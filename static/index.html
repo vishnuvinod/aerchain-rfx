@@ -120,6 +120,22 @@
           <button x-show="searchQuery" @click="searchQuery=''" class="absolute right-2 top-1 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
         </div>
 
+        <!-- Basket Scope Modeling Mode (Decision 1: Apples-to-Apples) -->
+        <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
+          <button @click="basketMode='quoted'"
+                  :class="basketMode==='quoted' ? 'bg-slate-800 text-white font-bold' : 'bg-slate-50 text-slate-600'"
+                  class="px-2.5 py-1"
+                  title="Show only stated quoted lines">
+            Stated Quotes
+          </button>
+          <button @click="basketMode='projected'"
+                  :class="basketMode==='projected' ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'"
+                  class="px-2.5 py-1 flex items-center gap-1"
+                  title="Model missing lines with market benchmark median for apples-to-apples evaluation">
+            <span>⚖️</span> Projected 30-Line
+          </button>
+        </div>
+
         <!-- View Density Toggle -->
         <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
           <button @click="denseView=false" :class="!denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1">
@@ -201,8 +217,10 @@
                         <span class="font-bold text-sm text-amber-300" x-text="formatCurrency(comparison?.totals?.[v.id]?.total_inr)"></span>
                         <span class="text-[9px] text-amber-200 font-semibold">(Partial)</span>
                       </div>
-                      <div class="mt-1 bg-amber-400/20 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-400/30">
-                        ⚠ <span x-text="comparison?.totals?.[v.id]?.missing_lines_count"></span> Lines Missing (-₹<span x-text="formatCompact(comparison?.totals?.[v.id]?.missing_scope_gap_inr)"></span> gap)
+                      <div class="mt-1 bg-amber-400/20 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-400/30 cursor-pointer hover:bg-amber-400/30 flex items-center justify-between"
+                           @click="openScopeFollowUp(v.id)">
+                        <span>⚠ <span x-text="comparison?.totals?.[v.id]?.missing_lines_count"></span> Lines Missing</span>
+                        <span class="text-[8px] bg-amber-500/40 text-amber-100 px-1 rounded uppercase">Follow Up ✉</span>
                       </div>
                       <div class="text-[9px] text-slate-400 mt-1 font-mono flex justify-between" title="Projected full basket if missing lines are filled at market median">
                         <span>Est. 30-Line TCO:</span>
@@ -352,9 +370,17 @@
                         </template>
                       </div>
 
-                      <!-- 3. Unquoted or Ref Required Status -->
+                      <!-- 3. Unquoted or Ref Required Status (Decision 2) -->
                       <template x-if="row.vendors[v.id]?.status === 'NOT_QUOTED'">
-                        <div class="text-slate-400 font-medium italic text-[11px] text-center py-1">Not Quoted</div>
+                        <div>
+                          <div x-show="basketMode==='quoted'" class="text-slate-400 font-medium italic text-[11px] text-center py-1">
+                            Not Quoted
+                          </div>
+                          <div x-show="basketMode==='projected'" class="border border-dashed border-blue-400/50 bg-blue-50/50 rounded px-1.5 py-0.5 text-center">
+                            <div class="text-[10px] font-mono text-blue-900 font-bold" x-text="formatCurrency(row.vendors[v.id]?.imputed_benchmark_inr || row.benchmark_price_inr)"></div>
+                            <div class="text-[8px] text-blue-600 font-semibold uppercase tracking-tighter">Est. Benchmark</div>
+                          </div>
+                        </div>
                       </template>
                       <template x-if="row.vendors[v.id]?.status === 'REFERENCE_REQUIRED'">
                         <div class="text-purple-700 font-semibold text-[10px] text-center bg-purple-100/60 rounded py-0.5">
@@ -755,6 +781,117 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 4B. VENDOR SCOPE FOLLOW-UP / ADDENDUM CHASER MODAL                          -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div x-show="showScopeModal" x-cloak class="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div class="bg-[#0f2447] text-white p-4 flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono text-amber-300 uppercase tracking-widest">Scope Gap Follow-Up</div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>Clarification Addendum for</span>
+            <span class="text-blue-300" x-text="selectedFollowUpVendor?.name"></span>
+          </h2>
+        </div>
+        <button @click="showScopeModal=false" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+        <!-- Strategic Chaser ROI Banner (Decision 3) -->
+        <div class="rounded-xl p-3.5 border flex items-start gap-3 shadow-xs"
+             :class="{
+               'bg-emerald-50 border-emerald-300 text-emerald-950': comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'emerald',
+               'bg-amber-50 border-amber-300 text-amber-950': comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'amber',
+               'bg-rose-50 border-rose-300 text-rose-950': comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'rose'
+             }">
+          <div class="text-2xl mt-0.5">
+            <span x-show="comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'emerald'">🎯</span>
+            <span x-show="comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'amber'">⚠️</span>
+            <span x-show="comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'rose'">⛔</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-xs uppercase tracking-wide"
+                    x-text="'Strategic Sourcing Recommendation: ' + (comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.badge || 'Review Required')"></span>
+              <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded uppercase border"
+                    :class="{
+                      'bg-emerald-100 text-emerald-900 border-emerald-300': comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'emerald',
+                      'bg-amber-100 text-amber-900 border-amber-300': comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'amber',
+                      'bg-rose-100 text-rose-900 border-rose-300': comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.color === 'rose'
+                    }"
+                    x-text="'Priority: ' + (comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.priority || 'MEDIUM')"></span>
+            </div>
+            <p class="text-[11px] mt-1 leading-relaxed opacity-95"
+               x-text="comparison?.totals?.[selectedFollowUpVendor?.id]?.chaser_roi?.summary"></p>
+            <div class="mt-2 text-[10px] font-mono pt-1.5 border-t border-black/10 flex items-center justify-between">
+              <span>Scope Gap: <strong x-text="missingItemsList.length + ' lines omitted'"></strong></span>
+              <span>Estimated Gap Value: <strong x-text="'₹' + formatCompact(comparison?.totals?.[selectedFollowUpVendor?.id]?.missing_scope_gap_inr)"></strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table of Missing Items -->
+        <div>
+          <div class="font-bold text-slate-800 text-xs mb-1.5 flex items-center justify-between">
+            <span>Unquoted Line Items Required from Supplier:</span>
+            <span class="text-slate-400 font-mono text-[10px]" x-text="missingItemsList.length + ' lines missing'"></span>
+          </div>
+          <div class="border rounded-lg overflow-hidden">
+            <table class="w-full border text-xs">
+              <thead class="bg-slate-100 font-bold border-b text-slate-700">
+                <tr>
+                  <th class="p-2 text-left">Code</th>
+                  <th class="p-2 text-left">Description</th>
+                  <th class="p-2 text-center">Qty</th>
+                  <th class="p-2 text-right">Est. Cost Gap</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <template x-for="item in missingItemsList" :key="item.item_code">
+                  <tr>
+                    <td class="p-2 font-mono font-bold text-blue-700" x-text="item.item_code"></td>
+                    <td class="p-2">
+                      <div class="font-semibold text-slate-800" x-text="item.description"></div>
+                      <div class="text-[10px] text-slate-500 truncate max-w-xs" x-text="item.specs"></div>
+                    </td>
+                    <td class="p-2 text-center font-mono font-bold" x-text="item.quantity + ' ' + item.rfx_unit"></td>
+                    <td class="p-2 text-right font-mono text-slate-600" x-text="formatCurrency(item.gap_val)"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pre-Drafted Automated Email to Supplier -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-bold text-slate-800 text-xs uppercase tracking-wide">Automated Sourcing Addendum Draft</span>
+            <button @click="copyScopeEmail()" class="text-blue-600 font-bold hover:underline text-[11px] flex items-center gap-1">
+              <span>📋</span> Copy Addendum Email
+            </button>
+          </div>
+          <div class="text-[10px] text-slate-700 space-y-1 bg-white p-3 border border-slate-200 rounded font-mono whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto"
+               x-text="getScopeClarificationBody()"></div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button @click="simulateVendorAddendumResponse()" class="text-blue-700 hover:text-blue-900 text-xs font-semibold flex items-center gap-1.5">
+          <span>⚡</span> Simulate Supplier Round-2 Submission (Auto-fill)
+        </button>
+        <div class="flex gap-2">
+          <button @click="showScopeModal=false" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 font-semibold text-xs">
+            Close
+          </button>
+          <button @click="copyScopeEmail(); showScopeModal=false" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center gap-1.5">
+            <span>✉</span> Send Addendum & Log in Audit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <!-- 5. SECONDARY VIEWS (RFx Builder & Vendor Inbox)                             -->
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <div x-show="viewMode==='rfx_builder'" class="pt-16 max-w-4xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-xl">
@@ -826,9 +963,12 @@
       return {
         viewMode: 'cockpit',
         denseView: false,
+        basketMode: 'quoted',
         copilotOpen: true,
         drawerOpen: false,
         showAllocationModal: false,
+        showScopeModal: false,
+        selectedFollowUpVendor: null,
         activeCell: null,
         overridePriceInput: '',
         comparison: null,
@@ -896,6 +1036,10 @@
             this.viewMode = 'rfx_builder';
           } else if (hash === '#inbox') {
             this.viewMode = 'vendor_inbox';
+          } else if (hash === '#scope') {
+            setTimeout(() => {
+              this.openScopeFollowUp('techpro');
+            }, 300);
           }
         },
 
@@ -961,6 +1105,67 @@
           if (cell.status === 'REFERENCE_REQUIRED') return 'bg-purple-50/60 border border-purple-200';
           if (cell.is_lowest) return 'cell-lowest font-bold text-emerald-800';
           return 'bg-white';
+        },
+
+        openScopeFollowUp(vid) {
+          this.selectedFollowUpVendor = this.vendors.find(v => v.id === vid);
+          this.showScopeModal = true;
+        },
+
+        get missingItemsList() {
+          if (!this.selectedFollowUpVendor || !this.comparison) return [];
+          const vid = this.selectedFollowUpVendor.id;
+          return this.comparison.rows
+            .filter(r => !r.vendors[vid]?.normalised_price_inr)
+            .map(r => {
+              const bench = r.benchmark_price_inr || r.vendors[vid]?.imputed_benchmark_inr || 45000;
+              return {
+                item_code: r.item_code,
+                description: r.description,
+                specs: r.specs,
+                quantity: r.quantity,
+                rfx_unit: r.rfx_unit,
+                benchmark_unit: bench,
+                gap_val: bench * r.quantity
+              };
+            });
+        },
+
+        getScopeClarificationBody() {
+          if (!this.selectedFollowUpVendor) return '';
+          const vName = this.selectedFollowUpVendor.name;
+          const items = this.missingItemsList.map((it, idx) => `  ${idx + 1}. [${it.item_code}] ${it.description} - Qty: ${it.quantity} ${it.rfx_unit} (${it.specs})`).join('\n');
+          return `To: tender.response@${this.selectedFollowUpVendor.id}.com\nSubject: URGENT: RFX-2024-ITH-001 Scope Gap Clarification · ${this.missingItemsList.length} Missing Line Items\n\nDear ${vName} Commercial Team,\n\nWe are in the final evaluation round for RFX-2024-ITH-001 (Bengaluru Campus IT Refresh). Our automated ingestion system noted that your proposal omitted ${this.missingItemsList.length} line items:\n\n${items}\n\nPlease submit your unit rates, delivery lead time, and Incoterms for these specific lines by 5:00 PM tomorrow. Without these rates, we will proceed with a split-award to competing compliant suppliers.\n\nRegards,\nVishnu Vinod · Strategic Sourcing Lead\nAerchain Autonomous Procurement Platform`;
+        },
+
+        copyScopeEmail() {
+          navigator.clipboard.writeText(this.getScopeClarificationBody());
+          alert("Automated RFP Addendum copied to clipboard!");
+        },
+
+        simulateVendorAddendumResponse() {
+          if (!this.selectedFollowUpVendor) return;
+          const vid = this.selectedFollowUpVendor.id;
+          const vName = this.selectedFollowUpVendor.name;
+          this.comparison.rows.forEach(r => {
+            if (!r.vendors[vid]?.normalised_price_inr) {
+              const bench = r.benchmark_price_inr || r.vendors[vid]?.imputed_benchmark_inr || 45000;
+              const negotiated = Math.round(bench * 0.96); // 4% negotiated round-2 rate
+              r.vendors[vid].normalised_price_inr = negotiated;
+              r.vendors[vid].raw_display = `₹${negotiated.toLocaleString()} (R2 Addendum)`;
+              r.vendors[vid].status = 'QUOTED';
+              r.vendors[vid].is_verified = true;
+              r.vendors[vid].formula = `Received via Round-2 Scope Addendum: negotiated @ ₹${negotiated.toLocaleString()} / unit (-4% vs benchmark)`;
+            }
+          });
+          const newTotal = this.comparison.rows.reduce((sum, r) => sum + (r.vendors[vid].normalised_price_inr * r.quantity), 0);
+          this.comparison.totals[vid].total_inr = newTotal;
+          this.comparison.totals[vid].lines_quoted = 30;
+          this.comparison.totals[vid].missing_lines_count = 0;
+          this.comparison.totals[vid].is_partial = false;
+          this.comparison.totals[vid].missing_scope_gap_inr = 0;
+          this.showScopeModal = false;
+          alert(`⚡ Round-2 Submission Received!\n\n${vName} submitted competitive rates for all missing lines.\nCoverage updated to 30/30 (100% Full Scope).\nNew Landed Total: ₹${(newTotal/10000000).toFixed(2)} Cr.`);
         },
 
         inspectCell(row, vid) {

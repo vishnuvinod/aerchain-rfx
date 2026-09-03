@@ -15,19 +15,19 @@ This is your step-by-step, minute-by-minute speaking script for your **5-minute 
 
 ---
 
-### 0:45 – 1:45: The Commercial Grid & Dual-Layer Traceability
+### 0:45 – 1:30: The Commercial Grid & Dual-Layer Traceability
 1. **Show the Main Screen ([http://localhost:8000](http://localhost:8000)):**
    - *"Notice our layout: on the left (65%), we have the Normalized Comparison Matrix. On the right (35%), an interactive Procurement Co-Pilot."*
-2. **Point out the Sticky Qualification Banner (Sticky Top Tier):**
-   - *"Before looking at a single price, we enforce a Supplier Risk Audit across ISO 9001 certification, warranty, and on-site SLAs. Price without compliance is a liability."*
-   - **Click the toggle:** *"Notice what happens when I toggle `Strict ISO 9001 Only`—QuickByte (who lacks ISO certification) is instantly disqualified, and their column dims out."*
-3. **Show the Dual-Layer Cell Architecture (Rank 4):**
+2. **Point out the Sticky Qualification Banner:**
+   - *"Before looking at a single price, we enforce a Supplier Risk Audit across ISO 9001 certification, warranty, on-site SLAs, and historical ERP invoice drift.*
+   - **Click the toggle:** *"Notice what happens when I toggle `Strict ISO 9001 Only`—QuickByte (who lacks ISO certification) is instantly disqualified, and their column dims with a high-contrast red badge."*
+3. **Show the Dual-Layer Cell Architecture:**
    - Point to GlobalIT's Laptop row (Row 5):
-     - *"Notice how we display prices: on top, the supplier's raw stated quote (`$1,050 list in USD`); on the bottom, the bold normalized INR rate (`₹77,154 net`). The buyer never has to guess where a number came from."*
+     - *"Notice how we display prices: bold normalized INR rate (`₹77,154 net`) on top, with the supplier's raw stated quote (`$1,050 list in USD · -12% footnote discount`) right below. The buyer never has to guess where a number came from."*
 
 ---
 
-### 1:45 – 3:00: The Ugly Edges & The Slide-Over Inspection Panel (Rank 1 & 5)
+### 1:30 – 2:30: The Ugly Edges & The Slide-Over Inspection Panel
 1. **The Angled Phone Photo (DigitalEdge Row 23 — CAT6 Cable):**
    - Click on the amber `⚑ Review Spool` badge on DigitalEdge's CAT6 cable row.
    - The slide-over inspection drawer opens on the right.
@@ -44,7 +44,21 @@ This is your step-by-step, minute-by-minute speaking script for your **5-minute 
 
 ---
 
-### 3:00 – 4:15: Bi-Directional Co-Pilot Simulation (The VP's Prompt)
+### 2:30 – 3:30: Incomplete Quotes & The Scope Delta Chaser (Option 3 Hero Flow)
+1. **Show the Apples-to-Apples Basket Modeling Toggle:**
+   - Click **`Projected 30-Line`** in the top ribbon:
+     - *"Notice what happened: unquoted cells now display dashed market benchmark estimates (`Est. ₹4,50,000`). This solves the classic procurement trap where Shree IT's ₹1.72 Cr looks cheaper simply because they skipped 14 lines. With imputed rates, Shree IT is actually ₹3.14 Cr—more expensive than TechPro!"*
+2. **Open the Scope Clarification Modal:**
+   - On TechPro's column header, click **`[ ⚠ 3 Lines Missing · Request Addendum ✉ ]`**:
+   - *"Look at what the system tells the Category Lead: an AI Strategic Sourcing Recommendation with a **High ROI Follow-up** verdict. TechPro is ISO-compliant with only +1.2% invoice drift. They are just 3 lines away from a viable single-source bid."*
+   - *"Compare that to Shree IT, where the system advises **Disqualification** because they omitted 47% of the project scope."*
+3. **Simulate Round-2 Vendor Response:**
+   - Click **`[ ⚡ Simulate Supplier Round-2 Submission ]`**:
+   - *"Watch what happens in real time: TechPro submits negotiated rates for those 3 lines. The matrix updates TechPro to **30/30 (100% Scope)** and recalculates their landed TCO live on screen."*
+
+---
+
+### 3:30 – 4:30: Bi-Directional Co-Pilot Simulation (The VP's Prompt)
 1. **Click the first Quick Prompt in the Co-Pilot:**
    > *"What if we split it, cheapest per line, but only among vendors who cleared the quality questionnaire?"*
 2. **Watch the AI respond and trigger live table highlighting:**
@@ -53,11 +67,11 @@ This is your step-by-step, minute-by-minute speaking script for your **5-minute 
      - Non-compliant vendors (QuickByte and Shree IT) are automatically dimmed.
      - Winning line items light up across TechPro, GlobalIT, and DigitalEdge with emerald green `AWARDED` badges.
    - **Point to the bottom bar:**
-     - *"The bottom executive bar instantly recalculates: our optimized spend is **₹2.84 Crore**, delivering **₹10.3 Lakhs in cost avoidance** compared to single-sourcing to TechPro."*
+     - *"The bottom executive bar instantly recalculates: our optimized spend is **₹2.84 Crore**, delivering **₹10.0 Lakhs in defensible savings** compared to TechPro single-sourcing."*
 
 ---
 
-### 4:15 – 5:00: The PM Closing ("Where the Better Problem Actually Is")
+### 4:30 – 5:00: The PM Closing ("Where the Better Problem Actually Is")
 > *"To close: automated quote ingestion saves 3 days of grunt work, but in my 1-page design memo, I outline where the real multi-million dollar bleed in enterprise procurement lies: **Post-Award Contract Drift**.*
 >
 > *Suppliers routinely win deals on low bids, then claw back margin through freight add-ons, delay surcharges, and spec substitutions on actual purchase orders. The natural evolution of this module is to close the loop: linking extracted quote terms directly into three-way ERP invoice matching to continuously score a **Vendor Trust Graph**.*
@@ -68,6 +82,7 @@ This is your step-by-step, minute-by-minute speaking script for your **5-minute 
 
 ## 🎯 Pre-Flight Recording Checklist
 - [ ] Make sure `http://localhost:8000` is open in your browser.
-- [ ] Click the toggles once to make sure you are comfortable with how QuickByte dims out.
-- [ ] Click Row 23 (DigitalEdge Cable) to see the rate card photo pop up.
-- [ ] Hit record on Loom, follow the script, and you're set!
+- [ ] Test the toggle: click `Projected 30-Line` to see the dashed benchmark estimates appear.
+- [ ] Click `[ ⚠ 3 Lines Missing · Request Addendum ✉ ]` on TechPro to verify the Scope Follow-Up Modal.
+- [ ] Click Row 23 (DigitalEdge Cable) to verify the rate card photo in the slide-over drawer.
+- [ ] Hit record on Loom, follow this script, and you are guaranteed a winning submission!

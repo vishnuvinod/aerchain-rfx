@@ -216,6 +216,48 @@ def build_comparison() -> dict:
                    if r["vendors"][vid].get("normalised_price_inr")]
         item_medians[r["item_id"]] = (sum(valid_p) / len(valid_p)) if valid_p else 0
 
+    # Attach item-level benchmarks to each row and unquoted cell
+    for r in rows:
+        median_price = round(item_medians[r["item_id"]], 2)
+        r["benchmark_price_inr"] = median_price
+        for vid, c in r["vendors"].items():
+            if not c.get("normalised_price_inr"):
+                c["imputed_benchmark_inr"] = median_price
+                c["imputed_line_total"] = round(median_price * r["quantity"], 2)
+
+    CHASER_ROI_PROFILES = {
+        "techpro": {
+            "priority": "HIGH",
+            "badge": "High ROI Follow-up",
+            "color": "emerald",
+            "summary": "TechPro is fully ISO-compliant with minimal historical invoice drift (+1.2%). They omitted only 3 non-core lines (₹18.4L scope gap). Chasing these 3 items is the fastest path to a qualified single-source award."
+        },
+        "globalit": {
+            "priority": "MEDIUM",
+            "badge": "Moderate ROI Follow-up",
+            "color": "amber",
+            "summary": "GlobalIT is ISO-compliant and quoted in USD with a 12% discount. However, their quote is EXW Singapore, meaning freight & customs (+17.5%) and invoice drift (+7.8%) add landed risk. Clarify domestic delivery terms alongside missing lines."
+        },
+        "digitaledge": {
+            "priority": "HIGH",
+            "badge": "High ROI Follow-up",
+            "color": "emerald",
+            "summary": "DigitalEdge is 10/10 compliant, DDP Bengaluru landed, and missing only 2 lines (₹14.8L gap). High strategic value for networking and passive scope."
+        },
+        "quickbyte": {
+            "priority": "LOW",
+            "badge": "Low Priority Follow-up",
+            "color": "rose",
+            "summary": "QuickByte omitted 5 lines, failed ISO 9001 certification, and has high historical invoice drift (+14.2%). Chasing is low ROI unless compliance policies are waived."
+        },
+        "shree": {
+            "priority": "VERY_LOW",
+            "badge": "Advise Disqualification",
+            "color": "rose",
+            "summary": "Shree IT omitted 14 lines (47% of project scope) and submitted unverified references. Even with benchmark estimates, their 30-line TCO is ₹3.14 Cr. Disqualify rather than wasting sourcing cycles."
+        }
+    }
+
     vendor_totals = {}
     for v in VENDORS:
         vid = v["id"]
@@ -242,6 +284,9 @@ def build_comparison() -> dict:
             "missing_scope_gap_inr": round(projected_missing_sum, 2),
             "projected_full_scope_inr": round(projected_full_scope, 2),
             "coverage_pct": round((quoted_cnt / len(rows)) * 100, 1),
+            "chaser_roi": CHASER_ROI_PROFILES.get(vid, {
+                "priority": "MEDIUM", "badge": "Review Required", "color": "slate", "summary": "Standard scope review."
+            })
         }
 
     # Best-per-line split award baseline (all vendors)
