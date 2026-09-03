@@ -1,0 +1,63 @@
+From: shreeittrd@gmail.com
+To: vishnu.vinod@democorp.in
+Subject: Re: RFX-2024-ITH-001 — IT Hardware Quotation
+Date: 26 November 2024, 11:38 AM
+
+Dear Vishnu Sir,
+
+Thanks for the RFQ. We are happy to quote for the items below. We have been
+in business for 14 years and have supplied to many large companies.
+
+Our rates (all prices in INR, per unit, excl GST):
+
+SERVERS & COMPUTE:
+- SRV-002 (Rack Server 1U): Rs.1,82,000/unit
+- SRV-004 (Blade Module): Rs.89,000/unit
+- WKS-001 (CAD Workstation): Not available with us, sorry
+- DSK-001 (Desktop PC): Rs.34,500/unit
+
+LAPTOPS:
+- LPT-001 (High-end laptop): Rs.87,500/unit
+- LPT-002 (Standard laptop): Rs.53,500/unit
+
+NETWORKING:
+- NSW-001 (24P Switch): Rs.16,800/unit
+- NSW-002 (48P Switch): Rs.29,500/unit
+- WAP-001 (WiFi AP): Rs.12,200/unit
+- SFP-001 (SFP+ Module): Rs.3,200/unit
+
+POWER:
+- UPS-001 (1kVA): Rs.13,200/unit
+- UPS-002 (3kVA): Rs.36,000/unit
+
+STORAGE & COMPONENTS:
+- SSD-001 (1TB SSD): Rs.16,500/unit
+- MON-001 (Monitor 27"): Rs.30,000/unit
+- RAK-001 (42U Rack): Rs.25,800/unit
+
+CABLING:
+- CAB-001 (CAT6 box 305m): Rs.7,500/box
+- PAT-001 (Fiber Patch Panel): Rs.5,000/unit
+
+For the following items, our rates are same as last year quote (you can check
+our 2023 quotation ref SIT-2023-088):
+- TNC-001 (Thin Client): same as last year
+- PDU-001 (Rack PDU): same as last year
+- RAM-001 (32GB DDR5): same as last year
+
+Items SRV-001, SRV-003, RTR-001, FWL-001, NSW-003, WLC-001, KVM-001,
+NAS-001, GPU-001 — we don't have these in stock currently. Can try to
+arrange but cannot commit delivery within 30 days.
+
+Freight: Extra. Bengaluru delivery free above Rs.5 lakh order value.
+GST as applicable (18% on IT hardware).
+
+Regarding questionnaire: We will provide ISO certificate if required
+(we are in process of getting certified). GST number is 29AABCS9876E1ZC.
+Payment Net 30 days. Warranty as per OEM.
+
+Please call if any questions: +91-98765-43210 (Ramesh Shree, Proprietor)
+
+Thanks and regards,
+Ramesh Shree
+Shree IT Traders, Bengaluru

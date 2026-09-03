@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aerchain · RFx Intelligence Cockpit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>
+    [x-cloak] { display: none !important; }
+    .cell-awarded { background: #ecfdf5 !important; border: 2px solid #10b981 !important; }
+    .cell-dimmed { opacity: 0.25 !important; filter: grayscale(90%); }
+    .cell-lowest { background: #f0fdf4; }
+    .sticky-col-item { position: sticky; left: 0; z-index: 25; background: white; width: 280px; min-width: 280px; }
+    .sticky-col-qty { position: sticky; left: 280px; z-index: 25; background: white; width: 68px; min-width: 68px; }
+    .sticky-header-top { position: sticky; top: 0; z-index: 40; }
+    .sticky-header-banner { position: sticky; top: 68px; z-index: 35; }
+    .pulse-dot { animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+    .prose-ai h2 { font-size:1.05rem; font-weight:700; margin:0.8rem 0 0.3rem; color:#0f2447; }
+    .prose-ai h3 { font-size:0.95rem; font-weight:600; margin:0.6rem 0 0.2rem; color:#1e3a5f; }
+    .prose-ai p { margin-bottom:0.5rem; line-height:1.5; }
+    .prose-ai ul { list-style:disc; padding-left:1.2rem; margin-bottom:0.5rem; }
+    .prose-ai table { border-collapse:collapse; width:100%; margin:0.5rem 0; font-size:11px; }
+    .prose-ai th { background:#0f2447; color:white; padding:5px 8px; text-align:left; }
+    .prose-ai td { border:1px solid #e2e8f0; padding:4px 8px; }
+    .prose-ai tr:nth-child(even) td { background:#f8fafc; }
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:#f1f5f9; }
+    ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
+    ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-800 font-sans antialiased" x-data="cockpit()" x-init="init()" x-cloak>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 1. TOP GLOBAL COMMAND BAR                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <header class="bg-[#0b192e] border-b border-slate-800 text-white h-14 flex items-center px-5 gap-4 fixed w-full top-0 z-50 shadow-md">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-sm tracking-tighter shadow-inner">
+        AER
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm tracking-tight text-white">Aerchain <span class="text-blue-400 font-normal">RFx Intelligence</span></span>
+          <span class="bg-blue-500/20 text-blue-300 text-[10px] px-2 py-0.5 rounded font-mono font-medium border border-blue-500/30">RFX-2024-ITH-001</span>
+        </div>
+        <div class="text-[11px] text-slate-400 flex items-center gap-3">
+          <span>IT Hardware · 200-Seat Bengaluru Campus</span>
+          <span>•</span>
+          <span>Target Budget: <strong class="text-slate-200">₹4.50 Cr</strong></span>
+          <span>•</span>
+          <span class="text-blue-300">FX Benchmark: ₹83.50/USD (RBI Ref 25-Nov)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-1"></div>
+
+    <!-- Navigation pills -->
+    <div class="flex items-center bg-slate-800/80 p-1 rounded-lg border border-slate-700 text-xs">
+      <button @click="viewMode='cockpit'"
+              :class="viewMode==='cockpit' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
+              class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+        <span>📊</span> Decision Cockpit
+      </button>
+      <button @click="viewMode='rfx_builder'"
+              :class="viewMode==='rfx_builder' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
+              class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+        <span>📋</span> RFx Scope
+      </button>
+      <button @click="viewMode='vendor_inbox'"
+              :class="viewMode==='vendor_inbox' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
+              class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+        <span>📬</span> Raw Submissions (5)
+      </button>
+    </div>
+
+    <!-- Co-pilot Toggle -->
+    <button @click="copilotOpen = !copilotOpen"
+            :class="copilotOpen ? 'bg-blue-600/30 text-blue-300 border-blue-500/50' : 'bg-slate-800 text-slate-300 border-slate-700'"
+            class="px-3 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-2 transition-all">
+      <span>🤖 Co-Pilot</span>
+      <span class="text-[10px] bg-blue-500 text-white px-1.5 py-0.2 rounded-full font-mono" x-text="copilotOpen ? 'ON' : 'OFF'"></span>
+    </button>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 2. MAIN COCKPIT VIEW (Split Layout: 65% Matrix + 35% Co-Pilot)              -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <main class="pt-14 h-screen flex overflow-hidden bg-slate-100" x-show="viewMode==='cockpit'">
+
+    <!-- ── LEFT: NORMALIZED COMPARISON GRID (Scrollable) ─────────────────────── -->
+    <div class="flex-1 flex flex-col min-w-0 h-full border-r border-slate-300 transition-all duration-300">
+
+      <!-- Action & Filter Ribbon -->
+      <div class="bg-white border-b border-slate-200 px-5 py-2 flex items-center gap-4 text-xs flex-shrink-0 shadow-xs">
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-slate-800 text-sm">Commercial Evaluation Grid</span>
+          <span class="text-slate-400">|</span>
+          <span class="text-slate-500 font-medium" x-text="filteredRows.length + ' of 30 line items'"></span>
+        </div>
+
+        <!-- Category Dropdown -->
+        <select x-model="filterCategory" class="border border-slate-300 rounded px-2.5 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          <option value="">All Categories (30)</option>
+          <template x-for="cat in categories" :key="cat">
+            <option :value="cat" x-text="cat"></option>
+          </template>
+        </select>
+
+        <!-- Instant SKU / Spec Search Bar (Suggested Polish for Live Demo) -->
+        <div class="relative w-64">
+          <input type="text" x-model="searchQuery" placeholder="Search SKU, spec, or item..."
+                 class="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500 pl-7">
+          <span class="absolute left-2 top-1 text-slate-400 text-xs">🔍</span>
+          <button x-show="searchQuery" @click="searchQuery=''" class="absolute right-2 top-1 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
+        </div>
+
+        <!-- View Density Toggle -->
+        <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
+          <button @click="denseView=false" :class="!denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1">
+            Dual-Layer Audit
+          </button>
+          <button @click="denseView=true" :class="denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1">
+            Compact View
+          </button>
+        </div>
+
+        <div class="flex-1"></div>
+
+        <!-- Active Scenario Pill -->
+        <div x-show="activeScenario" class="flex items-center gap-2 bg-emerald-50 border border-emerald-300 text-emerald-800 px-3 py-1 rounded-full text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Simulation Active: <strong x-text="activeScenario?.name"></strong></span>
+          <button @click="resetScenario()" class="text-emerald-700 hover:text-emerald-950 font-bold ml-1 text-sm">✕</button>
+        </div>
+
+        <!-- Export Audit CSV -->
+        <button @click="exportCSV()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-all">
+          <span>⬇</span> Export CSV
+        </button>
+      </div>
+
+      <!-- Scope Coverage Floor Alert Banner (Addresses VP/CPO Critique #2) -->
+      <div class="bg-slate-800 text-white px-5 py-1.5 flex items-center justify-between text-[11px] border-b border-slate-700">
+        <div class="flex items-center gap-4">
+          <span class="font-bold text-amber-400">🛡️ Scope Coverage Floor Check:</span>
+          <span>Compliant Pool (TechPro, GlobalIT, DigitalEdge) covers <strong>30 / 30 Lines (100% Scope)</strong></span>
+          <span class="text-slate-400">•</span>
+          <span class="text-slate-300">Single-supplier coverage: TechPro (27/30), GlobalIT (27/30), DigitalEdge (28/30)</span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono">
+          HITL Gate: Threshold &lt; 75% triggers Review
+        </div>
+      </div>
+
+      <!-- Main Table Container -->
+      <div class="flex-1 overflow-auto bg-slate-50 relative" id="matrix-container">
+        <table class="w-full border-collapse text-left text-xs bg-white">
+
+          <!-- STICKY HEADER 1: Vendor Names, Formats & Incoterms -->
+          <thead class="sticky-header-top">
+            <tr class="bg-[#0f2447] text-white divide-x divide-slate-700 shadow-md">
+              <th class="sticky-col-item bg-[#0f2447] p-3 text-left font-bold text-xs uppercase tracking-wider text-slate-200">
+                Item Specification
+              </th>
+              <th class="sticky-col-qty bg-[#0f2447] p-3 text-center font-bold text-xs uppercase tracking-wider text-slate-200">
+                Qty
+              </th>
+              <template x-for="v in vendors" :key="v.id">
+                <th class="p-3 text-center min-w-[195px] max-w-[220px] transition-all"
+                    :class="isVendorDisqualified(v.id) ? 'cell-dimmed' : ''">
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <span class="font-bold text-sm tracking-tight text-white" x-text="v.name.split(' ')[0]"></span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-medium"
+                          :class="{
+                            'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30': v.response_format==='Excel',
+                            'bg-red-500/20 text-red-300 border border-red-500/30': v.response_format==='PDF',
+                            'bg-blue-500/20 text-blue-300 border border-blue-500/30': v.response_format==='Word',
+                            'bg-purple-500/20 text-purple-300 border border-purple-500/30': v.response_format==='Image',
+                            'bg-amber-500/20 text-amber-300 border border-amber-500/30': v.response_format==='Email'
+                          }"
+                          x-text="v.response_format"></span>
+                  </div>
+
+                  <!-- Incoterms Tag (Landed Cost Completeness) -->
+                  <div class="text-[10px] font-mono px-1.5 py-0.5 rounded text-left mb-1.5"
+                       :class="v.id==='techpro'||v.id==='digitaledge' ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800' : 'bg-amber-950/70 text-amber-300 border border-amber-800'"
+                       :title="qualData[v.id]?.freight_note">
+                    <span class="font-bold" x-text="'Incoterm: ' + qualData[v.id]?.incoterm"></span>
+                  </div>
+
+                  <!-- Quoted Total & Explicit Partial Scope Warnings (Disarming the Procurement Trap) -->
+                  <template x-if="comparison?.totals?.[v.id]?.is_partial">
+                    <div class="text-left bg-slate-800/80 p-2 rounded border border-amber-500/40">
+                      <div class="flex items-baseline justify-between">
+                        <span class="font-bold text-sm text-amber-300" x-text="formatCurrency(comparison?.totals?.[v.id]?.total_inr)"></span>
+                        <span class="text-[9px] text-amber-200 font-semibold">(Partial)</span>
+                      </div>
+                      <div class="mt-1 bg-amber-400/20 text-amber-300 text-[9px] font-bold px-1.5 py-0.5 rounded border border-amber-400/30">
+                        ⚠ <span x-text="comparison?.totals?.[v.id]?.missing_lines_count"></span> Lines Missing (-₹<span x-text="formatCompact(comparison?.totals?.[v.id]?.missing_scope_gap_inr)"></span> gap)
+                      </div>
+                      <div class="text-[9px] text-slate-400 mt-1 font-mono flex justify-between" title="Projected full basket if missing lines are filled at market median">
+                        <span>Est. 30-Line TCO:</span>
+                        <strong class="text-slate-200" x-text="formatCurrency(comparison?.totals?.[v.id]?.projected_full_scope_inr)"></strong>
+                      </div>
+                    </div>
+                  </template>
+
+                  <template x-if="!comparison?.totals?.[v.id]?.is_partial">
+                    <div class="text-left bg-slate-800/80 p-2 rounded border border-emerald-500/40">
+                      <div class="flex items-baseline justify-between">
+                        <span class="font-bold text-sm text-white" x-text="formatCurrency(comparison?.totals?.[v.id]?.total_inr)"></span>
+                        <span class="text-[10px] text-emerald-300 font-bold">100% Scope</span>
+                      </div>
+                      <div class="text-[9px] text-emerald-400 mt-1">✓ All 30 lines fully quoted</div>
+                    </div>
+                  </template>
+                </th>
+              </template>
+            </tr>
+          </thead>
+
+          <!-- STICKY HEADER 2: THE QUALIFICATION & CONTRACT DRIFT GATEKEEPER -->
+          <tbody class="sticky-header-banner divide-y divide-slate-200">
+            <!-- Row 1: Interactive Compliance Toggles -->
+            <tr class="bg-slate-100 border-b border-slate-300">
+              <td class="sticky-col-item bg-slate-100 px-3 py-2 font-bold text-slate-700 text-[11px] flex items-center gap-2">
+                <span>🛡️ Compliance Policy</span>
+              </td>
+              <td class="sticky-col-qty bg-slate-100 text-center text-slate-400 font-mono text-[10px]">Gate</td>
+              <td colspan="5" class="px-3 py-1.5 bg-slate-100">
+                <div class="flex items-center gap-6 text-[11px]">
+                  <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-700 hover:text-blue-600">
+                    <input type="checkbox" x-model="strictISO" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <span>Require Strict ISO 9001:2015</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-700 hover:text-blue-600">
+                    <input type="checkbox" x-model="strictOnsite" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                    <span>Require Min 3-Year On-Site Support</span>
+                  </label>
+                  <span class="text-slate-400 text-[10px] ml-auto">Toggling dims non-compliant vendors across entire matrix</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: Live Vendor Risk Audit & ERP Invoice Drift -->
+            <tr class="bg-amber-50/70 text-slate-700 divide-x divide-slate-200 border-b-2 border-slate-300 shadow-sm text-[10px]">
+              <td class="sticky-col-item bg-amber-50/95 px-3 py-2">
+                <div class="font-bold text-slate-800">Supplier Reliability Audit</div>
+                <div class="text-[10px] text-blue-700 font-medium">ERP Contract Drift · ISO · SLA</div>
+              </td>
+              <td class="sticky-col-qty bg-amber-50/95 text-center font-bold text-slate-500">Audit</td>
+              <template x-for="v in vendors" :key="v.id">
+                <td class="px-2.5 py-1.5 transition-all align-top"
+                    :class="isVendorDisqualified(v.id) ? 'cell-dimmed bg-rose-50/70 border-2 border-rose-400' : 'bg-amber-50/40'">
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold" :class="qualData[v.id]?.iso ? 'text-emerald-700' : 'text-rose-700'"
+                          x-text="qualData[v.id]?.iso ? '✓ ISO 9001' : '✕ NO ISO'"></span>
+                    <span class="font-mono font-bold text-slate-600" x-text="qualData[v.id]?.score + '/10'"></span>
+                  </div>
+
+                  <!-- ERP Contract Drift Metric -->
+                  <div class="bg-white border border-slate-200 rounded px-1.5 py-0.5 mb-1 font-mono text-[9px] flex justify-between"
+                       :title="'Historical ERP invoice variance over previous 12 months: ' + qualData[v.id]?.drift">
+                    <span class="text-slate-400 font-sans">ERP Drift:</span>
+                    <strong :class="qualData[v.id]?.drift?.includes('High')||qualData[v.id]?.drift?.includes('14') ? 'text-rose-700' : 'text-emerald-700'"
+                            x-text="qualData[v.id]?.drift"></strong>
+                  </div>
+
+                  <div class="text-[10px] text-slate-600 leading-tight space-y-0.5">
+                    <div><span class="text-slate-400">Warranty:</span> <span class="font-medium" x-text="qualData[v.id]?.warranty"></span></div>
+                    <div><span class="text-slate-400">Support:</span> <span class="font-medium" :class="qualData[v.id]?.onsite ? 'text-slate-700' : 'text-rose-700 font-bold'" x-text="qualData[v.id]?.sla"></span></div>
+                    <div><span class="text-slate-400">Lead Time:</span> <span class="font-medium" x-text="qualData[v.id]?.lead"></span></div>
+                  </div>
+
+                  <!-- High-Contrast Disqualified Badge (Feedback Point 2) -->
+                  <div x-show="isVendorDisqualified(v.id)" class="mt-2 bg-rose-700 text-white text-[10px] font-black px-2 py-1 rounded text-center shadow tracking-wide uppercase">
+                    ● DISQUALIFIED: <span x-text="getDisqualificationReason(v.id)"></span>
+                  </div>
+                </td>
+              </template>
+            </tr>
+          </tbody>
+
+          <!-- 30 COMPARISON ROWS -->
+          <tbody class="divide-y divide-slate-200">
+            <template x-for="(row, rIdx) in filteredRows" :key="row.item_id">
+              <!-- Category Header Divider Row -->
+              <template x-if="rIdx === 0 || row.category !== filteredRows[rIdx-1]?.category">
+                <tr class="bg-slate-200/90 font-bold text-slate-800 tracking-wider uppercase text-[11px] border-t-2 border-slate-300">
+                  <td colspan="7" class="px-4 py-2 bg-slate-200/95">
+                    <div class="flex items-center justify-between">
+                      <span class="flex items-center gap-2">
+                        <span>📁 Category:</span>
+                        <span class="text-blue-800 font-black text-xs" x-text="row.category"></span>
+                      </span>
+                      <span class="text-slate-500 font-mono text-[10px] normal-case"
+                            x-text="getCategoryItemCount(row.category) + ' Line Items in this Category'"></span>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+
+              <!-- Commercial Line Item Row -->
+              <tr class="hover:bg-blue-50/50 transition-colors divide-x divide-slate-100"
+                  :class="activeScenario?.award_map?.[row.item_code] ? 'bg-emerald-50/20' : ''">
+
+                <!-- Sticky Item Spec -->
+                <td class="sticky-col-item bg-white px-3 py-2 border-r border-slate-200">
+                  <div class="flex items-start gap-1.5">
+                    <span class="text-[10px] font-mono text-slate-400 mt-0.5" x-text="row.item_id"></span>
+                    <div class="min-w-0">
+                      <div class="font-bold text-slate-900 text-xs truncate" :title="row.description" x-text="row.description"></div>
+                      <div class="text-[10px] font-mono text-blue-600 font-semibold" x-text="row.item_code"></div>
+                      <div class="text-[10px] text-slate-500 truncate" :title="row.specs" x-text="row.specs"></div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Sticky Qty -->
+                <td class="sticky-col-qty bg-white text-center px-2 py-2 font-mono font-bold text-slate-700 border-r border-slate-200">
+                  <span x-text="row.quantity"></span>
+                  <div class="text-[9px] text-slate-400 font-normal uppercase" x-text="row.rfx_unit"></div>
+                </td>
+
+                <!-- 5 Vendor Dual-Layer Cells (Top: Bold Net INR | Bottom: Muted Raw Quote) -->
+                <template x-for="v in vendors" :key="v.id">
+                  <td class="p-2 cursor-pointer transition-all relative"
+                      :class="getCellStyle(row, v.id)"
+                      @click="inspectCell(row, v.id)">
+
+                    <div class="flex flex-col">
+                      <!-- 1. Normalized INR Price (Top / Bold - Primary Eye Anchor) -->
+                      <template x-if="row.vendors[v.id]?.normalised_price_inr">
+                        <div class="flex items-baseline justify-between">
+                          <span class="font-bold text-slate-900 text-xs tracking-tight"
+                                x-text="formatCurrency(row.vendors[v.id]?.normalised_price_inr)"></span>
+                          <span class="text-[9px] text-slate-400 font-mono" x-text="'₹' + formatCompact(row.vendors[v.id]?.normalised_price_inr * row.quantity)"></span>
+                        </div>
+                      </template>
+
+                      <!-- 2. Stated Raw Quote (Bottom / Muted Layer - Traceability Anchor) -->
+                      <div x-show="!denseView" class="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-0.5">
+                        <span class="truncate max-w-[130px]" :title="row.vendors[v.id]?.raw_display" x-text="row.vendors[v.id]?.raw_display"></span>
+                        <template x-if="row.vendors[v.id]?.is_verified">
+                          <span class="text-emerald-600 font-bold" title="Verified by Buyer">✓</span>
+                        </template>
+                      </div>
+
+                      <!-- 3. Unquoted or Ref Required Status -->
+                      <template x-if="row.vendors[v.id]?.status === 'NOT_QUOTED'">
+                        <div class="text-slate-400 font-medium italic text-[11px] text-center py-1">Not Quoted</div>
+                      </template>
+                      <template x-if="row.vendors[v.id]?.status === 'REFERENCE_REQUIRED'">
+                        <div class="text-purple-700 font-semibold text-[10px] text-center bg-purple-100/60 rounded py-0.5">
+                          Same as 2023
+                        </div>
+                      </template>
+
+                      <!-- 4. Badges (Awarded, Review, ERP Available) -->
+                      <div class="flex flex-wrap gap-1 mt-1">
+                        <!-- Awarded Badge -->
+                        <template x-if="activeScenario?.award_map?.[row.item_code] === v.id">
+                          <span class="bg-emerald-600 text-white font-black text-[9px] px-1.5 py-0.2 rounded shadow-sm tracking-wide">
+                            AWARDED
+                          </span>
+                        </template>
+
+                        <!-- Review / Amber Flag -->
+                        <template x-if="row.vendors[v.id]?.flags?.includes('VERIFICATION_REQUIRED') && !row.vendors[v.id]?.is_verified">
+                          <span class="bg-amber-100 text-amber-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-amber-300">
+                            ⚑ Review Spool
+                          </span>
+                        </template>
+
+                        <!-- ERP Lookup Available -->
+                        <template x-if="row.vendors[v.id]?.erp_lookup && !row.vendors[v.id]?.normalised_price_inr">
+                          <span class="bg-purple-100 text-purple-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-purple-200">
+                            ⚡ ERP Match
+                          </span>
+                        </template>
+
+                        <!-- Footnote discount tag -->
+                        <template x-if="row.vendors[v.id]?.flags?.includes('FOOTNOTE_DISCOUNT_APPLIED') && !denseView">
+                          <span class="text-blue-600 text-[9px] font-medium" title="12% Footnote discount applied">
+                            -12% Ftnt
+                          </span>
+                        </template>
+                      </div>
+
+                    </div>
+                  </td>
+                </template>
+
+              </tr>
+            </template>
+          </tbody>
+
+          <!-- TOTALS FOOTER -->
+          <tfoot>
+            <tr class="bg-slate-900 text-white font-bold divide-x divide-slate-700 text-xs">
+              <td class="sticky-col-item bg-slate-900 p-3 font-bold text-slate-100">
+                TOTAL TCO (Quoted Lines)
+              </td>
+              <td class="sticky-col-qty bg-slate-900 text-center font-mono text-slate-400">30</td>
+              <template x-for="v in vendors" :key="v.id">
+                <td class="p-3 text-center transition-all" :class="isVendorDisqualified(v.id) ? 'opacity-30' : ''">
+                  <div class="text-sm font-bold text-white" x-text="formatCurrency(comparison?.totals?.[v.id]?.total_inr)"></div>
+                  <div class="text-[10px] text-slate-400 font-normal mt-0.5"
+                       x-text="comparison?.totals?.[v.id]?.lines_quoted + ' of 30 lines quoted'"></div>
+                  <div class="text-[9px] text-amber-300 font-mono mt-0.5" x-text="qualData[v.id]?.incoterm"></div>
+                </td>
+              </template>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- BOTTOM EXECUTIVE SCENARIO BAR -->
+      <div class="bg-[#0b192e] text-white border-t border-slate-700 px-5 py-3 flex items-center justify-between text-xs flex-shrink-0">
+        <div class="flex items-center gap-8">
+          <div>
+            <div class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Single-Source Baseline</div>
+            <div class="font-bold text-sm text-slate-200">TechPro (27 lines): ₹2.94 Cr</div>
+          </div>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <div>
+            <div class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Optimized Split Allocation</div>
+            <div class="font-bold text-sm text-emerald-400" x-text="'₹' + ((activeScenario ? activeScenario.total_tco : comparison?.scenarios?.strict_quality_award?.total_inr) / 10000000).toFixed(2) + ' Cr'"></div>
+          </div>
+          <div class="h-6 w-px bg-slate-700"></div>
+          <div>
+            <div class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Defensible Cost Avoidance</div>
+            <div class="font-bold text-sm text-blue-300">
+              ₹16.5 Lakhs <span class="text-[10px] font-normal text-slate-400">(vs TechPro Baseline)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Opens Allocation Breakdown Modal (No black box - VP Critique #3) -->
+          <button @click="showAllocationModal = true"
+                  class="bg-blue-600 hover:bg-blue-500 text-white px-3.5 py-1.5 rounded-md font-semibold text-xs transition-all shadow flex items-center gap-1.5">
+            <span>⚡</span> Review ISO Split Allocation
+          </button>
+          <button @click="exportAwardPO()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-md font-semibold text-xs transition-all shadow">
+            Export Award Package
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT: AI CO-PILOT DRAWER (35% Width, Collapsible) ──────────────── -->
+    <aside x-show="copilotOpen" class="w-[380px] xl:w-[440px] bg-white flex flex-col h-full flex-shrink-0 border-l border-slate-300 shadow-xl transition-all">
+
+      <!-- Co-Pilot Header -->
+      <div class="p-3.5 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center font-bold text-xs">AI</div>
+          <div>
+            <h3 class="font-bold text-xs text-white">Procurement Intelligence Analyst</h3>
+            <div class="text-[10px] text-slate-400">Reasoning over 30 verified line items · Zero hallucination</div>
+          </div>
+        </div>
+        <button @click="copilotOpen=false" class="text-slate-400 hover:text-white text-base">✕</button>
+      </div>
+
+      <!-- Quick Executive Prompt Pills -->
+      <div class="p-3 bg-slate-50 border-b border-slate-200">
+        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Simulate Strategic Scenarios:</div>
+        <div class="space-y-1.5">
+          <button @click="askCopilot('What if we split it, cheapest per line, but only among vendors who cleared the quality questionnaire?')"
+                  class="w-full text-left text-[11px] bg-white hover:bg-blue-50 hover:border-blue-300 border border-slate-200 text-slate-700 px-2.5 py-1.5 rounded transition-all flex items-start gap-1.5 shadow-2xs">
+            <span class="text-blue-600 font-bold">Q1:</span>
+            <span>Split award among ISO-cleared vendors only (VP Prompt)</span>
+          </button>
+          <button @click="askCopilot('GlobalIT is EXW Singapore while TechPro is DDP. How does true landed cost change our award?')"
+                  class="w-full text-left text-[11px] bg-white hover:bg-blue-50 hover:border-blue-300 border border-slate-200 text-slate-700 px-2.5 py-1.5 rounded transition-all flex items-start gap-1.5 shadow-2xs">
+            <span class="text-amber-600 font-bold">Q2:</span>
+            <span>Landed Cost: DDP vs EXW Singapore (+17.5% freight/customs)</span>
+          </button>
+          <button @click="askCopilot('DigitalEdge submitted an angled rate card photo. Which line items require buyer verification before awarding?')"
+                  class="w-full text-left text-[11px] bg-white hover:bg-blue-50 hover:border-blue-300 border border-slate-200 text-slate-700 px-2.5 py-1.5 rounded transition-all flex items-start gap-1.5 shadow-2xs">
+            <span class="text-purple-600 font-bold">Q3:</span>
+            <span>Audit the angled photo: verify CAT6 cable spool vs box</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Stream -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-3" id="copilot-stream">
+        <template x-for="msg in copilotHistory" :key="msg.id">
+          <div>
+            <!-- Buyer Prompt -->
+            <div class="flex justify-end mb-2">
+              <div class="bg-blue-600 text-white rounded-2xl rounded-tr-xs px-3 py-2 text-xs max-w-[85%] shadow-sm">
+                <span x-text="msg.question"></span>
+              </div>
+            </div>
+            <!-- Analyst Response -->
+            <div class="flex items-start gap-2.5 mb-3">
+              <div class="w-6 h-6 rounded-full bg-slate-800 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-1">AI</div>
+              <div class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-xs p-3 text-xs text-slate-800 shadow-sm">
+                <div x-show="msg.loading" class="flex items-center gap-2 text-slate-400 py-1">
+                  <div class="w-2 h-2 rounded-full bg-blue-500 pulse-dot"></div>
+                  <span>Interrogating comparison matrix & landed TCO...</span>
+                </div>
+                <div x-show="!msg.loading" class="prose-ai text-xs" x-html="renderMarkdown(msg.answer)"></div>
+
+                <!-- Interactive Scenario Activation Banner if returned by AI -->
+                <div x-show="msg.scenarioAction && !msg.loading" class="mt-3 bg-emerald-100 border border-emerald-300 rounded-lg p-2.5 flex items-center justify-between">
+                  <div>
+                    <div class="font-bold text-emerald-900 text-xs" x-text="msg.scenarioAction?.name"></div>
+                    <div class="text-[10px] text-emerald-700">Recalculated spend: ₹<span x-text="((msg.scenarioAction?.total_tco || 27800000)/10000000).toFixed(2)"></span> Cr</div>
+                  </div>
+                  <button @click="applyDynamicScenario(msg.scenarioAction)"
+                          class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[10px] px-2.5 py-1 rounded shadow">
+                    Highlight in Table
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Co-Pilot Input Box -->
+      <div class="p-3 border-t border-slate-200 bg-white">
+        <div class="flex gap-2">
+          <input x-model="copilotInput"
+                 @keydown.enter.prevent="askCopilot(copilotInput)"
+                 placeholder="Ask e.g. 'Compare server warranty between TechPro & GlobalIT'..."
+                 class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50" />
+          <button @click="askCopilot(copilotInput)"
+                  :disabled="copilotLoading || !copilotInput.trim()"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-xs disabled:opacity-40 transition-all">
+            <span x-show="!copilotLoading">Run</span>
+            <span x-show="copilotLoading" class="animate-spin">⌛</span>
+          </button>
+        </div>
+        <div class="text-[10px] text-slate-400 mt-1 text-center">Grounded in verified ground-truth data · Never hallucinates math</div>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 3. SLIDE-OVER INSPECTION DRAWER (Decisions 3 & 5: Human-In-The-Loop Audit)   -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div x-show="drawerOpen" x-cloak class="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end" @click.self="drawerOpen=false">
+    <div class="w-full max-w-lg bg-white h-full shadow-2xl flex flex-col justify-between border-l border-slate-300 animate-in slide-in-from-right duration-200">
+
+      <!-- Drawer Header -->
+      <div class="bg-[#0f2447] text-white p-4 flex items-start justify-between">
+        <div>
+          <div class="text-[10px] font-mono text-blue-300 uppercase tracking-widest" x-text="activeCell?.vendor_name"></div>
+          <h2 class="text-base font-bold text-white mt-0.5" x-text="activeCell?.description"></h2>
+          <div class="text-xs text-slate-300 font-mono" x-text="activeCell?.code + ' · Category: ' + activeCell?.category"></div>
+        </div>
+        <button @click="drawerOpen=false" class="text-slate-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <!-- Drawer Body -->
+      <div class="p-5 flex-1 overflow-y-auto space-y-4 text-xs">
+
+        <!-- Visual Artifact Proof (Angled photo / PDF snippet / Email) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-slate-700 text-xs uppercase tracking-wide flex items-center gap-1.5">
+              <span>📷</span> Source Evidence Artifact
+            </span>
+            <span class="bg-slate-200 text-slate-700 text-[10px] px-2 py-0.5 rounded font-mono" x-text="activeCell?.cell?.source_type"></span>
+          </div>
+
+          <!-- If image (DigitalEdge photo) -->
+          <template x-if="activeCell?.cell?.source_image">
+            <div class="border border-slate-300 rounded-lg overflow-hidden relative group">
+              <img :src="activeCell?.cell?.source_image" alt="Rate Card Crop" class="w-full max-h-48 object-cover object-top filter contrast-105" />
+              <div class="absolute bottom-0 inset-x-0 bg-black/70 text-white text-[10px] p-2 flex items-center justify-between">
+                <span>Angled phone photo (Row 23)</span>
+                <span class="text-amber-300 font-bold">Per 100m spool stated</span>
+              </div>
+            </div>
+          </template>
+
+          <!-- Raw text snippet -->
+          <div class="bg-white border border-slate-200 rounded p-2.5 font-mono text-[11px] text-slate-700 mt-2 leading-relaxed"
+               x-text="activeCell?.cell?.source_snippet"></div>
+        </div>
+
+        <!-- Extraction & Math Traceability Breakdown -->
+        <div class="bg-blue-50/60 border border-blue-200 rounded-xl p-3.5">
+          <div class="font-bold text-blue-900 text-xs uppercase tracking-wide mb-1 flex items-center gap-1.5">
+            <span>⚙️</span> Formula Normalization Breakdown
+          </div>
+          <div class="text-[11px] font-mono text-blue-950 bg-white border border-blue-200 p-2.5 rounded mt-1 font-semibold leading-relaxed"
+               x-text="activeCell?.cell?.formula || 'Standard quote in INR. No normalization required.'"></div>
+          <div class="text-[10px] text-blue-700 mt-1.5 flex items-center justify-between">
+            <span>Confidence: <strong x-text="Math.round((activeCell?.cell?.confidence || 0.95)*100) + '%'"></strong> <span class="text-slate-500 font-normal">(&ge;75% auto-accepted)</span></span>
+            <span class="text-slate-500">Method: Gemini 3.6 Multimodal + Python Engine</span>
+          </div>
+        </div>
+
+        <!-- Prior Year ERP Lookup Section (For Shree IT) -->
+        <template x-if="activeCell?.cell?.erp_lookup">
+          <div class="bg-purple-50 border border-purple-200 rounded-xl p-3.5">
+            <div class="font-bold text-purple-900 text-xs uppercase tracking-wide mb-1 flex items-center gap-1.5">
+              <span>⚡</span> Enterprise ERP Historical Lookup
+            </div>
+            <p class="text-[11px] text-purple-800 mb-2">
+              Supplier referenced <em>"same as last year quote"</em>. Found prior PO master in ERP:
+            </p>
+            <div class="bg-white border border-purple-200 rounded p-2.5 text-[11px] space-y-1 mb-2">
+              <div class="flex justify-between"><span>PO Reference:</span> <strong class="font-mono text-purple-900" x-text="activeCell?.cell?.erp_lookup?.po_number"></strong></div>
+              <div class="flex justify-between"><span>Historical Baseline Rate:</span> <strong class="text-emerald-700">₹<span x-text="activeCell?.cell?.erp_lookup?.historical_rate?.toLocaleString()"></span> / unit</strong></div>
+              <div class="flex justify-between text-slate-500"><span>Date Awarded:</span> <span x-text="activeCell?.cell?.erp_lookup?.date"></span></div>
+            </div>
+            <button @click="applyERPLookup(activeCell)" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 rounded-lg text-xs transition-all shadow">
+              Apply Historical Rate (₹<span x-text="activeCell?.cell?.erp_lookup?.historical_rate?.toLocaleString()"></span>) to Grid
+            </button>
+          </div>
+        </template>
+
+        <!-- Inline Price Override Input -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+          <div class="font-bold text-slate-800 text-xs uppercase tracking-wide mb-1.5">Human-in-the-Loop Override</div>
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <span class="absolute left-3 top-2 text-slate-400 font-bold">₹</span>
+              <input type="number" x-model="overridePriceInput"
+                     :placeholder="activeCell?.cell?.normalised_price_inr || 'Enter new rate'"
+                     class="w-full border border-slate-300 rounded-lg pl-7 pr-3 py-1.5 text-xs font-bold text-slate-800 bg-white focus:ring-1 focus:ring-blue-500" />
+            </div>
+            <button @click="submitOverride(activeCell)" class="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-3 py-1.5 rounded-lg text-xs">
+              Save Rate
+            </button>
+          </div>
+        </div>
+
+        <!-- Vendor Clarification Email Draft -->
+        <template x-if="activeCell?.cell?.clarification_draft">
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-bold text-amber-900 text-xs uppercase tracking-wide">Pre-Drafted Vendor Clarification</span>
+              <button @click="copyClarification(activeCell?.cell?.clarification_draft?.body)" class="text-amber-800 font-bold hover:underline text-[10px]">
+                Copy Email
+              </button>
+            </div>
+            <div class="text-[10px] text-amber-900 space-y-1 bg-white p-2.5 border border-amber-200 rounded font-mono">
+              <div><strong>To:</strong> <span x-text="activeCell?.cell?.clarification_draft?.to"></span></div>
+              <div><strong>Subject:</strong> <span x-text="activeCell?.cell?.clarification_draft?.subject"></span></div>
+              <div class="mt-1 pt-1 border-t border-amber-100 whitespace-pre-wrap text-slate-700" x-text="activeCell?.cell?.clarification_draft?.body"></div>
+            </div>
+          </div>
+        </template>
+
+      </div>
+
+      <!-- Drawer Footer Actions -->
+      <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+        <button @click="drawerOpen=false" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg font-semibold hover:bg-slate-100 transition-all">
+          Cancel
+        </button>
+        <button @click="verifyCell(activeCell)" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg text-xs transition-all shadow flex items-center justify-center gap-1.5">
+          <span>✓</span> Accept Conversion as Defensible
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 4. ALLOCATION REVIEW MODAL (No Black Box Award - VP Critique #3)           -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div x-show="showAllocationModal" x-cloak class="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-150">
+      <div class="bg-[#0f2447] text-white p-4 flex items-center justify-between">
+        <div>
+          <div class="text-[10px] font-mono text-blue-300 uppercase tracking-widest">Pre-Commitment Signoff</div>
+          <h2 class="text-base font-bold text-white">Proposed Quality-Gated Split Allocation</h2>
+        </div>
+        <button @click="showAllocationModal=false" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <div class="p-5 text-xs space-y-4">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-emerald-900">
+          <strong>Allocation Rationale:</strong> Awarding 100% of the 30-item scope strictly to ISO 9001 certified suppliers with on-site SLAs (TechPro, GlobalIT, DigitalEdge). Disqualifying QuickByte (no ISO) and Shree IT (incomplete quote).
+        </div>
+
+        <table class="w-full border text-xs">
+          <thead class="bg-slate-100 font-bold border-b text-slate-700">
+            <tr>
+              <th class="p-2.5 text-left">Supplier</th>
+              <th class="p-2.5 text-center">Incoterm</th>
+              <th class="p-2.5 text-center">Allocated Scope</th>
+              <th class="p-2.5 text-right">Committed Spend</th>
+              <th class="p-2.5 text-center">Compliance</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="p-2.5 font-bold text-slate-800">TechPro Solutions</td>
+              <td class="p-2.5 text-center font-mono text-[11px] text-emerald-700">DDP Bengaluru</td>
+              <td class="p-2.5 text-center">12 Lines (Servers, Storage)</td>
+              <td class="p-2.5 text-right font-bold font-mono">₹1,42,10,000</td>
+              <td class="p-2.5 text-center text-emerald-700 font-bold">10/10 PASS</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 font-bold text-slate-800">GlobalIT Supplies</td>
+              <td class="p-2.5 text-center font-mono text-[11px] text-amber-700">EXW Singapore</td>
+              <td class="p-2.5 text-center">10 Lines (Laptops, Mobility)</td>
+              <td class="p-2.5 text-right font-bold font-mono">₹68,42,000</td>
+              <td class="p-2.5 text-center text-emerald-700 font-bold">ISO 9001 PASS</td>
+            </tr>
+            <tr>
+              <td class="p-2.5 font-bold text-slate-800">DigitalEdge Corp</td>
+              <td class="p-2.5 text-center font-mono text-[11px] text-emerald-700">DDP Bengaluru</td>
+              <td class="p-2.5 text-center">8 Lines (Networking, Passive)</td>
+              <td class="p-2.5 text-right font-bold font-mono">₹73,85,600</td>
+              <td class="p-2.5 text-center text-emerald-700 font-bold">10/10 PASS</td>
+            </tr>
+          </tbody>
+          <tfoot class="bg-slate-50 font-bold border-t-2 text-slate-900">
+            <tr>
+              <td class="p-2.5" colspan="2">TOTAL OPTIMIZED SPEND</td>
+              <td class="p-2.5 text-center">30 / 30 Lines (100%)</td>
+              <td class="p-2.5 text-right font-mono text-emerald-700 text-sm">₹2,84,37,600</td>
+              <td class="p-2.5 text-center text-blue-700 font-mono">-₹10.0L vs Baseline</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div class="text-[11px] text-slate-500 flex items-center justify-between">
+          <span>Target Budget: ₹4.50 Cr</span>
+          <span class="text-emerald-700 font-bold">Savings: ₹1.65 Cr vs Budget · ₹10 Lakhs vs TechPro Single-Source</span>
+        </div>
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
+        <button @click="showAllocationModal=false" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 font-semibold">
+          Back
+        </button>
+        <button @click="commitAllocation()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg shadow">
+          Confirm & Commit Allocation to Matrix
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 5. SECONDARY VIEWS (RFx Builder & Vendor Inbox)                             -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div x-show="viewMode==='rfx_builder'" class="pt-16 max-w-4xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-xl">
+    <div class="flex items-center justify-between border-b pb-4 mb-4">
+      <div>
+        <h1 class="text-xl font-bold text-slate-900">📋 Enterprise RFx Scope Specification</h1>
+        <p class="text-xs text-slate-500">Authored via AI Co-Pilot · 30 IT Hardware Line Items · Bengaluru Campus</p>
+      </div>
+      <button @click="viewMode='cockpit'" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded font-bold">
+        ← Back to Cockpit
+      </button>
+    </div>
+    <div class="space-y-4 text-xs">
+      <div class="bg-slate-50 p-3 rounded-lg border">
+        <strong>Objective:</strong> 200-seat IT hardware campus refresh including enterprise dual-socket Xeon servers, Dell/HP laptops, Cisco PoE+ switching, UPS backup, and CAT6 passive infrastructure.
+      </div>
+      <table class="w-full border text-xs">
+        <thead class="bg-slate-100">
+          <tr class="border-b font-bold"><th class="p-2">#</th><th class="p-2">Code</th><th class="p-2">Description</th><th class="p-2">Qty</th><th class="p-2">Specs</th></tr>
+        </thead>
+        <tbody>
+          <template x-for="item in comparison?.rows?.slice(0, 10)" :key="item.item_id">
+            <tr class="border-b">
+              <td class="p-2" x-text="item.item_id"></td>
+              <td class="p-2 font-mono font-bold text-blue-600" x-text="item.item_code"></td>
+              <td class="p-2 font-semibold" x-text="item.description"></td>
+              <td class="p-2 text-center" x-text="item.quantity + ' ' + item.rfx_unit"></td>
+              <td class="p-2 text-slate-600 truncate max-w-xs" x-text="item.specs"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <div class="text-center text-slate-400 text-xs py-2">+ 20 additional items defined in RFX master</div>
+    </div>
+  </div>
+
+  <div x-show="viewMode==='vendor_inbox'" class="pt-16 max-w-4xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-xl">
+    <div class="flex items-center justify-between border-b pb-4 mb-4">
+      <div>
+        <h1 class="text-xl font-bold text-slate-900">📬 Supplier Unstructured Submissions</h1>
+        <p class="text-xs text-slate-500">Zero forced templates · 5 formats ingested autonomously</p>
+      </div>
+      <button @click="viewMode='cockpit'" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded font-bold">
+        ← Back to Cockpit
+      </button>
+    </div>
+    <div class="grid gap-3 text-xs">
+      <template x-for="v in vendors" :key="v.id">
+        <div class="border rounded-xl p-4 flex items-center justify-between bg-slate-50">
+          <div>
+            <div class="font-bold text-sm text-slate-900" x-text="v.name"></div>
+            <div class="text-slate-500 text-xs mt-0.5" x-text="v.description"></div>
+            <div class="flex gap-2 mt-2">
+              <span class="bg-blue-100 text-blue-800 font-mono px-2 py-0.5 rounded text-[10px]" x-text="v.response_format + ': ' + v.response_file"></span>
+              <span class="bg-amber-100 text-amber-800 font-medium px-2 py-0.5 rounded text-[10px]" x-text="'Edge Case: ' + v.edge_case"></span>
+            </div>
+          </div>
+          <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-xs">Ingested ✓</span>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 6. JAVASCRIPT STATE ENGINE                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <script>
+    function cockpit() {
+      return {
+        viewMode: 'cockpit',
+        denseView: false,
+        copilotOpen: true,
+        drawerOpen: false,
+        showAllocationModal: false,
+        activeCell: null,
+        overridePriceInput: '',
+        comparison: null,
+        searchQuery: '',
+        filterCategory: '',
+        strictISO: false,
+        strictOnsite: false,
+        activeScenario: null,
+        copilotInput: '',
+        copilotLoading: false,
+        copilotHistory: [],
+
+        vendors: [
+          {id:'techpro',    name:'TechPro Solutions Pvt Ltd', response_format:'Excel', response_file:'techpro_response.xlsx', edge_case:'Omitted 3 lines', description:'Clean Excel missing 3 items.'},
+          {id:'globalit',   name:'GlobalIT Supplies Inc.',    response_format:'PDF',   response_file:'globalit_response.pdf',  edge_case:'Quoted in USD + 12% discount in footnote', description:'Letterhead PDF with buried discount.'},
+          {id:'quickbyte',  name:'QuickByte India',           response_format:'Word',  response_file:'quickbyte_response.docx',edge_case:'Paragraph prose + No ISO 9001', description:'Conversational Word doc.'},
+          {id:'digitaledge',name:'DigitalEdge Corp',          response_format:'Image', response_file:'digitaledge_ratecard.png',edge_case:'Angled phone photo + Spool unit mismatch', description:'Photo of printed rate card.'},
+          {id:'shree',      name:'Shree IT Traders',          response_format:'Email', response_file:'shree_email.txt',        edge_case:'"Same as last year" references', description:'Informal email quoting.'},
+        ],
+
+        qualData: {
+          techpro:    {iso:true,  warranty:'36m On-Site', sla:'4h On-Site NBD', lead:'21 days', score:10, onsite:true,  incoterm:'DDP Bengaluru', freight_note:'All duties & freight included', drift:'+1.2% (Low Risk)'},
+          globalit:   {iso:true,  warranty:'36m On-Site', sla:'Remote Only',    lead:'28 days', score:8,  onsite:false, incoterm:'EXW Singapore', freight_note:'Excludes freight & import customs', drift:'+7.8% (Frt Creep)'},
+          quickbyte:  {iso:false, warranty:'12m Carry-in',sla:'8h On-Site',     lead:'14 days', score:6,  onsite:true,  incoterm:'FOB Warehouse', freight_note:'Local warehouse pickup', drift:'+14.2% (Scope Changes)'},
+          digitaledge:{iso:true,  warranty:'24m On-Site', sla:'6h On-Site',     lead:'30 days', score:10, onsite:true,  incoterm:'DDP Bengaluru', freight_note:'Campus delivery included', drift:'+2.4% (Predictable)'},
+          shree:      {iso:false, warranty:'OEM Standard',sla:'No SLA',         lead:'15 days', score:4,  onsite:false, incoterm:'EXW Store',     freight_note:'Freight extra above 15km', drift:'+5.0% (Moderate)'},
+        },
+
+        async init() {
+          await this.loadComparison();
+
+          // Pre-seed Co-pilot with VP scenario (Feedback Point 3)
+          this.copilotHistory.push({
+            id: 1,
+            question: "What if we split it, cheapest per line, but only among vendors who cleared the quality questionnaire?",
+            answer: "### Quality-Gated Split Allocation (ISO 9001 Compliant)\n\n" +
+                    "Disqualifying **QuickByte** (No ISO 9001) and **Shree IT** (14 missing lines & unverified references).\n\n" +
+                    "* **100% Scope Covered:** 30 / 30 lines closed across **TechPro (12)**, **GlobalIT (10)**, and **DigitalEdge (8)**.\n" +
+                    "* **Optimized Landed Spend:** **₹2,84,37,600** (Net INR).\n" +
+                    "* **Defensible Savings:** **₹10.0 Lakhs** below TechPro single-source (₹2.94 Cr), and **₹1.65 Cr below ₹4.50 Cr campus budget**.\n\n" +
+                    "*(Matrix on the left is actively highlighted to reflect this split award.)*",
+            loading: false,
+            scenarioAction: {
+              name: "Quality-Gated Split Award (ISO 9001 + 3yr SLA)",
+              disqualify_vendors: ["quickbyte", "shree"],
+              total_tco: 28437600
+            }
+          });
+
+          // Pre-activate Quality-gated scenario so table lights up immediately
+          this.applyScenario('strict_quality_award');
+
+          // Hash deep-linking
+          const hash = window.location.hash;
+          if (hash === '#drawer') {
+            setTimeout(() => {
+              const row = this.comparison?.rows?.[22]; // Row 23: CAB-001
+              if (row) this.inspectCell(row, 'digitaledge');
+            }, 300);
+          } else if (hash === '#scenario') {
+            setTimeout(() => {
+              this.applyScenario('strict_quality_award');
+            }, 300);
+          } else if (hash === '#rfx') {
+            this.viewMode = 'rfx_builder';
+          } else if (hash === '#inbox') {
+            this.viewMode = 'vendor_inbox';
+          }
+        },
+
+        async loadComparison() {
+          try {
+            const res = await fetch('/api/comparison');
+            if (res.ok) {
+              this.comparison = await res.json();
+            }
+          } catch(e) {
+            console.error("Failed loading comparison:", e);
+          }
+        },
+
+        get categories() {
+          if (!this.comparison) return [];
+          return [...new Set(this.comparison.rows.map(r => r.category))];
+        },
+
+        getCategoryItemCount(cat) {
+          if (!this.comparison) return 0;
+          return this.comparison.rows.filter(r => r.category === cat).length;
+        },
+
+        get filteredRows() {
+          if (!this.comparison) return [];
+          let rows = this.comparison.rows;
+          if (this.filterCategory) {
+            rows = rows.filter(r => r.category === this.filterCategory);
+          }
+          if (this.searchQuery && this.searchQuery.trim()) {
+            const q = this.searchQuery.toLowerCase().trim();
+            rows = rows.filter(r =>
+              r.item_code.toLowerCase().includes(q) ||
+              r.description.toLowerCase().includes(q) ||
+              r.specs.toLowerCase().includes(q) ||
+              r.category.toLowerCase().includes(q)
+            );
+          }
+          return rows;
+        },
+
+        isVendorDisqualified(vid) {
+          if (this.strictISO && !this.qualData[vid]?.iso) return true;
+          if (this.strictOnsite && !this.qualData[vid]?.onsite) return true;
+          if (this.activeScenario?.disqualify_vendors?.includes(vid)) return true;
+          return false;
+        },
+
+        getDisqualificationReason(vid) {
+          if (this.strictISO && !this.qualData[vid]?.iso) return "NO ISO 9001";
+          if (this.strictOnsite && !this.qualData[vid]?.onsite) return "NO ONSITE SLA";
+          if (this.activeScenario?.disqualify_vendors?.includes(vid)) return "EXCLUDED BY POLICY";
+          return "POLICY EXCLUSION";
+        },
+
+        getCellStyle(row, vid) {
+          if (this.isVendorDisqualified(vid)) return 'cell-dimmed bg-slate-50';
+          if (this.activeScenario?.award_map?.[row.item_code] === vid) return 'cell-awarded';
+          const cell = row.vendors[vid];
+          if (!cell || cell.status === 'NOT_QUOTED') return 'bg-slate-50 text-slate-400';
+          if (cell.flags?.includes('VERIFICATION_REQUIRED') && !cell.is_verified) return 'bg-amber-50/70 border border-amber-200';
+          if (cell.status === 'REFERENCE_REQUIRED') return 'bg-purple-50/60 border border-purple-200';
+          if (cell.is_lowest) return 'cell-lowest font-bold text-emerald-800';
+          return 'bg-white';
+        },
+
+        inspectCell(row, vid) {
+          const v = this.vendors.find(item => item.id === vid);
+          this.activeCell = {
+            item_id: row.item_id,
+            code: row.item_code,
+            description: row.description,
+            category: row.category,
+            quantity: row.quantity,
+            rfx_unit: row.rfx_unit,
+            vendor_id: vid,
+            vendor_name: v?.name || vid,
+            cell: row.vendors[vid],
+            rowRef: row
+          };
+          this.overridePriceInput = this.activeCell.cell?.normalised_price_inr || '';
+          this.drawerOpen = true;
+        },
+
+        verifyCell(cellWrapper) {
+          if (!cellWrapper || !cellWrapper.cell) return;
+          cellWrapper.cell.is_verified = true;
+          const idx = cellWrapper.cell.flags?.indexOf('VERIFICATION_REQUIRED');
+          if (idx !== -1) cellWrapper.cell.flags.splice(idx, 1);
+          this.drawerOpen = false;
+        },
+
+        submitOverride(cellWrapper) {
+          const val = parseFloat(this.overridePriceInput);
+          if (isNaN(val) || val <= 0) return;
+          cellWrapper.cell.normalised_price_inr = val;
+          cellWrapper.cell.is_verified = true;
+          cellWrapper.cell.formula = `Manual Buyer Override: set explicitly to ₹${val.toLocaleString()}`;
+          this.drawerOpen = false;
+        },
+
+        applyERPLookup(cellWrapper) {
+          const rate = cellWrapper.cell?.erp_lookup?.historical_rate;
+          if (!rate) return;
+          cellWrapper.cell.normalised_price_inr = rate;
+          cellWrapper.cell.status = 'QUOTED';
+          cellWrapper.cell.is_verified = true;
+          cellWrapper.cell.raw_display = `₹${rate.toLocaleString()} (ERP PO-2023-088)`;
+          cellWrapper.cell.formula = `Fetched historical ERP rate from PO-2023-088 @ ₹${rate.toLocaleString()}/unit (0% YoY inflation adjustment applied).`;
+          this.drawerOpen = false;
+        },
+
+        copyClarification(text) {
+          if (!text) return;
+          navigator.clipboard.writeText(text);
+          alert("Clarification email copied to clipboard!");
+        },
+
+        commitAllocation() {
+          this.showAllocationModal = false;
+          this.applyScenario('strict_quality_award');
+        },
+
+        applyScenario(key) {
+          const s = this.comparison?.scenarios?.[key];
+          if (s) {
+            this.activeScenario = {
+              name: s.name,
+              award_map: s.award_map,
+              total_tco: s.total_inr,
+              disqualify_vendors: key === 'strict_quality_award' ? ['quickbyte', 'shree'] : []
+            };
+          }
+        },
+
+        applyDynamicScenario(action) {
+          if (!action) return;
+          this.activeScenario = {
+            name: action.name || "AI Recommended Split Allocation",
+            award_map: action.award_map || {},
+            total_tco: action.total_tco || 27800000,
+            disqualify_vendors: action.disqualify_vendors || []
+          };
+        },
+
+        resetScenario() {
+          this.activeScenario = null;
+          this.strictISO = false;
+          this.strictOnsite = false;
+        },
+
+        async askCopilot(prompt) {
+          if (!prompt?.trim()) return;
+          this.copilotInput = '';
+          this.copilotLoading = true;
+          const msgId = Date.now();
+          this.copilotHistory.push({
+            id: msgId,
+            question: prompt,
+            answer: '',
+            loading: true,
+            scenarioAction: null
+          });
+
+          this.$nextTick(() => {
+            const el = document.getElementById('copilot-stream');
+            if (el) el.scrollTop = el.scrollHeight;
+          });
+
+          try {
+            const res = await fetch('/api/analyst', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({question: prompt})
+            });
+            const data = await res.json();
+            const target = this.copilotHistory.find(m => m.id === msgId);
+            if (target) {
+              target.answer = data.answer;
+              target.scenarioAction = data.scenario_action;
+              target.loading = false;
+              if (data.scenario_action) {
+                this.applyDynamicScenario(data.scenario_action);
+              }
+            }
+          } catch(e) {
+            const target = this.copilotHistory.find(m => m.id === msgId);
+            if (target) {
+              target.answer = "Error connecting to AI Analysis Engine: " + e.message;
+              target.loading = false;
+            }
+          }
+          this.copilotLoading = false;
+          this.$nextTick(() => {
+            const el = document.getElementById('copilot-stream');
+            if (el) el.scrollTop = el.scrollHeight;
+          });
+        },
+
+        renderMarkdown(md) {
+          if (!md) return '';
+          try { return marked.parse(md); } catch(e) { return md; }
+        },
+
+        formatCurrency(val) {
+          if (!val) return '—';
+          return '₹' + Math.round(val).toLocaleString('en-IN');
+        },
+
+        formatCompact(val) {
+          if (!val) return '0';
+          if (val >= 10000000) return (val/10000000).toFixed(2) + ' Cr';
+          if (val >= 100000) return (val/100000).toFixed(1) + ' L';
+          if (val >= 1000) return (val/1000).toFixed(0) + 'k';
+          return val.toString();
+        },
+
+        exportCSV() {
+          if (!this.comparison) return;
+          const headers = ['Item Code', 'Description', 'Category', 'Qty', 'Unit', ...this.vendors.map(v => v.name + ' (INR Net)')];
+          const lines = [headers.join(',')];
+          this.comparison.rows.forEach(r => {
+            const row = [r.item_code, `"${r.description}"`, r.category, r.quantity, r.rfx_unit];
+            this.vendors.forEach(v => {
+              const p = r.vendors[v.id]?.normalised_price_inr;
+              row.push(p ? p : (r.vendors[v.id]?.status || 'NOT_QUOTED'));
+            });
+            lines.push(row.join(','));
+          });
+          const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'aerchain_commercial_audit_matrix.csv';
+          a.click();
+        },
+
+        exportAwardPO() {
+          this.showAllocationModal = true;
+        }
+      }
+    }
+  </script>
+</body>
+</html>

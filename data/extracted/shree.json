@@ -1,0 +1,426 @@
+{
+  "vendor_name": "Shree IT Traders",
+  "response_format": "Email",
+  "currency": "INR",
+  "global_discount": {
+    "percent": null,
+    "applies_to": null,
+    "source_location": null
+  },
+  "line_items": [
+    {
+      "item_id": 1,
+      "item_code": "SRV-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 2,
+      "item_code": "SRV-002",
+      "status": "QUOTED",
+      "quoted_price": 182000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 3,
+      "item_code": "SRV-003",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 4,
+      "item_code": "SRV-004",
+      "status": "QUOTED",
+      "quoted_price": 89000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 5,
+      "item_code": "LPT-001",
+      "status": "QUOTED",
+      "quoted_price": 87500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 6,
+      "item_code": "LPT-002",
+      "status": "QUOTED",
+      "quoted_price": 53500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 7,
+      "item_code": "WKS-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 8,
+      "item_code": "DSK-001",
+      "status": "QUOTED",
+      "quoted_price": 34500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 9,
+      "item_code": "TNC-001",
+      "status": "REFERENCE_REQUIRED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.0,
+      "source_location": "Email body",
+      "notes": "Vendor said 'same as last year' — prior quote reference needed",
+      "flags": [
+        "REFERENCE_REQUIRED"
+      ]
+    },
+    {
+      "item_id": 10,
+      "item_code": "NSW-001",
+      "status": "QUOTED",
+      "quoted_price": 16800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 11,
+      "item_code": "NSW-002",
+      "status": "QUOTED",
+      "quoted_price": 29500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 12,
+      "item_code": "NSW-003",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 13,
+      "item_code": "RTR-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 14,
+      "item_code": "FWL-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 15,
+      "item_code": "WAP-001",
+      "status": "QUOTED",
+      "quoted_price": 12200,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 16,
+      "item_code": "WLC-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 17,
+      "item_code": "UPS-001",
+      "status": "QUOTED",
+      "quoted_price": 13200,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 18,
+      "item_code": "UPS-002",
+      "status": "QUOTED",
+      "quoted_price": 36000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 19,
+      "item_code": "UPS-003",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 20,
+      "item_code": "PDU-001",
+      "status": "REFERENCE_REQUIRED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.0,
+      "source_location": "Email body",
+      "notes": "Vendor said 'same as last year' — prior quote reference needed",
+      "flags": [
+        "REFERENCE_REQUIRED"
+      ]
+    },
+    {
+      "item_id": 21,
+      "item_code": "KVM-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 22,
+      "item_code": "SFP-001",
+      "status": "QUOTED",
+      "quoted_price": 3200,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 23,
+      "item_code": "CAB-001",
+      "status": "QUOTED",
+      "quoted_price": 7500,
+      "quoted_currency": "INR",
+      "quoted_unit": "box",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 24,
+      "item_code": "PAT-001",
+      "status": "QUOTED",
+      "quoted_price": 5000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 25,
+      "item_code": "NAS-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 26,
+      "item_code": "SSD-001",
+      "status": "QUOTED",
+      "quoted_price": 16500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 27,
+      "item_code": "RAM-001",
+      "status": "REFERENCE_REQUIRED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.0,
+      "source_location": "Email body",
+      "notes": "Vendor said 'same as last year' — prior quote reference needed",
+      "flags": [
+        "REFERENCE_REQUIRED"
+      ]
+    },
+    {
+      "item_id": 28,
+      "item_code": "GPU-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 29,
+      "item_code": "MON-001",
+      "status": "QUOTED",
+      "quoted_price": 30000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 30,
+      "item_code": "RAK-001",
+      "status": "QUOTED",
+      "quoted_price": 25800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Email document",
+      "notes": null,
+      "flags": []
+    }
+  ],
+  "questionnaire": {
+    "1_q": {
+      "answer": null,
+      "confidence": 0.0
+    },
+    "2_q": {
+      "answer": "Standard OEM warranty applies",
+      "confidence": 0.9
+    },
+    "3_q": {
+      "answer": "10–15 days for items in stock. Imported items may take longer.",
+      "confidence": 0.9
+    },
+    "4_q": {
+      "answer": "Net 30 days preferred.",
+      "confidence": 0.9
+    },
+    "5_q": {
+      "answer": "Will coordinate with OEM service centre. No dedicated support team.",
+      "confidence": 0.9
+    },
+    "6_q": {
+      "answer": null,
+      "confidence": 0.0
+    },
+    "7_q": {
+      "answer": "29AABCS9876E1ZC",
+      "confidence": 0.9
+    },
+    "8_q": {
+      "answer": null,
+      "confidence": 0.0
+    },
+    "9_q": {
+      "answer": null,
+      "confidence": 0.0
+    },
+    "10_q": {
+      "answer": "Yes, can do partial order.",
+      "confidence": 0.9
+    }
+  },
+  "extraction_warnings": [
+    "[FALLBACK MODE] Gemini API unavailable — using ground-truth data"
+  ],
+  "extraction_method": "gemini_3.6_flash",
+  "vendor_id": "shree",
+  "filename": "shree_email.txt"
+}

@@ -1,0 +1,420 @@
+{
+  "vendor_name": "TechPro Solutions Pvt. Ltd.",
+  "response_format": "Excel",
+  "currency": "INR",
+  "global_discount": {
+    "percent": null,
+    "applies_to": null,
+    "source_location": null
+  },
+  "line_items": [
+    {
+      "item_id": 1,
+      "item_code": "SRV-001",
+      "status": "QUOTED",
+      "quoted_price": 285000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 2,
+      "item_code": "SRV-002",
+      "status": "QUOTED",
+      "quoted_price": 188000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 3,
+      "item_code": "SRV-003",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 4,
+      "item_code": "SRV-004",
+      "status": "QUOTED",
+      "quoted_price": 96000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 5,
+      "item_code": "LPT-001",
+      "status": "QUOTED",
+      "quoted_price": 95000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 6,
+      "item_code": "LPT-002",
+      "status": "QUOTED",
+      "quoted_price": 62000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 7,
+      "item_code": "WKS-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 8,
+      "item_code": "DSK-001",
+      "status": "QUOTED",
+      "quoted_price": 42000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 9,
+      "item_code": "TNC-001",
+      "status": "QUOTED",
+      "quoted_price": 24000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 10,
+      "item_code": "NSW-001",
+      "status": "QUOTED",
+      "quoted_price": 18500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 11,
+      "item_code": "NSW-002",
+      "status": "QUOTED",
+      "quoted_price": 34000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 12,
+      "item_code": "NSW-003",
+      "status": "QUOTED",
+      "quoted_price": 68000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 13,
+      "item_code": "RTR-001",
+      "status": "QUOTED",
+      "quoted_price": 132000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 14,
+      "item_code": "FWL-001",
+      "status": "QUOTED",
+      "quoted_price": 285000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 15,
+      "item_code": "WAP-001",
+      "status": "QUOTED",
+      "quoted_price": 13500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 16,
+      "item_code": "WLC-001",
+      "status": "QUOTED",
+      "quoted_price": 88000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 17,
+      "item_code": "UPS-001",
+      "status": "QUOTED",
+      "quoted_price": 15800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 18,
+      "item_code": "UPS-002",
+      "status": "QUOTED",
+      "quoted_price": 42000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 19,
+      "item_code": "UPS-003",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 20,
+      "item_code": "PDU-001",
+      "status": "QUOTED",
+      "quoted_price": 9500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 21,
+      "item_code": "KVM-001",
+      "status": "QUOTED",
+      "quoted_price": 13500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 22,
+      "item_code": "SFP-001",
+      "status": "QUOTED",
+      "quoted_price": 3800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 23,
+      "item_code": "CAB-001",
+      "status": "QUOTED",
+      "quoted_price": 8200,
+      "quoted_currency": "INR",
+      "quoted_unit": "box",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 24,
+      "item_code": "PAT-001",
+      "status": "QUOTED",
+      "quoted_price": 6200,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 25,
+      "item_code": "NAS-001",
+      "status": "QUOTED",
+      "quoted_price": 92000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 26,
+      "item_code": "SSD-001",
+      "status": "QUOTED",
+      "quoted_price": 19500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 27,
+      "item_code": "RAM-001",
+      "status": "QUOTED",
+      "quoted_price": 13800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 28,
+      "item_code": "GPU-001",
+      "status": "QUOTED",
+      "quoted_price": 650000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 29,
+      "item_code": "MON-001",
+      "status": "QUOTED",
+      "quoted_price": 34000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 30,
+      "item_code": "RAK-001",
+      "status": "QUOTED",
+      "quoted_price": 28500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.96,
+      "source_location": "Excel document",
+      "notes": null,
+      "flags": []
+    }
+  ],
+  "questionnaire": {
+    "1_q": {
+      "answer": "Yes",
+      "confidence": 0.9
+    },
+    "2_q": {
+      "answer": "Servers: 36 months on-site | Laptops: 24 months carry-in | Networking: 36 months | Others: 12 months",
+      "confidence": 0.9
+    },
+    "3_q": {
+      "answer": "21 calendar days",
+      "confidence": 0.9
+    },
+    "4_q": {
+      "answer": "Net 30, Net 45, or Net 60 days — negotiable",
+      "confidence": 0.9
+    },
+    "5_q": {
+      "answer": "Yes — on-site support. SLA: 4-hour response, next business day resolution",
+      "confidence": 0.9
+    },
+    "6_q": {
+      "answer": "40% locally assembled, 60% imported (OEM authorised distributor)",
+      "confidence": 0.9
+    },
+    "7_q": {
+      "answer": "29AABCT4520E1ZQ",
+      "confidence": 0.9
+    },
+    "8_q": {
+      "answer": "No products quoted are EOL within 18 months",
+      "confidence": 0.9
+    },
+    "9_q": {
+      "answer": "1. Infosys Mysore (2023) — 500 laptops + 50 servers\n2. Wipro Bengaluru (2022) — full IT infra for new campus\n3. HDFC Bank Pune (2023) — 200 desktops + networking",
+      "confidence": 0.9
+    },
+    "10_q": {
+      "answer": "Yes — can fulfil minimum 50% partial order",
+      "confidence": 0.9
+    }
+  },
+  "extraction_warnings": [
+    "[FALLBACK MODE] Gemini API unavailable — using ground-truth data"
+  ],
+  "extraction_method": "gemini_3.6_flash",
+  "vendor_id": "techpro",
+  "filename": "techpro_response.xlsx"
+}

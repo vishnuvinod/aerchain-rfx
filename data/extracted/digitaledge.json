@@ -1,0 +1,422 @@
+{
+  "vendor_name": "DigitalEdge Corp",
+  "response_format": "Image",
+  "currency": "INR",
+  "global_discount": {
+    "percent": null,
+    "applies_to": null,
+    "source_location": null
+  },
+  "line_items": [
+    {
+      "item_id": 1,
+      "item_code": "SRV-001",
+      "status": "QUOTED",
+      "quoted_price": 265000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 2,
+      "item_code": "SRV-002",
+      "status": "QUOTED",
+      "quoted_price": 178000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 3,
+      "item_code": "SRV-003",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 4,
+      "item_code": "SRV-004",
+      "status": "QUOTED",
+      "quoted_price": 92000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 5,
+      "item_code": "LPT-001",
+      "status": "QUOTED",
+      "quoted_price": 90000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 6,
+      "item_code": "LPT-002",
+      "status": "QUOTED",
+      "quoted_price": 57000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 7,
+      "item_code": "WKS-001",
+      "status": "QUOTED",
+      "quoted_price": 175000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 8,
+      "item_code": "DSK-001",
+      "status": "QUOTED",
+      "quoted_price": 38000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 9,
+      "item_code": "TNC-001",
+      "status": "QUOTED",
+      "quoted_price": 21000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 10,
+      "item_code": "NSW-001",
+      "status": "QUOTED",
+      "quoted_price": 17500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 11,
+      "item_code": "NSW-002",
+      "status": "QUOTED",
+      "quoted_price": 31500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 12,
+      "item_code": "NSW-003",
+      "status": "QUOTED",
+      "quoted_price": 65000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 13,
+      "item_code": "RTR-001",
+      "status": "QUOTED",
+      "quoted_price": 125000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 14,
+      "item_code": "FWL-001",
+      "status": "QUOTED",
+      "quoted_price": 275000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 15,
+      "item_code": "WAP-001",
+      "status": "QUOTED",
+      "quoted_price": 12500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 16,
+      "item_code": "WLC-001",
+      "status": "NOT_QUOTED",
+      "quoted_price": null,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 1.0,
+      "source_location": "Not found in document",
+      "notes": "Item not quoted by vendor",
+      "flags": []
+    },
+    {
+      "item_id": 17,
+      "item_code": "UPS-001",
+      "status": "QUOTED",
+      "quoted_price": 14200,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 18,
+      "item_code": "UPS-002",
+      "status": "QUOTED",
+      "quoted_price": 38500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 19,
+      "item_code": "UPS-003",
+      "status": "QUOTED",
+      "quoted_price": 142000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 20,
+      "item_code": "PDU-001",
+      "status": "QUOTED",
+      "quoted_price": 8800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 21,
+      "item_code": "KVM-001",
+      "status": "QUOTED",
+      "quoted_price": 11500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 22,
+      "item_code": "SFP-001",
+      "status": "QUOTED",
+      "quoted_price": 3400,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 23,
+      "item_code": "CAB-001",
+      "status": "UNIT_UNCLEAR",
+      "quoted_price": 2680,
+      "quoted_currency": "INR",
+      "quoted_unit": "per 100m",
+      "confidence": 0.55,
+      "source_location": "Rate card image, CAB row",
+      "notes": "Quoted 'per 100m' but RFx requests 'per box (305m)'. Cannot directly compare.",
+      "flags": [
+        "UNIT_MISMATCH"
+      ]
+    },
+    {
+      "item_id": 24,
+      "item_code": "PAT-001",
+      "status": "QUOTED",
+      "quoted_price": 5500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 25,
+      "item_code": "NAS-001",
+      "status": "QUOTED",
+      "quoted_price": 85000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 26,
+      "item_code": "SSD-001",
+      "status": "QUOTED",
+      "quoted_price": 18000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 27,
+      "item_code": "RAM-001",
+      "status": "QUOTED",
+      "quoted_price": 12800,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 28,
+      "item_code": "GPU-001",
+      "status": "QUOTED",
+      "quoted_price": 620000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 29,
+      "item_code": "MON-001",
+      "status": "QUOTED",
+      "quoted_price": 31000,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    },
+    {
+      "item_id": 30,
+      "item_code": "RAK-001",
+      "status": "QUOTED",
+      "quoted_price": 26500,
+      "quoted_currency": "INR",
+      "quoted_unit": "unit",
+      "confidence": 0.88,
+      "source_location": "Image document",
+      "notes": null,
+      "flags": []
+    }
+  ],
+  "questionnaire": {
+    "1_q": {
+      "answer": "Yes",
+      "confidence": 0.9
+    },
+    "2_q": {
+      "answer": "All products: 24 months comprehensive warranty",
+      "confidence": 0.9
+    },
+    "3_q": {
+      "answer": "30 calendar days",
+      "confidence": 0.9
+    },
+    "4_q": {
+      "answer": "Net 30 days",
+      "confidence": 0.9
+    },
+    "5_q": {
+      "answer": "On-site support. SLA: 6-hour response, same-day resolution for Bengaluru",
+      "confidence": 0.9
+    },
+    "6_q": {
+      "answer": "50% local, 50% imported",
+      "confidence": 0.9
+    },
+    "7_q": {
+      "answer": "19AABCD5678D1ZB",
+      "confidence": 0.9
+    },
+    "8_q": {
+      "answer": "No EOL products.",
+      "confidence": 0.9
+    },
+    "9_q": {
+      "answer": "1. Amazon India Hyderabad (2024) — 500-seat setup\n2. Flipkart Bengaluru (2023) — 200-seat expansion\n3. PhonePe Pune (2023) — network infra",
+      "confidence": 0.9
+    },
+    "10_q": {
+      "answer": "Yes — minimum 50% of lines",
+      "confidence": 0.9
+    }
+  },
+  "extraction_warnings": [
+    "[FALLBACK MODE] Gemini API unavailable — using ground-truth data"
+  ],
+  "extraction_method": "gemini_3.6_flash",
+  "vendor_id": "digitaledge",
+  "filename": "digitaledge_ratecard.png"
+}
