@@ -147,6 +147,8 @@ If answering a scenario/award strategy, conclude with SCENARIO_ACTION: {{...}} a
             "scenario_action": scenario_action,
             "model": MODEL,
             "question": question,
+            "is_fallback": False,
+            "engine": "gemini-3.6-flash",
         }
 
     except Exception as e:
@@ -192,7 +194,9 @@ Reject QuickByte on compliance and true TCO. Award the **Quality-Gated Split Awa
                     "total_tco": 28437600
                 },
                 "model": "aerchain-analyst-v1",
-                "question": question
+                "question": question,
+                "is_fallback": True,
+                "engine": "offline_fallback"
             }
         elif "split" in q_lower or "quality" in q_lower or "iso" in q_lower:
             return {
@@ -212,7 +216,9 @@ Disqualifying **QuickByte** (No ISO 9001 certification) and **Shree IT** (14 mis
                     "total_tco": 28437600
                 },
                 "model": "aerchain-analyst-v1",
-                "question": question
+                "question": question,
+                "is_fallback": True,
+                "engine": "offline_fallback"
             }
         elif "landed" in q_lower or "exw" in q_lower or "ddp" in q_lower:
             return {
@@ -229,7 +235,9 @@ Disqualifying **QuickByte** (No ISO 9001 certification) and **Shree IT** (14 mis
                 "chart": None,
                 "scenario_action": None,
                 "model": "aerchain-analyst-v1",
-                "question": question
+                "question": question,
+                "is_fallback": True,
+                "engine": "offline_fallback"
             }
         elif "angled" in q_lower or "spool" in q_lower or "photo" in q_lower:
             return {
@@ -244,7 +252,9 @@ Disqualifying **QuickByte** (No ISO 9001 certification) and **Shree IT** (14 mis
                 "chart": None,
                 "scenario_action": None,
                 "model": "aerchain-analyst-v1",
-                "question": question
+                "question": question,
+                "is_fallback": True,
+                "engine": "offline_fallback"
             }
 
         return {
@@ -253,6 +263,8 @@ Disqualifying **QuickByte** (No ISO 9001 certification) and **Shree IT** (14 mis
             "scenario_action": None,
             "model": MODEL,
             "question": question,
+            "is_fallback": True,
+            "engine": "offline_fallback"
         }
 
 

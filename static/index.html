@@ -129,28 +129,28 @@
       <div x-show="comparison" class="bg-white border-b border-slate-200 px-5 py-3 grid grid-cols-5 gap-3 flex-shrink-0">
         <div class="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5">
           <div class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Vendors Evaluated</div>
-          <div class="text-lg font-black text-slate-900 mt-0.5">5</div>
-          <div class="text-[10px] text-slate-500 font-medium">3 Compliant · 2 Flagged</div>
+          <div class="text-lg font-black text-slate-900 mt-0.5" x-text="vendors.length"></div>
+          <div class="text-[10px] text-slate-500 font-medium" x-text="vendors.filter(v => qualData[v.id]?.score >= 8).length + ' Compliant · ' + vendors.filter(v => qualData[v.id]?.score < 8).length + ' Flagged'"></div>
         </div>
         <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2.5">
           <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Optimized TCO</div>
-          <div class="text-lg font-black text-emerald-700 mt-0.5" x-text="'₹' + ((activeScenario ? activeScenario.total_tco : comparison?.scenarios?.strict_quality_award?.total_inr) / 10000000).toFixed(2) + ' Cr'"></div>
-          <div class="text-[10px] text-slate-500 font-medium">Split across 3 vendors</div>
+          <div class="text-lg font-black text-emerald-700 mt-0.5" x-text="formatCurrency(getAllocationSummary().total_spend)"></div>
+          <div class="text-[10px] text-slate-500 font-medium" x-text="'Split across ' + getAllocationSummary().vendors.length + ' vendor' + (getAllocationSummary().vendors.length === 1 ? '' : 's')"></div>
         </div>
         <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-2.5">
           <div class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Budget Savings</div>
-          <div class="text-lg font-black text-indigo-700 mt-0.5">₹1.65 Cr</div>
-          <div class="text-[10px] text-slate-500 font-medium">37% under ₹4.50 Cr target</div>
+          <div class="text-lg font-black text-indigo-700 mt-0.5" x-text="formatCurrency(getAllocationSummary().savings_vs_budget)"></div>
+          <div class="text-[10px] text-slate-500 font-medium" x-text="getAllocationSummary().savings_pct + '% under ₹4.50 Cr target'"></div>
         </div>
         <div class="bg-purple-50 border border-purple-200 rounded-xl px-3 py-2.5">
           <div class="text-[10px] font-bold uppercase tracking-wider text-purple-600">Scope Coverage</div>
-          <div class="text-lg font-black text-purple-700 mt-0.5">100%</div>
-          <div class="text-[10px] text-slate-500 font-medium">30 / 30 lines quoted</div>
+          <div class="text-lg font-black text-purple-700 mt-0.5" x-text="Math.round((getAllocationSummary().total_lines / 30) * 100) + '%'"></div>
+          <div class="text-[10px] text-slate-500 font-medium" x-text="getAllocationSummary().total_lines + ' / 30 lines closed'"></div>
         </div>
         <div class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
           <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">Review Required</div>
-          <div class="text-lg font-black text-amber-700 mt-0.5">3</div>
-          <div class="text-[10px] text-slate-500 font-medium">Spool/unit verification</div>
+          <div class="text-lg font-black text-amber-700 mt-0.5" x-text="getReviewCount()"></div>
+          <div class="text-[10px] text-slate-500 font-medium" x-text="getReviewCount() === 0 ? 'All flags resolved ✓' : 'Spool & ref checks'"></div>
         </div>
       </div>
 
@@ -583,18 +583,18 @@
         <div class="flex items-center gap-8">
           <div>
             <div class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Single-Source Baseline</div>
-            <div class="font-bold text-sm text-slate-200">TechPro (27 lines): ₹2.94 Cr</div>
+            <div class="font-bold text-sm text-slate-200" x-text="'TechPro (27 lines): ' + formatCurrency(getAllocationSummary().baseline_spend)"></div>
           </div>
           <div class="h-6 w-px bg-slate-700"></div>
           <div>
             <div class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Optimized Split Allocation</div>
-            <div class="font-bold text-sm text-emerald-400" x-text="'₹' + ((activeScenario ? activeScenario.total_tco : comparison?.scenarios?.strict_quality_award?.total_inr) / 10000000).toFixed(2) + ' Cr'"></div>
+            <div class="font-bold text-sm text-emerald-400" x-text="formatCurrency(getAllocationSummary().total_spend)"></div>
           </div>
           <div class="h-6 w-px bg-slate-700"></div>
           <div>
             <div class="text-slate-400 text-[10px] uppercase tracking-wider font-semibold">Defensible Cost Avoidance</div>
             <div class="font-bold text-sm text-blue-300">
-              ₹16.5 Lakhs <span class="text-[10px] font-normal text-slate-400">(vs TechPro Baseline)</span>
+              <span x-text="formatCurrency(getAllocationSummary().savings_vs_baseline)"></span> <span class="text-[10px] font-normal text-slate-400">(vs TechPro Baseline)</span>
             </div>
           </div>
         </div>
@@ -622,7 +622,7 @@
           <div class="w-6 h-6 rounded bg-blue-600 flex items-center justify-center font-bold text-xs">AI</div>
           <div>
             <h3 class="font-bold text-xs text-white">Procurement Intelligence Analyst</h3>
-            <div class="text-[10px] text-slate-400">Reasoning over 30 verified line items · Zero hallucination</div>
+            <div class="text-[10px] text-slate-400">Deterministic TCO engine + Gemini 3.6 reasoning · Dual-layer audit trail</div>
           </div>
         </div>
         <button @click="copilotOpen=false" class="text-slate-400 hover:text-white text-base">✕</button>
@@ -675,6 +675,23 @@
             <div class="flex items-start gap-2.5 mb-3">
               <div class="w-6 h-6 rounded-full bg-slate-800 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-1">AI</div>
               <div class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl rounded-tl-xs p-3 text-xs text-slate-800 shadow-sm">
+                <!-- Engine Provenance Badge -->
+                <div class="flex items-center justify-between border-b border-slate-200/80 pb-1.5 mb-2">
+                  <div>
+                    <template x-if="msg.is_fallback">
+                      <span class="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-2xs" title="Serving verified deterministic sourcing heuristic while live LLM endpoint is in offline cache mode">
+                        <span>⚡</span> Offline Sourcing Heuristic (Demo Cache)
+                      </span>
+                    </template>
+                    <template x-if="!msg.is_fallback && !msg.loading">
+                      <span class="bg-blue-100 text-blue-900 border border-blue-300 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded flex items-center gap-1 shadow-2xs">
+                        <span>✨</span> Gemini 3.6 Flash Verified
+                      </span>
+                    </template>
+                  </div>
+                  <span class="text-[9px] text-slate-400 font-mono">TCO Reconciled</span>
+                </div>
+
                 <div x-show="msg.loading" class="flex items-center gap-2 text-slate-400 py-1">
                   <div class="w-2 h-2 rounded-full bg-blue-500 pulse-dot"></div>
                   <span>Interrogating comparison matrix & landed TCO...</span>
@@ -706,13 +723,13 @@
                  placeholder="Ask e.g. 'Compare server warranty between TechPro & GlobalIT'..."
                  class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 bg-slate-50" />
           <button @click="askCopilot(copilotInput)"
-                  :disabled="copilotLoading || !copilotInput.trim()"
-                  class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-xs disabled:opacity-40 transition-all">
+                 :disabled="copilotLoading || !copilotInput.trim()"
+                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-xs disabled:opacity-40 transition-all">
             <span x-show="!copilotLoading">Run</span>
             <span x-show="copilotLoading" class="animate-spin">⌛</span>
           </button>
         </div>
-        <div class="text-[10px] text-slate-400 mt-1 text-center">Grounded in verified ground-truth data · Never hallucinates math</div>
+        <div class="text-[10px] text-slate-400 mt-1 text-center">Grounded in normalized comparison matrix · Line-item mathematical verification</div>
       </div>
 
     </aside>
@@ -902,7 +919,7 @@
 
       <div class="p-5 text-xs space-y-4">
         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-emerald-900">
-          <strong>Allocation Rationale:</strong> Awarding 100% of the 30-item scope strictly to ISO 9001 certified suppliers with on-site SLAs (TechPro, GlobalIT, DigitalEdge). Disqualifying QuickByte (no ISO) and Shree IT (incomplete quote).
+          <strong>Allocation Rationale:</strong> Awarding <span x-text="getAllocationSummary().total_lines"></span> of 30 items strictly to compliant suppliers (<span x-text="getAllocationSummary().vendors.map(v => v.vendor_name.split(' ')[0]).join(', ')"></span>). Disqualifying non-compliant bidders (QuickByte no ISO; Shree IT scope hole).
         </div>
 
         <table class="w-full border text-xs">
@@ -916,41 +933,31 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            <tr>
-              <td class="p-2.5 font-bold text-slate-800">TechPro Solutions</td>
-              <td class="p-2.5 text-center font-mono text-[11px] text-emerald-700">DDP Bengaluru</td>
-              <td class="p-2.5 text-center">12 Lines (Servers, Storage)</td>
-              <td class="p-2.5 text-right font-bold font-mono">₹1,42,10,000</td>
-              <td class="p-2.5 text-center text-emerald-700 font-bold">10/10 PASS</td>
-            </tr>
-            <tr>
-              <td class="p-2.5 font-bold text-slate-800">GlobalIT Supplies</td>
-              <td class="p-2.5 text-center font-mono text-[11px] text-amber-700">EXW Singapore</td>
-              <td class="p-2.5 text-center">10 Lines (Laptops, Mobility)</td>
-              <td class="p-2.5 text-right font-bold font-mono">₹68,42,000</td>
-              <td class="p-2.5 text-center text-emerald-700 font-bold">ISO 9001 PASS</td>
-            </tr>
-            <tr>
-              <td class="p-2.5 font-bold text-slate-800">DigitalEdge Corp</td>
-              <td class="p-2.5 text-center font-mono text-[11px] text-emerald-700">DDP Bengaluru</td>
-              <td class="p-2.5 text-center">8 Lines (Networking, Passive)</td>
-              <td class="p-2.5 text-right font-bold font-mono">₹73,85,600</td>
-              <td class="p-2.5 text-center text-emerald-700 font-bold">10/10 PASS</td>
-            </tr>
+            <template x-for="alloc in getAllocationSummary().vendors" :key="alloc.vendor_id">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-800" x-text="alloc.vendor_name"></td>
+                <td class="p-2.5 text-center font-mono text-[11px]" :class="alloc.incoterm.includes('DDP') ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'" x-text="alloc.incoterm"></td>
+                <td class="p-2.5 text-center" x-text="alloc.lines_count + ' Lines (' + alloc.categories.slice(0, 2).join(', ') + (alloc.categories.length > 2 ? '...' : '') + ')'"></td>
+                <td class="p-2.5 text-right font-bold font-mono" x-text="formatCurrency(alloc.total_spend)"></td>
+                <td class="p-2.5 text-center text-emerald-700 font-bold" x-text="alloc.compliance"></td>
+              </tr>
+            </template>
           </tbody>
           <tfoot class="bg-slate-50 font-bold border-t-2 text-slate-900">
             <tr>
               <td class="p-2.5" colspan="2">TOTAL OPTIMIZED SPEND</td>
-              <td class="p-2.5 text-center">30 / 30 Lines (100%)</td>
-              <td class="p-2.5 text-right font-mono text-emerald-700 text-sm">₹2,84,37,600</td>
-              <td class="p-2.5 text-center text-blue-700 font-mono">-₹10.0L vs Baseline</td>
+              <td class="p-2.5 text-center" x-text="getAllocationSummary().total_lines + ' / 30 Lines (' + Math.round((getAllocationSummary().total_lines/30)*100) + '%)'"></td>
+              <td class="p-2.5 text-right font-mono text-emerald-700 text-sm" x-text="formatCurrency(getAllocationSummary().total_spend)"></td>
+              <td class="p-2.5 text-center text-blue-700 font-mono" x-text="'-' + formatCurrency(getAllocationSummary().savings_vs_baseline) + ' vs Baseline'"></td>
             </tr>
           </tfoot>
         </table>
 
         <div class="text-[11px] text-slate-500 flex items-center justify-between">
           <span>Target Budget: ₹4.50 Cr</span>
-          <span class="text-emerald-700 font-bold">Savings: ₹1.65 Cr vs Budget · ₹10 Lakhs vs TechPro Single-Source</span>
+          <span class="text-emerald-700 font-bold">
+            Savings: <span x-text="formatCurrency(getAllocationSummary().savings_vs_budget)"></span> vs Budget (<span x-text="getAllocationSummary().savings_pct"></span>%) · <span x-text="formatCurrency(getAllocationSummary().savings_vs_baseline)"></span> vs TechPro Baseline
+          </span>
         </div>
       </div>
 
@@ -1281,13 +1288,13 @@
               </div>
               <div>
                 <div class="text-slate-400 text-[10px] uppercase font-bold">Recommended Award</div>
-                <div class="font-bold text-emerald-700 text-sm font-mono">₹2,84,37,600</div>
-                <div class="text-[10px] text-emerald-600 font-semibold">100% Scope (30/30 Items)</div>
+                <div class="font-bold text-emerald-700 text-sm font-mono" x-text="formatCurrency(getAllocationSummary().total_spend)"></div>
+                <div class="text-[10px] text-emerald-600 font-semibold" x-text="getAllocationSummary().total_lines + ' / 30 Items (' + Math.round((getAllocationSummary().total_lines/30)*100) + '%)'"></div>
               </div>
               <div>
                 <div class="text-slate-400 text-[10px] uppercase font-bold">Net Budget Variance</div>
-                <div class="font-bold text-blue-700 text-sm font-mono">-₹1,65,62,400</div>
-                <div class="text-[10px] text-blue-600 font-semibold">36.8% Hard Savings</div>
+                <div class="font-bold text-blue-700 text-sm font-mono" x-text="'-' + formatCurrency(getAllocationSummary().savings_vs_budget)"></div>
+                <div class="text-[10px] text-blue-600 font-semibold" x-text="getAllocationSummary().savings_pct + '% Hard Savings'"></div>
               </div>
             </div>
           </div>
@@ -1298,7 +1305,7 @@
               <span class="w-2 h-2 rounded bg-blue-600"></span> 1. Executive Summary & Award Rationale
             </h2>
             <p class="text-xs text-slate-700 leading-relaxed">
-              Following competitive evaluation of 5 multi-format supplier bids (Excel, PDF, Word, Angled Image, Email) representing 30 distinct IT infrastructure line items, Sourcing recommends a <strong>Quality-Gated Split Award</strong> across <strong>TechPro Solutions Pvt Ltd</strong> and <strong>DigitalEdge Corp</strong>. This configuration captures maximum volume rebates while enforcing 100% ISO 9001:2015 compliance and 3-year on-site SLA covenants required by FinTech risk governance.
+              Following competitive evaluation of 5 multi-format supplier bids (Excel, PDF, Word, Angled Image, Email) representing 30 distinct IT infrastructure line items, Sourcing recommends a <strong>Quality-Gated Split Award</strong> across <span class="font-bold text-slate-900" x-text="getAllocationSummary().vendors.map(v => v.vendor_name).join(' and ')"></span>. This configuration captures maximum volume rebates while enforcing 100% ISO 9001:2015 compliance and 3-year on-site SLA covenants required by FinTech risk governance.
             </p>
           </div>
 
@@ -1318,27 +1325,22 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
-                <tr>
-                  <td class="p-2 font-bold text-slate-900">TechPro Solutions Pvt Ltd</td>
-                  <td class="p-2 text-slate-700">Compute, Storage & High-End Mobility (18 Lines)</td>
-                  <td class="p-2 text-center font-mono text-[10px] text-emerald-700">DDP Bengaluru</td>
-                  <td class="p-2 text-right font-mono font-bold">₹1,85,92,000</td>
-                  <td class="p-2 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">ISO PASS · 4h SLA</span></td>
-                </tr>
-                <tr>
-                  <td class="p-2 font-bold text-slate-900">DigitalEdge Corp</td>
-                  <td class="p-2 text-slate-700">Networking, Power & Passive Cabling (12 Lines)</td>
-                  <td class="p-2 text-center font-mono text-[10px] text-emerald-700">DDP Bengaluru</td>
-                  <td class="p-2 text-right font-mono font-bold">₹98,45,600</td>
-                  <td class="p-2 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">ISO PASS · 6h SLA</span></td>
-                </tr>
+                <template x-for="alloc in getAllocationSummary().vendors" :key="alloc.vendor_id">
+                  <tr>
+                    <td class="p-2 font-bold text-slate-900" x-text="alloc.vendor_name"></td>
+                    <td class="p-2 text-slate-700" x-text="alloc.categories.join(', ') + ' (' + alloc.lines_count + ' Lines)'"></td>
+                    <td class="p-2 text-center font-mono text-[10px]" :class="alloc.incoterm.includes('DDP') ? 'text-emerald-700 font-semibold' : 'text-amber-700 font-semibold'" x-text="alloc.incoterm"></td>
+                    <td class="p-2 text-right font-mono font-bold" x-text="formatCurrency(alloc.total_spend)"></td>
+                    <td class="p-2 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded" x-text="alloc.compliance"></span></td>
+                  </tr>
+                </template>
               </tbody>
               <tfoot class="bg-slate-50 font-bold border-t-2 text-slate-900">
                 <tr>
                   <td class="p-2" colspan="2">TOTAL COMMITMENT</td>
-                  <td class="p-2 text-center font-mono">DDP Campus</td>
-                  <td class="p-2 text-right font-mono text-emerald-700 text-sm">₹2,84,37,600</td>
-                  <td class="p-2 text-center text-blue-700 font-mono">30 / 30 Lines (100%)</td>
+                  <td class="p-2 text-center font-mono text-[10px]">Campus Delivery</td>
+                  <td class="p-2 text-right font-mono text-emerald-700 text-sm" x-text="formatCurrency(getAllocationSummary().total_spend)"></td>
+                  <td class="p-2 text-center text-blue-700 font-mono" x-text="getAllocationSummary().total_lines + ' / 30 Lines (100%)'"></td>
                 </tr>
               </tfoot>
             </table>
@@ -1397,7 +1399,7 @@
             </table>
             <div class="text-[11px] text-rose-950 font-bold flex items-center justify-between pt-1">
               <span>Financial Conclusion:</span>
-              <span>Recommended ISO Award (₹2.84 Cr) is <span class="underline">₹17.77 Lakhs CHEAPER</span> than QuickByte true landed cost.</span>
+              <span>Recommended ISO Award (<span x-text="formatCurrency(getAllocationSummary().total_spend)"></span>) is <span class="underline" x-text="formatCurrency(30215000 - getAllocationSummary().total_spend) + ' CHEAPER'"></span> than QuickByte true landed cost.</span>
             </div>
           </div>
 
@@ -1906,6 +1908,8 @@
                     "* **Defensible Savings:** **₹10.0 Lakhs** below TechPro single-source (₹2.94 Cr), and **₹1.65 Cr below ₹4.50 Cr campus budget**.\n\n" +
                     "*(Matrix on the left is actively highlighted to reflect this split award.)*",
             loading: false,
+            is_fallback: true,
+            engine: "offline_fallback",
             scenarioAction: {
               name: "Quality-Gated Split Award (ISO 9001 + 3yr SLA)",
               disqualify_vendors: ["quickbyte", "shree"],
@@ -2277,6 +2281,8 @@
             if (target) {
               target.answer = data.answer;
               target.scenarioAction = data.scenario_action;
+              target.is_fallback = data.is_fallback ?? false;
+              target.engine = data.engine ?? 'gemini-3.6-flash';
               target.loading = false;
               if (data.scenario_action) {
                 this.applyDynamicScenario(data.scenario_action);
@@ -2286,6 +2292,8 @@
             const target = this.copilotHistory.find(m => m.id === msgId);
             if (target) {
               target.answer = "Error connecting to AI Analysis Engine: " + e.message;
+              target.is_fallback = true;
+              target.engine = "offline_fallback";
               target.loading = false;
             }
           }
@@ -2434,13 +2442,161 @@
           window.print();
         },
 
+        getAllocationSummary() {
+          if (!this.comparison || !this.comparison.rows) {
+            return {
+              vendors: [
+                { vendor_id: 'techpro', vendor_name: 'TechPro Solutions Pvt Ltd', incoterm: 'DDP Bengaluru', lines_count: 18, categories: ['Compute', 'Storage'], total_spend: 18592000, compliance: 'ISO PASS · 4h SLA' },
+                { vendor_id: 'digitaledge', vendor_name: 'DigitalEdge Corp', incoterm: 'DDP Bengaluru', lines_count: 12, categories: ['Networking', 'Passive'], total_spend: 9845600, compliance: 'ISO PASS · 6h SLA' }
+              ],
+              total_spend: 28437600,
+              total_lines: 30,
+              baseline_spend: 29437600,
+              savings_vs_baseline: 1000000,
+              budget: 45000000,
+              savings_vs_budget: 16562400,
+              savings_pct: "36.8",
+              items: []
+            };
+          }
+
+          let awardMap = this.activeScenario?.award_map;
+          if (!awardMap || Object.keys(awardMap).length === 0) {
+            awardMap = this.comparison?.scenarios?.strict_quality_award?.award_map || {};
+          }
+
+          const vendorMap = {};
+          let totalSpend = 0;
+          let totalLines = 0;
+          const allocatedItems = [];
+
+          this.comparison.rows.forEach((row, idx) => {
+            const itemCode = row.item_code;
+            const winningVid = awardMap[itemCode];
+            if (winningVid) {
+              const vObj = this.vendors.find(v => v.id === winningVid);
+              const cell = row.vendors[winningVid];
+              const unitRate = cell?.normalised_price_inr || row.benchmark_price_inr || 45000;
+              const lineTotal = Math.round(unitRate * row.quantity);
+
+              totalSpend += lineTotal;
+              totalLines += 1;
+
+              allocatedItems.push({
+                line_num: idx + 1,
+                item_id: row.item_id,
+                item_code: row.item_code,
+                description: row.description,
+                category: row.category,
+                quantity: row.quantity,
+                rfx_unit: row.rfx_unit,
+                unit_price: unitRate,
+                total_amount: lineTotal,
+                vendor_id: winningVid,
+                vendor_name: vObj?.name || winningVid
+              });
+
+              if (!vendorMap[winningVid]) {
+                const q = this.qualData[winningVid] || {};
+                vendorMap[winningVid] = {
+                  vendor_id: winningVid,
+                  vendor_name: vObj?.name || winningVid,
+                  incoterm: q.incoterm || 'DDP Bengaluru',
+                  lines_count: 0,
+                  categories: new Set(),
+                  total_spend: 0,
+                  compliance: (q.iso ? 'ISO PASS' : 'NON-ISO') + ' · ' + (q.sla || 'Standard SLA'),
+                  items: []
+                };
+              }
+              vendorMap[winningVid].lines_count += 1;
+              vendorMap[winningVid].categories.add(row.category);
+              vendorMap[winningVid].total_spend += lineTotal;
+              vendorMap[winningVid].items.push({
+                item_code: row.item_code,
+                description: row.description,
+                quantity: row.quantity,
+                unit_price: unitRate,
+                line_total: lineTotal
+              });
+            }
+          });
+
+          const vendorList = Object.values(vendorMap).map(v => ({
+            ...v,
+            categories: Array.from(v.categories)
+          }));
+          vendorList.sort((a, b) => b.total_spend - a.total_spend);
+
+          const budget = 45000000;
+          const savingsVsBudget = budget - totalSpend;
+          const savingsPct = budget > 0 ? ((savingsVsBudget / budget) * 100).toFixed(1) : "0";
+          const techproTotal = this.comparison?.totals?.techpro?.total_inr || 29437600;
+          const savingsVsBaseline = Math.max(0, techproTotal - totalSpend);
+
+          return {
+            vendors: vendorList,
+            total_spend: totalSpend,
+            total_lines: totalLines,
+            baseline_spend: techproTotal,
+            savings_vs_baseline: savingsVsBaseline,
+            budget: budget,
+            savings_vs_budget: savingsVsBudget,
+            savings_pct: savingsPct,
+            items: allocatedItems
+          };
+        },
+
+        getReviewCount() {
+          if (!this.comparison || !this.comparison.rows) return 3;
+          let count = 0;
+          this.comparison.rows.forEach(r => {
+            this.vendors.forEach(v => {
+              const c = r.vendors[v.id];
+              if (c && c.flags && (c.flags.includes('VERIFICATION_REQUIRED') || c.flags.includes('SPEC_DRIFT') || c.status === 'REFERENCE_REQUIRED') && !c.is_verified) {
+                count++;
+              }
+            });
+          });
+          return count;
+        },
+
         getCoupaPayloadText() {
+          const summary = this.getAllocationSummary();
+          const splitAllocations = summary.vendors.map((v, vIdx) => {
+            return {
+              "vendor-code": `V-${v.vendor_id.toUpperCase()}-0${vIdx + 1}`,
+              "vendor-name": v.vendor_name,
+              "incoterm": v.incoterm,
+              "total-commitment-inr": v.total_spend,
+              "lines-allocated": v.lines_count,
+              "line-items": summary.items.filter(it => it.vendor_id === v.vendor_id).map((it, idx) => {
+                let gl = "6100-IT-INFRA";
+                if (it.category.includes("Laptop") || it.category.includes("Client")) gl = "6110-IT-ENDUSER";
+                if (it.category.includes("Passive") || it.category.includes("Cabling")) gl = "6120-IT-PASSIVE";
+                if (it.category.includes("Power")) gl = "6130-IT-FACILITIES";
+                return {
+                  "line-num": it.line_num,
+                  "item-code": it.item_code,
+                  "description": it.description,
+                  "qty": it.quantity,
+                  "unit-price-inr": it.unit_price,
+                  "line-total-inr": it.total_amount,
+                  "gl-account": gl,
+                  "tax-code": "GST-18"
+                };
+              })
+            };
+          });
+
           const payload = {
             "order-header": {
               "requisition-id": "REQ-2024-BLR-8821",
               "po-number": "PO-2024-BLR-0492",
               "currency": "INR",
               "payment-terms": "Net 30",
+              "total-commitment-inr": summary.total_spend,
+              "budget-ceiling-inr": summary.budget,
               "shipping-address": {
                 "location-code": "BLR-CAMPUS-01",
                 "name": "FinTech Enterprise Bengaluru Campus",
@@ -2454,47 +2610,34 @@
                 "name": "Priya Sharma",
                 "email": "priya.sharma@enterprise-fintech.com",
                 "department": "Strategic IT Procurement"
+              },
+              "governance": {
+                "status": "APPROVED",
+                "approval-date": "2024-11-25",
+                "audit-hash": "AER-RFX-BLR-HASH-7709"
               }
             },
-            "split-allocations": [
-              {
-                "vendor-code": "V-TECHPRO-01",
-                "vendor-name": "TechPro Solutions Pvt Ltd",
-                "incoterm": "DDP Bengaluru",
-                "total-commitment-inr": 18592000,
-                "lines-allocated": 18,
-                "line-items": [
-                  {"line-num": 1, "item-code": "SRV-001", "description": "Enterprise Rack Server 2U Dual Xeon", "qty": 10, "unit-price-inr": 285000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
-                  {"line-num": 2, "item-code": "SRV-002", "description": "High-Memory Database Server 4U", "qty": 4, "unit-price-inr": 480000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
-                  {"line-num": 3, "item-code": "SRV-004", "description": "1U Storage Server 48TB NVMe", "qty": 6, "unit-price-inr": 310000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
-                  {"line-num": 5, "item-code": "LPT-001", "description": "Developer Laptop 32GB DDR5 ECC", "qty": 50, "unit-price-inr": 88000, "gl-account": "6110-IT-ENDUSER", "tax-code": "GST-18"},
-                  {"line-num": 6, "item-code": "LPT-002", "description": "Standard Business Laptop 16GB", "qty": 150, "unit-price-inr": 62000, "gl-account": "6110-IT-ENDUSER", "tax-code": "GST-18"}
-                ]
-              },
-              {
-                "vendor-code": "V-DIGITALEDGE-04",
-                "vendor-name": "DigitalEdge Corp",
-                "incoterm": "DDP Bengaluru",
-                "total-commitment-inr": 9845600,
-                "lines-allocated": 12,
-                "line-items": [
-                  {"line-num": 11, "item-code": "SW-001", "description": "48-Port PoE+ Gigabit Access Switch", "qty": 8, "unit-price-inr": 31500, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
-                  {"line-num": 14, "item-code": "FW-001", "description": "Next-Gen Enterprise Firewall Appliance", "qty": 2, "unit-price-inr": 275000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
-                  {"line-num": 23, "item-code": "CAB-001", "description": "CAT6 Cable UTP (305m box)", "qty": 15, "unit-price-inr": 7320, "gl-account": "6120-IT-PASSIVE", "tax-code": "GST-18"}
-                ]
-              }
-            ]
+            "split-allocations": splitAllocations
           };
           return JSON.stringify(payload, null, 2);
         },
 
         getNetSuitePayloadText() {
-          return `ExternalID,VendorID,Subsidiary,Location,Date,DueDate,Currency,ExchangeRate,Item,Quantity,Rate,Amount,Department,Class,TaxCode,Memo
-PO-2024-BLR-001,V-TECHPRO-01,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,SRV-001,10,285000,2850000,Engineering:Infra,Hardware:Server,GST_18%,RFX-2024-ITH-001 Lot 1
-PO-2024-BLR-001,V-TECHPRO-01,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,SRV-002,4,480000,1920000,Engineering:Infra,Hardware:Server,GST_18%,RFX-2024-ITH-001 Lot 1
-PO-2024-BLR-001,V-TECHPRO-01,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,LPT-001,50,88000,4400000,Engineering:Infra,Hardware:Client,GST_18%,RFX-2024-ITH-001 Lot 2
-PO-2024-BLR-002,V-DIGITALEDGE-04,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,SW-001,8,31500,252000,Engineering:Infra,Hardware:Network,GST_18%,RFX-2024-ITH-001 Lot 3
-PO-2024-BLR-002,V-DIGITALEDGE-04,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,CAB-001,15,7320,109800,Engineering:Infra,Hardware:Passive,GST_18%,RFX-2024-ITH-001 Lot 5`;
+          const summary = this.getAllocationSummary();
+          const headers = "ExternalID,VendorID,Subsidiary,Location,Date,DueDate,Currency,ExchangeRate,Item,Quantity,Rate,Amount,Department,Class,TaxCode,Memo";
+          const rows = summary.items.map((it) => {
+            const poNum = `PO-2024-BLR-00${it.vendor_id === 'techpro' ? '1' : it.vendor_id === 'globalit' ? '2' : '3'}`;
+            const vCode = `V-${it.vendor_id.toUpperCase()}-01`;
+            let dept = "Engineering:Infra";
+            let cls = "Hardware:Server";
+            if (it.category.includes("Laptop")) { dept = "Engineering:Client"; cls = "Hardware:Client"; }
+            else if (it.category.includes("Network")) { dept = "Engineering:Network"; cls = "Hardware:Network"; }
+            else if (it.category.includes("Passive")) { dept = "Engineering:Facilities"; cls = "Hardware:Passive"; }
+            else if (it.category.includes("Power")) { dept = "Engineering:Facilities"; cls = "Hardware:Power"; }
+
+            return `${poNum},${vCode},FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,${it.item_code},${it.quantity},${it.unit_price},${it.total_amount},${dept},${cls},GST_18%,RFX-2024-ITH-001 Line ${it.line_num}`;
+          });
+          return [headers, ...rows].join('\n');
         },
 
         copyCoupaPayload() {
