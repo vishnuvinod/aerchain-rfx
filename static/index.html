@@ -167,78 +167,86 @@
       </div>
 
       <!-- Action & Filter Ribbon -->
-      <div class="bg-white border-b border-slate-200 px-5 py-2 flex items-center gap-4 text-xs flex-shrink-0 shadow-xs">
-        <div class="flex items-center gap-2">
-          <span class="font-bold text-slate-800 text-sm">Commercial Evaluation Grid</span>
-          <span class="text-slate-400">|</span>
-          <span class="text-slate-500 font-medium" x-text="filteredRows.length + ' of 30 line items'"></span>
+      <!-- Action & Filter Ribbon -->
+      <div class="bg-white border-b border-slate-200 px-4 py-2 flex items-center justify-between gap-3 text-xs flex-shrink-0 shadow-xs overflow-x-auto">
+        <!-- Left Group: Title, Filter, Search -->
+        <div class="flex items-center gap-2.5 shrink-0">
+          <div class="flex items-center gap-1.5 shrink-0">
+            <span class="font-bold text-slate-800 text-xs whitespace-nowrap">Grid</span>
+            <span class="text-slate-400">|</span>
+            <span class="text-slate-500 font-medium text-[11px] whitespace-nowrap" x-text="filteredRows.length + ' lines'"></span>
+          </div>
+
+          <!-- Category Dropdown -->
+          <select x-model="filterCategory" class="border border-slate-300 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500 shrink-0">
+            <option value="">All Categories (30)</option>
+            <template x-for="cat in categories" :key="cat">
+              <option :value="cat" x-text="cat"></option>
+            </template>
+          </select>
+
+          <!-- Search Bar -->
+          <div class="relative w-40 shrink-0">
+            <input type="text" x-model="searchQuery" placeholder="Search SKU, spec..."
+                   class="w-full border border-slate-300 rounded px-2 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500 pl-6">
+            <span class="absolute left-1.5 top-1 text-slate-400 text-xs">🔍</span>
+            <button x-show="searchQuery" @click="searchQuery=''" class="absolute right-1.5 top-1 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
+          </div>
         </div>
 
-        <!-- Category Dropdown -->
-        <select x-model="filterCategory" class="border border-slate-300 rounded px-2.5 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500">
-          <option value="">All Categories (30)</option>
-          <template x-for="cat in categories" :key="cat">
-            <option :value="cat" x-text="cat"></option>
-          </template>
-        </select>
+        <!-- Center Group: Toggles & Controls -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Basket Scope Mode -->
+          <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px] shrink-0">
+            <button @click="basketMode='quoted'"
+                    :class="basketMode==='quoted' ? 'bg-slate-800 text-white font-bold' : 'bg-slate-50 text-slate-600'"
+                    class="px-2.5 py-1 whitespace-nowrap"
+                    title="Show only stated quoted lines">
+              Stated
+            </button>
+            <button @click="basketMode='projected'"
+                    :class="basketMode==='projected' ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'"
+                    class="px-2.5 py-1 flex items-center gap-1 whitespace-nowrap"
+                    title="Model missing lines with market benchmark median">
+              <span>⚖️</span> 30-Line
+            </button>
+          </div>
 
-        <!-- Instant SKU / Spec Search Bar (Suggested Polish for Live Demo) -->
-        <div class="relative w-64">
-          <input type="text" x-model="searchQuery" placeholder="Search SKU, spec, or item..."
-                 class="w-full border border-slate-300 rounded px-2.5 py-1 text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-blue-500 pl-7">
-          <span class="absolute left-2 top-1 text-slate-400 text-xs">🔍</span>
-          <button x-show="searchQuery" @click="searchQuery=''" class="absolute right-2 top-1 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</button>
+          <!-- Density Toggle -->
+          <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px] shrink-0">
+            <button @click="denseView=false" :class="!denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1 whitespace-nowrap">
+              Audit
+            </button>
+            <button @click="denseView=true" :class="denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1 whitespace-nowrap">
+              Compact
+            </button>
+          </div>
+
+          <!-- Accordion Controls -->
+          <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px] shrink-0">
+            <button @click="expandAllCategories()" class="px-2 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium flex items-center gap-1 whitespace-nowrap" title="Expand all 5 category lots">
+              <span>⊞</span> Expand
+            </button>
+            <button @click="collapseAllCategories()" class="px-2 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium border-l border-slate-200 flex items-center gap-1 whitespace-nowrap" title="Collapse all into executive rollups">
+              <span>⊟</span> Collapse
+            </button>
+          </div>
         </div>
 
-        <!-- Basket Scope Modeling Mode (Decision 1: Apples-to-Apples) -->
-        <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
-          <button @click="basketMode='quoted'"
-                  :class="basketMode==='quoted' ? 'bg-slate-800 text-white font-bold' : 'bg-slate-50 text-slate-600'"
-                  class="px-2.5 py-1"
-                  title="Show only stated quoted lines">
-            Stated Quotes
-          </button>
-          <button @click="basketMode='projected'"
-                  :class="basketMode==='projected' ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'"
-                  class="px-2.5 py-1 flex items-center gap-1"
-                  title="Model missing lines with market benchmark median for apples-to-apples evaluation">
-            <span>⚖️</span> Projected 30-Line
+        <!-- Right Group: Scenario badge & Export -->
+        <div class="flex items-center gap-2 shrink-0">
+          <!-- Active Scenario Pill -->
+          <div x-show="activeScenario" class="flex items-center gap-1.5 bg-emerald-50 border border-emerald-300 text-emerald-800 px-2.5 py-1 rounded-full text-[11px] whitespace-nowrap shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span class="font-bold">ISO Split Active</span>
+            <button @click="resetScenario()" class="text-emerald-700 hover:text-emerald-950 font-bold ml-0.5 text-xs" title="Reset Scenario">✕</button>
+          </div>
+
+          <!-- Export CSV -->
+          <button @click="exportCSV()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-2.5 py-1 rounded text-xs flex items-center gap-1 transition-all whitespace-nowrap shrink-0">
+            <span>⬇</span> Export
           </button>
         </div>
-
-        <!-- View Density Toggle -->
-        <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
-          <button @click="denseView=false" :class="!denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1">
-            Dual-Layer Audit
-          </button>
-          <button @click="denseView=true" :class="denseView ? 'bg-blue-600 text-white font-bold' : 'bg-slate-50 text-slate-600'" class="px-2.5 py-1">
-            Compact View
-          </button>
-        </div>
-
-        <!-- Smart Accordion Expand / Collapse Controls -->
-        <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
-          <button @click="expandAllCategories()" class="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium flex items-center gap-1" title="Expand all 5 category lots">
-            <span>⊞</span> Expand All
-          </button>
-          <button @click="collapseAllCategories()" class="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium border-l border-slate-200 flex items-center gap-1" title="Collapse all into executive rollups">
-            <span>⊟</span> Collapse All
-          </button>
-        </div>
-
-        <div class="flex-1"></div>
-
-        <!-- Active Scenario Pill -->
-        <div x-show="activeScenario" class="flex items-center gap-2 bg-emerald-50 border border-emerald-300 text-emerald-800 px-3 py-1 rounded-full text-xs">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-          <span>Simulation Active: <strong x-text="activeScenario?.name"></strong></span>
-          <button @click="resetScenario()" class="text-emerald-700 hover:text-emerald-950 font-bold ml-1 text-sm">✕</button>
-        </div>
-
-        <!-- Export Audit CSV -->
-        <button @click="exportCSV()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition-all">
-          <span>⬇</span> Export CSV
-        </button>
       </div>
 
       <!-- Scope Coverage Floor Alert Banner (Addresses VP/CPO Critique #2) -->
