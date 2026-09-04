@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aerchain RFx Intelligence — Executive Presentation (8 Slides)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* 16:9 Slide Presentation Frame */
+    .slide-viewport {
+      aspect-ratio: 16 / 9;
+      max-height: 88vh;
+      max-width: 156.44vh;
+    }
+
+    @media print {
+      body { background: #0b192e !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print { display: none !important; }
+      .slide-container { display: block !important; }
+      .slide-page { 
+        page-break-after: always !important; 
+        break-after: page !important;
+        height: 100vh !important; 
+        width: 100vw !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+      }
+      .slide-viewport {
+        max-height: 100vh !important;
+        max-width: 100vw !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        border: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden select-none">
+
+  <!-- TOP APP BAR / CONTROLS (Screen only) -->
+  <header class="no-print bg-[#0b192e] border-b border-slate-800 px-6 py-3 flex items-center justify-between z-30">
+    <div class="flex items-center gap-3">
+      <a href="/" class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-black text-sm tracking-tighter text-white hover:bg-blue-500 transition shadow">
+        AER
+      </a>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-sm text-white">Aerchain RFx Intelligence</span>
+          <span class="bg-blue-500/20 text-blue-300 text-[10px] px-2 py-0.5 rounded font-mono font-medium border border-blue-500/30">Executive Deck (8 Slides)</span>
+        </div>
+        <div class="text-[11px] text-slate-400">Candidate: <strong class="text-slate-200">Vishnu Vinod</strong> · Product Management (Module Owner)</div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-2">
+      <!-- Notes Toggle -->
+      <button onclick="toggleNotes()" id="notes-btn" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1.5 transition">
+        <span>📝 Speaker Notes</span>
+        <kbd class="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded font-mono text-slate-400">N</kbd>
+      </button>
+      
+      <!-- Fullscreen Button -->
+      <button onclick="toggleFullscreen()" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1.5 transition">
+        <span>⛶ Fullscreen</span>
+        <kbd class="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded font-mono text-slate-400">F</kbd>
+      </button>
+
+      <!-- Print / Export PDF -->
+      <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white flex items-center gap-1.5 shadow transition">
+        <span>🖨 Save as PDF</span>
+        <kbd class="text-[10px] bg-emerald-800 px-1.5 py-0.5 rounded font-mono text-emerald-200">⌘P</kbd>
+      </button>
+
+      <!-- Back to Live Cockpit -->
+      <a href="/" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white flex items-center gap-1.5 shadow transition ml-2">
+        <span>⚡ Live Cockpit</span>
+        <span>→</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN SLIDE VIEWER -->
+  <main class="flex-1 flex items-center justify-center p-4 lg:p-6">
+    <div class="w-full flex justify-center items-center">
+      
+      <!-- SLIDE 1: Title & Overview -->
+      <div id="slide-1" class="slide-page w-full flex justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <!-- Background decoration -->
+          <div class="absolute -top-32 -right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-emerald-600/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="flex justify-between items-start z-10">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-black text-lg text-white shadow-lg">AER</div>
+              <div>
+                <div class="text-xs font-bold uppercase tracking-widest text-blue-400">Aerchain Product Take-Home</div>
+                <div class="text-xs text-slate-400">Module Ownership: Autonomous Quotation Ingestion & RFx Intelligence</div>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-xs font-mono">
+                Slide 1 of 8 · Executive Overview
+              </span>
+            </div>
+          </div>
+
+          <div class="my-auto py-6 z-10">
+            <div class="inline-block px-3 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-xs font-semibold mb-4">
+              ASSIGNMENT: KILL THE QUOTE SPREADSHEET
+            </div>
+            <h1 class="text-3xl lg:text-5xl font-black text-white tracking-tight leading-tight max-w-4xl">
+              Aerchain RFx Decision Cockpit
+            </h1>
+            <p class="text-lg lg:text-xl text-slate-300 font-normal mt-3 max-w-3xl leading-relaxed">
+              Autonomous Ingestion, Deterministic Normalization, and Live Scenario Co-Pilot for Enterprise Sourcing.
+            </p>
+
+            <div class="grid grid-cols-4 gap-4 mt-8 max-w-4xl">
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase">Target Spend</div>
+                <div class="text-2xl font-black text-white mt-0.5">₹4.50 Cr</div>
+                <div class="text-xs text-slate-500 mt-0.5">Campus IT Hardware</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase">Scope Volume</div>
+                <div class="text-2xl font-black text-blue-400 mt-0.5">30 Lines</div>
+                <div class="text-xs text-slate-500 mt-0.5">Compute, Network, UPS</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase">Vendor Ingestion</div>
+                <div class="text-2xl font-black text-emerald-400 mt-0.5">5 Formats</div>
+                <div class="text-xs text-slate-500 mt-0.5">Excel, PDF, Word, Photo, Email</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+                <div class="text-[11px] font-semibold text-slate-400 uppercase">Cycle Time</div>
+                <div class="text-2xl font-black text-purple-400 mt-0.5">4 Days → 3 Min</div>
+                <div class="text-xs text-slate-500 mt-0.5">Zero manual transcription</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-end border-t border-slate-800/80 pt-4 z-10 text-xs text-slate-400">
+            <div>Candidate: <strong class="text-white">Vishnu Vinod</strong> · <span class="text-blue-400">Product Management (Module Owner)</span></div>
+            <div>Built for Aerchain Leadership Review (Raghunath Reddy, VP Product & Neelakanteshwar, CPO)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: The Enterprise Pain: The 4-Day Spreadsheet Nightmare -->
+      <div id="slide-2" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-red-400">The Problem</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">The 4-Day "Quote Spreadsheet" Nightmare</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+              Slide 2 of 8 · Enterprise Reality
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <p class="text-sm lg:text-base text-slate-300 max-w-3xl mb-6">
+              When an enterprise procures ₹4.5 Crore of infrastructure, <strong class="text-white">suppliers never reply in clean templates</strong>. Sourcing managers waste 4 full days manually transcribing incompatible files:
+            </p>
+
+            <div class="grid grid-cols-5 gap-3">
+              <!-- Vendor 1 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-white">TechPro India</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">Excel</span>
+                  </div>
+                  <div class="text-xs text-slate-300 font-medium">Standard `.xlsx` table</div>
+                  <div class="text-[11px] text-red-400 mt-2">⚠️ Omitted 3 items (only quoted 27 of 30 lines)</div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-3 pt-2 border-t border-slate-800">Buyer must manually hunt for missing lines</div>
+              </div>
+
+              <!-- Vendor 2 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-white">GlobalIT Direct</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono">PDF</span>
+                  </div>
+                  <div class="text-xs text-slate-300 font-medium">Quoted in USD ($1,050)</div>
+                  <div class="text-[11px] text-amber-400 mt-2">⚠️ 12% rebate buried in Page 3 footnote</div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-3 pt-2 border-t border-slate-800">Requires manual FX & rebate recalculation</div>
+              </div>
+
+              <!-- Vendor 3 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-white">QuickByte India</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono">Word</span>
+                  </div>
+                  <div class="text-xs text-slate-300 font-medium">Unstructured paragraphs</div>
+                  <div class="text-[11px] text-red-400 mt-2">⚠️ Sneaky ₹2.70 Cr "cheap" bid omits freight & tax</div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-3 pt-2 border-t border-slate-800">L1 trap: Landed cost is actually ₹3.02 Cr</div>
+              </div>
+
+              <!-- Vendor 4 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-white">DigitalEdge</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">Photo</span>
+                  </div>
+                  <div class="text-xs text-slate-300 font-medium">Angled phone photo</div>
+                  <div class="text-[11px] text-amber-400 mt-2">⚠️ Quoted cable per 100m spool instead of 305m box</div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-3 pt-2 border-t border-slate-800">3.05× conversion trap easily missed by humans</div>
+              </div>
+
+              <!-- Vendor 5 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3.5 flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold text-white">Shree IT Solutions</span>
+                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono">Email</span>
+                  </div>
+                  <div class="text-xs text-slate-300 font-medium">Informal 2-line email</div>
+                  <div class="text-[11px] text-blue-400 mt-2">⚠️ States "pricing same as last year (PO-2023-088)"</div>
+                </div>
+                <div class="text-[10px] text-slate-500 mt-3 pt-2 border-t border-slate-800">Dead-end in standard templates without ERP lookups</div>
+              </div>
+            </div>
+
+            <div class="mt-6 bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🛑</span>
+                <div class="text-xs lg:text-sm text-red-200">
+                  <strong>The Real Cost:</strong> When leadership asks: <em>"What if we enforce our 4-hour on-site SLA for laptops?"</em>, the buyer loses another 24 hours rebuilding formulas from scratch.
+                </div>
+              </div>
+              <span class="text-xs font-mono font-bold text-red-300 bg-red-950 px-3 py-1 rounded-md border border-red-800">4-Day Bottleneck</span>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between">
+            <span>Enterprise Reality: Suppliers resist custom portals. Ingesting native documents is mandatory.</span>
+            <span>Aerchain RFx Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: What Was Built: The 4-Step Decision Cockpit -->
+      <div id="slide-3" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-emerald-400">The Solution</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">What Was Built: The 4-Step Decision Cockpit</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+              Slide 3 of 8 · Product Architecture
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <div class="grid grid-cols-4 gap-4">
+              <!-- Stage 1 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-sm mb-3">1</div>
+                  <h3 class="text-sm font-bold text-white mb-1">RFx Genesis</h3>
+                  <div class="text-xs text-blue-300 font-medium mb-2">Plain English to BoM</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Buyer describes campus needs in conversational English; engine derives a complete 30-item tender (compute, networking, UPS, cabling) with commercial qualification gates.
+                  </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">
+                  Input: Natural Language<br>Output: 30-Line RFx Specs
+                </div>
+              </div>
+
+              <!-- Stage 2 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-sm mb-3">2</div>
+                  <h3 class="text-sm font-bold text-white mb-1">Universal Inbox</h3>
+                  <div class="text-xs text-emerald-300 font-medium mb-2">Zero-Vendor-Onboarding</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Accepts Excel, PDF, Word, phone photos, and emails natively. Extracts rates, uncovers footnotes, handles packaging, and fetches ERP references without forcing vendor logins.
+                  </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">
+                  Input: 5 Messy File Formats<br>Output: Structured Line Tokens
+                </div>
+              </div>
+
+              <!-- Stage 3 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-bold text-sm mb-3">3</div>
+                  <h3 class="text-sm font-bold text-white mb-1">Decision Matrix</h3>
+                  <div class="text-xs text-indigo-300 font-medium mb-2">Dual-Layer Normalized Grid</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Renders all bids side-by-side in INR and tender units. Shows raw quote below normalized price. Visual inspection drawer provides photo evidence crops and 1-click buyer verification.
+                  </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">
+                  Feature: Dual-Layer Cells<br>Feature: 75% HITL Drawer
+                </div>
+              </div>
+
+              <!-- Stage 4 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-purple-600/20 text-purple-400 border border-purple-500/30 flex items-center justify-center font-bold text-sm mb-3">4</div>
+                  <h3 class="text-sm font-bold text-white mb-1">Co-Pilot & ERP</h3>
+                  <div class="text-xs text-purple-300 font-medium mb-2">Live Scenario Allocation</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Interactive sourcing analyst models what-ifs, enforces SLA gates, highlights winning cells on the matrix, and generates 1-click Coupa JSON and NetSuite CSV purchase order payloads.
+                  </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[10px] text-slate-400 font-mono">
+                  Feature: Dynamic Grid Highlighting<br>Feature: Coupa & NetSuite Payloads
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 bg-slate-900 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
+              <div class="text-xs text-slate-300">
+                <span class="text-emerald-400 font-bold">End-to-End Velocity:</span> From raw unorganized vendor emails and photos to an executive-ready purchase order allocation in <strong class="text-white">under 3 minutes</strong>.
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2.5 py-1 rounded border border-blue-500/30 font-mono">₹4.50 Cr Tender</span>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2.5 py-1 rounded border border-emerald-500/30 font-mono">₹2.84 Cr - ₹2.99 Cr Awarded</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between">
+            <span>One unified workflow: Genesis → Ingestion → Normalization → Co-Pilot Negotiation</span>
+            <span>Aerchain RFx Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: How It Works Underneath: Perception vs. Arithmetic Separation -->
+      <div id="slide-4" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-blue-400">Core Engineering Principle</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">Perception vs. Arithmetic Separation</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+              Slide 4 of 8 · Technical Mechanics
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3.5 mb-6 text-xs text-amber-200">
+              <strong>The Golden Rule:</strong> Large Language Models (LLMs) are probabilistic and hallucinate arithmetic. In enterprise procurement, a ₹10 Lakh calculation error is legally binding. <span class="text-white font-bold">We never allow an AI language model to perform math.</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+              <!-- AI Perception Layer -->
+              <div class="bg-slate-900/90 border border-blue-500/30 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-sm font-bold text-blue-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+                    AI Perception Layer (Gemini 3.6 Multimodal)
+                  </span>
+                  <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded font-mono">Semantic & Vision</span>
+                </div>
+                <ul class="space-y-2 text-xs text-slate-300">
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Optical Vision OCR:</strong> Reads handwriting and wrinkled smartphone rate card photos.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Footnote Extraction:</strong> Locates buried rebate clauses on Page 3 of PDFs.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Unstructured Text Parsing:</strong> Extracts item rates from conversational Word paragraphs.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Questionnaire Auditing:</strong> Reads ISO certificates, warranties, and SLA terms.</span>
+                  </li>
+                </ul>
+                <div class="mt-4 p-2.5 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono text-slate-400">
+                  Outputs clean, structured key-value tokens (No calculations).
+                </div>
+              </div>
+
+              <!-- Deterministic Engine -->
+              <div class="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                    Deterministic Python Calculation Engine
+                  </span>
+                  <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono">100% Math Guarantee</span>
+                </div>
+                <ul class="space-y-2 text-xs text-slate-300">
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>FX Conversion:</strong> Applies official RBI benchmark rate (e.g. ₹83.50/USD).</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Packaging Multiplier:</strong> Exact ratio math (100m spool × 3.05 = 305m master box).</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Volume Rebate Math:</strong> Applies explicit 12% discount to net unit rates.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>Spend Aggregations:</strong> Sums, ranking algorithms, and IEEE-754 financial precision.</span>
+                  </li>
+                </ul>
+                <div class="mt-4 p-2.5 rounded bg-slate-950 border border-slate-800 text-[11px] font-mono text-emerald-400">
+                  Guarantees 100% repeatable, auditable arithmetic.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between">
+            <span>Architecture: Probabilistic AI extracts data; Deterministic Python calculates spend.</span>
+            <span>Aerchain RFx Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Trust Architecture: The 75% HITL Gate & Audit Drawer -->
+      <div id="slide-5" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-amber-400">Trust & Defensibility</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">The 75% HITL Safety Gate & Audit Drawer</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+              Slide 5 of 8 · Buyer Governance
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <div class="grid grid-cols-3 gap-5">
+              <!-- Column 1: Confidence Scoring -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-bold text-white mb-3 flex items-center justify-between">
+                  <span>Calibrated Confidence</span>
+                  <span class="text-[10px] text-blue-300 font-mono">0.0 to 1.0</span>
+                </div>
+                <div class="space-y-2 text-xs">
+                  <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                    <span class="text-slate-300">Excel (.xlsx)</span>
+                    <span class="font-mono text-emerald-400 font-bold">0.98</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                    <span class="text-slate-300">Vector PDF</span>
+                    <span class="font-mono text-emerald-400 font-bold">0.94</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                    <span class="text-slate-300">Word Document</span>
+                    <span class="font-mono text-blue-400 font-bold">0.91</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1 border-b border-slate-800">
+                    <span class="text-slate-300">Smartphone Photo</span>
+                    <span class="font-mono text-amber-400 font-bold">0.85</span>
+                  </div>
+                  <div class="flex justify-between items-center py-1">
+                    <span class="text-slate-300">Unit Mismatch Penalty</span>
+                    <span class="font-mono text-red-400 font-bold">-0.25 (Drops to 0.62)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Column 2: The 75% Gate -->
+              <div class="bg-slate-900/90 border border-amber-500/40 rounded-xl p-4">
+                <div class="text-xs font-bold text-amber-400 mb-3 flex items-center justify-between">
+                  <span>The 75% Safety Gate</span>
+                  <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded font-mono">RULE</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                  If confidence drops below <strong>75%</strong>, the system <strong class="text-amber-300">refuses autonomous acceptance</strong>.
+                </p>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 mb-3">
+                  <div class="text-[11px] text-amber-400 font-semibold mb-1">Triggered on DigitalEdge:</div>
+                  <div class="text-xs text-slate-300">CAT6 cable quoted per 100m spool instead of 305m box. Confidence: <span class="font-mono text-red-400 font-bold">0.62</span></div>
+                  <div class="mt-2 inline-block px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-mono font-bold">
+                    ⚑ Review Spool
+                  </div>
+                </div>
+                <div class="text-[11px] text-slate-400">Forces human review before spend commitment.</div>
+              </div>
+
+              <!-- Column 3: The Audit Drawer -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4">
+                <div class="text-xs font-bold text-white mb-3 flex items-center justify-between">
+                  <span>Audit Slide-Over Drawer</span>
+                  <span class="text-[10px] text-emerald-400 font-mono">HITL Triad</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed mb-3">
+                  Clicking any cell opens the drawer with visual evidence and 3 one-click actions:
+                </p>
+                <div class="space-y-2">
+                  <div class="bg-emerald-500/10 border border-emerald-500/30 rounded p-2 text-[11px] text-emerald-300 font-medium">
+                    <strong>[ ✓ Accept Conversion ]</strong><br>
+                    Validates 3.05× math, tags cell as buyer-verified.
+                  </div>
+                  <div class="bg-blue-500/10 border border-blue-500/30 rounded p-2 text-[11px] text-blue-300 font-medium">
+                    <strong>[ ✎ Override Price ]</strong><br>
+                    Direct manual override; updates row/column totals live.
+                  </div>
+                  <div class="bg-purple-500/10 border border-purple-500/30 rounded p-2 text-[11px] text-purple-300 font-medium">
+                    <strong>[ ✉ Draft Clarification ]</strong><br>
+                    1-click email to vendor requesting packaging confirmation.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between">
+            <span>Trust Architecture: Would a buyer staking ₹4 Crore act on what's on screen? Yes, because every number is verifiable.</span>
+            <span>Aerchain RFx Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 6: Commercial Intelligence: Unmasking the L1 Trap -->
+      <div id="slide-6" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-red-400">Commercial Intelligence</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">Unmasking the "Cheapest Bid" (L1) Trap</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+              Slide 6 of 8 · Sourcing Audit
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <div class="grid grid-cols-2 gap-6 items-center">
+              <!-- Left: The Illusion -->
+              <div class="bg-slate-900/90 border border-red-500/30 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-red-400 uppercase tracking-wider">The Paper Illusion</span>
+                  <span class="text-xs bg-red-500/20 text-red-300 px-2 py-0.5 rounded font-mono">Headline L1</span>
+                </div>
+                <div class="text-3xl font-black text-white">₹2,70,50,000</div>
+                <div class="text-xs text-slate-400 mt-1">QuickByte India submitted headline quotation</div>
+                <div class="mt-4 p-3 bg-red-950/60 border border-red-800/60 rounded-lg text-xs text-red-200">
+                  Appears ₹13.87 Lakhs lower than the recommended award. Naive procurement algorithms award them the entire contract!
+                </div>
+              </div>
+
+              <!-- Right: The Reality -->
+              <div class="bg-slate-900/90 border border-emerald-500/30 rounded-xl p-5">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider">True Landed Cost (TCO)</span>
+                  <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-mono">Audited Reality</span>
+                </div>
+                <div class="text-3xl font-black text-emerald-400">₹3,02,15,000</div>
+                <div class="text-xs text-slate-400 mt-1">Sourcing audit catches 4 hidden traps inversion</div>
+                <div class="mt-4 p-3 bg-emerald-950/60 border border-emerald-800/60 rounded-lg text-xs text-emerald-200">
+                  QuickByte is actually <strong class="text-white">₹17.77 Lakhs MORE expensive</strong> than the recommended award!
+                </div>
+              </div>
+            </div>
+
+            <!-- The 4 Additions Table -->
+            <div class="mt-5 bg-slate-900/80 border border-slate-800 rounded-xl p-4">
+              <div class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">4 Trap Inversions Identified by Audit Engine:</div>
+              <div class="grid grid-cols-4 gap-3 text-xs">
+                <div class="bg-slate-950 p-2.5 rounded border border-slate-800">
+                  <div class="text-slate-400 text-[11px]">1. Missing Scope (3 lines)</div>
+                  <div class="text-white font-bold font-mono mt-0.5">+₹10,50,000</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5">Benchmark imputation</div>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded border border-slate-800">
+                  <div class="text-slate-400 text-[11px]">2. Spec Drift (16GB RAM)</div>
+                  <div class="text-white font-bold font-mono mt-0.5">+₹4,20,000</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5">32GB ECC delta required</div>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded border border-slate-800">
+                  <div class="text-slate-400 text-[11px]">3. Freight & Transit Add-on</div>
+                  <div class="text-white font-bold font-mono mt-0.5">+₹8,45,000</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5">Buried in Page 4 clause</div>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded border border-slate-800">
+                  <div class="text-slate-400 text-[11px]">4. 3-Year Warranty Upgrade</div>
+                  <div class="text-white font-bold font-mono mt-0.5">+₹6,40,000</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5">Only quoted 1-yr standard</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between">
+            <span>Sourcing Defensibility: Protecting the business from false low-bid traps.</span>
+            <span>Aerchain RFx Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 7: Decision Modeling & MVP Prioritization -->
+      <div id="slide-7" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-indigo-400">Execution & Trade-offs</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">Decision Modeling & MVP Prioritization</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-mono">
+              Slide 7 of 8 · PM Trade-offs
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <div class="grid grid-cols-2 gap-5">
+              <!-- Live Scenario Modeling -->
+              <div class="bg-slate-900/90 border border-indigo-500/30 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-bold text-indigo-300 uppercase">Live Co-Pilot Scenario Modeling</span>
+                  <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded font-mono">SLA Gate</span>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded border border-slate-800 text-xs text-slate-300 mb-3">
+                  <strong class="text-white">Query:</strong> <em>"What if we enforce 4-hour on-site support for developer laptops?"</em>
+                </div>
+                <ul class="space-y-1.5 text-xs text-slate-300">
+                  <li class="flex items-center gap-2">
+                    <span class="text-red-400">✗</span>
+                    <span><strong>GlobalIT:</strong> Quoted ₹77,154 net ($1,050), but support is remote from Singapore.</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <span class="text-emerald-400">✓</span>
+                    <span><strong>TechPro:</strong> Quoted ₹88,000 with 4-hr local Bengaluru depot support.</span>
+                  </li>
+                </ul>
+                <div class="mt-3 p-2.5 bg-emerald-950/40 border border-emerald-800/50 rounded text-xs text-emerald-300">
+                  <strong>Result:</strong> Grid dynamically shifts laptop award to TechPro. Spend recalculates live to <strong class="text-white">₹2.99 Cr</strong>. Generates 1-click Coupa JSON / NetSuite CSV payloads.
+                </div>
+              </div>
+
+              <!-- What Was Omitted -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-bold text-slate-300 uppercase mb-2">What We Deliberately Left Out (and Why)</div>
+                  <div class="space-y-2 text-xs">
+                    <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                      <strong class="text-white">1. Forced Vendor Portals:</strong> Suppliers resist logging into custom portals. Ingesting native formats gets 100% response rate.
+                    </div>
+                    <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                      <strong class="text-white">2. Autonomous PO Dispatch:</strong> At ₹4.5 Cr spend, full autonomous release creates legal risk. System advises; human director signs.
+                    </div>
+                    <div class="bg-slate-950 p-2 rounded border border-slate-800">
+                      <strong class="text-white">3. Heavy Microservices:</strong> Single FastAPI + reactive Alpine.js stack provides zero cold-start latency and works offline.
+                    </div>
+                  </div>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-2">Pragmatic Product Management: Solving the high-friction core.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between">
+            <span>PM Decision: Focus on trust, speed, and mathematical defensibility over bloated enterprise features.</span>
+            <span>Aerchain RFx Intelligence</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDE 8: "Where the Better Problem Actually Is" (What Else Can Be Solved) -->
+      <div id="slide-8" class="slide-page w-full hidden justify-center">
+        <div class="slide-viewport w-full bg-[#0b192e] border border-slate-800 rounded-2xl shadow-2xl p-8 lg:p-12 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex justify-between items-start">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-widest text-purple-400">The $25M ARR Expansion Thesis</div>
+              <h2 class="text-2xl lg:text-3xl font-black text-white mt-1">Where the Better Problem Actually Is</h2>
+            </div>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-mono">
+              Slide 8 of 8 · Beyond RFx
+            </span>
+          </div>
+
+          <div class="my-auto py-4">
+            <div class="bg-purple-500/10 border border-purple-500/30 rounded-xl p-3.5 mb-5 text-xs text-purple-200">
+              <em>"If you finish this and think 'the interesting problem was actually somewhere else' — tell us that too."</em><br>
+              Quote extraction eliminates 3 to 4 days of manual spreadsheet grunt work. But the <strong>true multi-million dollar bleed in enterprise spend is Post-Award Contract & Invoice Drift</strong>.
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+              <!-- Better Problem 1 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-7 h-7 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-xs mb-2">1</div>
+                  <h3 class="text-xs font-bold text-white mb-1">Quote vs. Invoice Drift</h3>
+                  <div class="text-[11px] text-blue-300 font-medium mb-2">3-Way ERP Invoice Bridge</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Suppliers bid low to win the tender, then silently claw back margin through unannounced freight surcharges, storage fees, and slight specification downgrades during delivery.
+                  </p>
+                </div>
+                <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-emerald-400 font-semibold">
+                  Opportunity: Automated RFx-to-Invoice matching in SAP/Oracle.
+                </div>
+              </div>
+
+              <!-- Better Problem 2 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-7 h-7 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center font-bold text-xs mb-2">2</div>
+                  <h3 class="text-xs font-bold text-white mb-1">Dynamic Trust Graph</h3>
+                  <div class="text-[11px] text-emerald-300 font-medium mb-2">Continuous Vendor Scoring</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Replace static once-a-year questionnaire checkboxes with continuous reliability tracking: actual On-Time In-Full (OTIF) delivery, RMA defect rates, and invoice dispute history across multi-year cycles.
+                  </p>
+                </div>
+                <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-emerald-400 font-semibold">
+                  Opportunity: Real-time Supplier Risk & Reliability Index.
+                </div>
+              </div>
+
+              <!-- Better Problem 3 -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
+                <div>
+                  <div class="w-7 h-7 rounded-lg bg-purple-600/20 text-purple-400 border border-purple-500/30 flex items-center justify-center font-bold text-xs mb-2">3</div>
+                  <h3 class="text-xs font-bold text-white mb-1">Autonomous Counter-Offers</h3>
+                  <div class="text-[11px] text-purple-300 font-medium mb-2">Multi-Vendor Game Theory</div>
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Empower the Co-Pilot to draft data-driven negotiation letters automatically: <em>"Supplier B: We will award you the full ₹1.8 Cr server lot if you match Supplier A's 4-hr local Bengaluru depot SLA."</em>
+                  </p>
+                </div>
+                <div class="mt-3 pt-2 border-t border-slate-800 text-[10px] text-emerald-400 font-semibold">
+                  Opportunity: AI-assisted multi-round negotiations.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs text-slate-400 border-t border-slate-800/80 pt-3 flex justify-between items-center">
+            <span>Live System: <a href="https://aerchain-rfx.vercel.app" target="_blank" class="text-blue-400 underline font-mono">aerchain-rfx.vercel.app</a></span>
+            <span class="text-emerald-400 font-bold">Ready for Final Leadership Presentation</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- BOTTOM NAVIGATION & SPEAKER NOTES BAR (Screen only) -->
+  <footer class="no-print bg-[#0b192e] border-t border-slate-800 px-6 py-3 flex flex-col gap-2 z-30">
+    <div class="flex items-center justify-between">
+      <!-- Slide Indicator -->
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-slate-400">Slide <strong id="slide-num-text" class="text-white">1</strong> of 8</span>
+        <div class="flex gap-1 ml-2">
+          <div id="dot-container" class="flex gap-1.5 items-center"></div>
+        </div>
+      </div>
+
+      <!-- Arrow Navigation -->
+      <div class="flex items-center gap-2">
+        <button onclick="prevSlide()" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 flex items-center gap-1 transition">
+          <span>← Previous</span>
+          <kbd class="text-[10px] bg-slate-900 px-1 py-0.5 rounded font-mono text-slate-400">Left</kbd>
+        </button>
+        <button onclick="nextSlide()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white flex items-center gap-1 shadow transition">
+          <span>Next →</span>
+          <kbd class="text-[10px] bg-blue-800 px-1 py-0.5 rounded font-mono text-blue-200">Right / Space</kbd>
+        </button>
+      </div>
+    </div>
+
+    <!-- SPEAKER NOTES EXPANDABLE PANEL -->
+    <div id="notes-panel" class="hidden bg-slate-900/95 border border-slate-700 rounded-xl p-4 text-xs text-slate-300 mt-2 transition-all">
+      <div class="flex justify-between items-center mb-1 text-slate-400 font-semibold">
+        <span class="text-amber-400">🎙️ Presenter Script / Speaker Notes for Slide <span id="notes-slide-num">1</span>:</span>
+        <span class="text-[10px] font-mono">Press 'N' to dismiss</span>
+      </div>
+      <div id="notes-content" class="leading-relaxed text-slate-200">
+        <!-- Dynamic Speaker notes filled by JS -->
+      </div>
+    </div>
+  </footer>
+
+  <!-- PRESENTATION SCRIPT -->
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    const speakerNotes = {
+      1: "Hi Raghu, Hi Neel. Today I'm presenting the RFx Decision Cockpit for our take-home assignment, 'Kill the Quote Spreadsheet'. We took on an enterprise scenario: procuring ₹4.5 Crore of campus IT infrastructure across 30 lines with 5 messy vendor submissions. I'll show you how we turn a 4-day spreadsheet headache into a 3-minute, mathematically defensible award.",
+      2: "Here is why enterprise procurement is broken today. Suppliers never reply using clean portal templates. TechPro omitted 3 lines. GlobalIT quoted in US Dollars with a 12% rebate hidden in a Page 3 footnote. QuickByte sent unstructured Word paragraphs looking cheap at ₹2.70 Cr. DigitalEdge sent an angled phone photo quoting cables per 100m spool instead of 305m box. And Shree IT sent a 2-line email saying 'same as last year'. In the real world, buyers spend 4 days copy-pasting this into Excel.",
+      3: "To solve this, we built a 4-stage Decision Cockpit. Stage 1: RFx Genesis converts natural language into a 30-item Bill of Materials. Stage 2: Universal Inbox ingests all 5 formats natively with zero vendor onboarding. Stage 3: Decision Matrix renders every bid side-by-side in INR with full raw quote transparency. Stage 4: Bi-Directional Co-Pilot models what-ifs and exports 1-click Coupa JSON and NetSuite CSV payloads.",
+      4: "This is our cardinal engineering rule: We never allow an AI language model to perform arithmetic. Gemini 3.6 Multimodal is strictly restricted to Perception—reading handwriting, angled photos, footnotes, and questionnaires. 100% of the math—FX conversion at ₹83.50, 3.05× spool multipliers, footnote rebates, and totals—is calculated by deterministic Python code. No math hallucinations.",
+      5: "How does a buyer staking ₹4 Crore trust what is on screen? Every price cell gets a confidence score. DigitalEdge's angled phone photo drops to 0.62 because of the spool packaging mismatch. That hits our 75% Safety Gate: the system refuses autonomous entry and raises an amber 'Review Spool' flag. The buyer opens the slide-over drawer, sees the cropped photo snippet of the paper rate card, and verifies it with one click.",
+      6: "Here is the commercial intelligence in action: unmasking the low-bid trap. QuickByte looks cheapest at ₹2.70 Crore. But our audit engine identified 4 non-negotiable additions: 3 omitted lines (+₹10.5L), 16GB soldered RAM spec drift (+₹4.2L), and missing freight and warranty (+₹14.8L). Their true landed cost is ₹3.02 Crore! We prevented a massive multi-lakh procurement mistake.",
+      7: "Next, scenario modeling. When we ask our Co-Pilot: 'What if we enforce 4-hour on-site SLA for laptops?', it catches that GlobalIT is remote from Singapore, while TechPro has a 4-hour local Bengaluru depot. The matrix dynamically updates: laptops switch to TechPro, and the spend recalculates live to ₹2.99 Crore. For the MVP, we prioritized trust and defensibility, and deliberately omitted forced vendor logins and autonomous PO releases.",
+      8: "Finally, where the better problem actually is. Quote transcription is an operational win that saves 3 days. But as Aerchain scales from $4M to $25M ARR, the true multi-million dollar bleed in enterprise spend is Post-Award Contract and Invoice Drift. Vendors quote low to win, then overbill on freight, delivery, and spec substitutions. Connecting this RFx matrix directly into 3-way invoice matching in SAP or Oracle ERP is where the massive enterprise value lives."
+    };
+
+    function updateSlide() {
+      for (let i = 1; i <= totalSlides; i++) {
+        const slide = document.getElementById(`slide-${i}`);
+        if (slide) {
+          if (i === currentSlide) {
+            slide.classList.remove('hidden');
+            slide.classList.add('flex');
+          } else {
+            slide.classList.remove('flex');
+            slide.classList.add('hidden');
+          }
+        }
+      }
+
+      document.getElementById('slide-num-text').innerText = currentSlide;
+      document.getElementById('notes-slide-num').innerText = currentSlide;
+      document.getElementById('notes-content').innerText = speakerNotes[currentSlide] || '';
+
+      renderDots();
+    }
+
+    function renderDots() {
+      const container = document.getElementById('dot-container');
+      container.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.onclick = () => { currentSlide = i; updateSlide(); };
+        dot.className = `h-2 rounded-full transition-all ${i === currentSlide ? 'w-6 bg-blue-500' : 'w-2 bg-slate-700 hover:bg-slate-600'}`;
+        container.appendChild(dot);
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function toggleNotes() {
+      const panel = document.getElementById('notes-panel');
+      panel.classList.toggle('hidden');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        prevSlide();
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize
+    updateSlide();
+  </script>
+</body>
+</html>

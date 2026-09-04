@@ -64,6 +64,12 @@ def _load_comparison():
 async def root():
     return FileResponse(str(BASE / "static" / "index.html"))
 
+@app.get("/presentation")
+@app.get("/presentation.html")
+@app.get("/deck")
+async def presentation_deck():
+    return FileResponse(str(BASE / "static" / "presentation.html"))
+
 @app.get("/api/rfx")
 async def get_rfx():
     from data import RFX
