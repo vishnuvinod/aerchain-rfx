@@ -78,25 +78,6 @@
 
     <div class="flex-1"></div>
 
-    <!-- Navigation pills -->
-    <div class="flex items-center bg-slate-800/80 p-1 rounded-lg border border-slate-700 text-xs">
-      <button @click="viewMode='cockpit'; currentStep=2"
-              :class="viewMode==='cockpit' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
-              class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-        <span>📊</span> Decision Cockpit
-      </button>
-      <button @click="viewMode='rfx_builder'; currentStep=0"
-              :class="viewMode==='rfx_builder' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
-              class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-        <span>📋</span> RFx Scope
-      </button>
-      <button @click="viewMode='vendor_inbox'; currentStep=1"
-              :class="viewMode==='vendor_inbox' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
-              class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
-        <span>📬</span> Raw Submissions (5)
-      </button>
-    </div>
-
     <!-- Co-pilot Toggle -->
     <button @click="copilotOpen = !copilotOpen"
             :class="copilotOpen ? 'bg-blue-600/30 text-blue-300 border-blue-500/50' : 'bg-slate-800 text-slate-300 border-slate-700'"
@@ -112,28 +93,25 @@
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <!-- 1B. WORKFLOW STEPPER BAR — End-to-End Procurement Journey                 -->
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-  <div class="fixed top-14 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-xs">
-    <div class="max-w-5xl mx-auto flex items-center justify-center py-2 px-4 gap-1">
+  <div class="fixed top-14 left-0 right-0 z-40 bg-[#0e1e38] border-b border-slate-800 shadow-md py-2">
+    <div class="max-w-5xl mx-auto flex items-center justify-between px-4">
       <template x-for="(step, idx) in workflowSteps" :key="idx">
-        <div class="flex items-center gap-1" :class="idx < workflowSteps.length - 1 ? 'flex-1' : ''">
+        <div class="flex items-center" :class="idx < workflowSteps.length - 1 ? 'flex-1' : ''">
           <button @click="navigateStep(idx)"
-                  class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all whitespace-nowrap"
+                  class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all shadow-xs cursor-pointer"
                   :class="{
-                    'step-done': idx < currentStep,
-                    'step-active': idx === currentStep,
-                    'step-pending': idx > currentStep
+                    'bg-emerald-600 hover:bg-emerald-500 text-white': idx < currentStep,
+                    'bg-blue-600 text-white ring-2 ring-blue-400': idx === currentStep,
+                    'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700': idx > currentStep
                   }">
-            <span class="w-4.5 h-4.5 rounded-full flex items-center justify-center text-[10px] font-black"
-                  :class="{
-                    'bg-white/30': idx <= currentStep,
-                    'bg-slate-300/50': idx > currentStep
-                  }"
+            <span class="w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black"
+                  :class="idx <= currentStep ? 'bg-white/20' : 'bg-slate-700'"
                   x-text="idx < currentStep ? '✓' : (idx + 1)"></span>
             <span x-text="step.label"></span>
           </button>
           <div x-show="idx < workflowSteps.length - 1"
-               class="step-connector"
-               :class="idx < currentStep ? 'bg-emerald-400' : 'bg-slate-200'"></div>
+               class="h-[2px] flex-1 mx-2 transition-colors"
+               :class="idx < currentStep ? 'bg-emerald-500' : 'bg-slate-700'"></div>
         </div>
       </template>
     </div>
@@ -1038,10 +1016,10 @@
         <p class="text-xs text-slate-500 mt-0.5">Transform unstructured campus requirements into a multi-lot 30-item procurement specification with auto-calculated port math, UPS sizing, and qualification rules.</p>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="viewMode='cockpit'" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-2 rounded-lg font-semibold transition-colors">
+        <button @click="navigateStep(2)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3 py-2 rounded-lg font-semibold transition-colors">
           ← Back to Cockpit
         </button>
-        <button @click="viewMode='cockpit'" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow flex items-center gap-1.5 transition-colors">
+        <button @click="navigateStep(2)" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow flex items-center gap-1.5 transition-colors">
           <span>Proceed to Commercial Matrix (5 Ingested)</span>
           <span>→</span>
         </button>
@@ -1228,7 +1206,7 @@
         </div>
         <div class="mt-4 pt-3 border-t border-blue-200 flex items-center justify-between">
           <span class="text-[11px] font-mono text-slate-500">5 Responses Ingested</span>
-          <button @click="viewMode='cockpit'" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition-colors flex items-center gap-1.5">
+          <button @click="navigateStep(2)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition-colors flex items-center gap-1.5">
             <span>Open Decision Cockpit</span>
             <span>→</span>
           </button>
@@ -1243,7 +1221,7 @@
         <h1 class="text-xl font-bold text-slate-900">📬 Supplier Unstructured Submissions</h1>
         <p class="text-xs text-slate-500">Zero forced templates · 5 formats ingested autonomously · AI extraction with provenance chain</p>
       </div>
-      <button @click="viewMode='cockpit'" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded font-bold">
+      <button @click="navigateStep(2)" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded font-bold">
         ← Back to Cockpit
       </button>
     </div>
@@ -1389,6 +1367,9 @@
         async init() {
           await this.loadComparison();
 
+          // Start in clean executive lot collapsed state by default
+          this.collapseAllCategories(true);
+
           // Pre-seed Co-pilot with VP scenario (Feedback Point 3)
           this.copilotHistory.push({
             id: 1,
@@ -1501,11 +1482,13 @@
           this.showToast('All category lots expanded', 'info');
         },
 
-        collapseAllCategories() {
+        collapseAllCategories(silent = false) {
           const map = {};
           this.categories.forEach(c => { map[c] = true; });
           this.collapsedCategories = map;
-          this.showToast('All category lots collapsed to executive view', 'info');
+          if (!silent) {
+            this.showToast('All category lots collapsed to executive view', 'info');
+          }
         },
 
         get visibleCategories() {
