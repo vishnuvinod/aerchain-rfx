@@ -146,6 +146,16 @@
           </button>
         </div>
 
+        <!-- Smart Accordion Expand / Collapse Controls -->
+        <div class="flex items-center border border-slate-300 rounded overflow-hidden text-[11px]">
+          <button @click="expandAllCategories()" class="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium flex items-center gap-1" title="Expand all 5 category lots">
+            <span>⊞</span> Expand All
+          </button>
+          <button @click="collapseAllCategories()" class="px-2.5 py-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium border-l border-slate-200 flex items-center gap-1" title="Collapse all into executive rollups">
+            <span>⊟</span> Collapse All
+          </button>
+        </div>
+
         <div class="flex-1"></div>
 
         <!-- Active Scenario Pill -->
@@ -308,24 +318,43 @@
           <!-- 30 COMPARISON ROWS -->
           <tbody class="divide-y divide-slate-200">
             <template x-for="(row, rIdx) in filteredRows" :key="row.item_id">
-              <!-- Category Header Divider Row -->
+              <!-- Category Header Divider Row (Smart Rollup Accordion) -->
               <template x-if="rIdx === 0 || row.category !== filteredRows[rIdx-1]?.category">
-                <tr class="bg-slate-200/90 font-bold text-slate-800 tracking-wider uppercase text-[11px] border-t-2 border-slate-300">
-                  <td colspan="7" class="px-4 py-2 bg-slate-200/95">
+                <tr @click="toggleCategory(row.category)"
+                    class="bg-slate-200/95 hover:bg-slate-300/90 cursor-pointer font-bold text-slate-800 tracking-wider uppercase text-[11px] border-t-2 border-slate-300 transition-colors select-none">
+                  <td colspan="7" class="px-4 py-2.5">
                     <div class="flex items-center justify-between">
-                      <span class="flex items-center gap-2">
-                        <span>📁 Category:</span>
-                        <span class="text-blue-800 font-black text-xs" x-text="row.category"></span>
-                      </span>
-                      <span class="text-slate-500 font-mono text-[10px] normal-case"
-                            x-text="getCategoryItemCount(row.category) + ' Line Items in this Category'"></span>
+                      <div class="flex items-center gap-2.5">
+                        <span class="text-blue-700 font-bold text-xs" x-text="isCategoryCollapsed(row.category) ? '▶' : '▼'"></span>
+                        <span class="flex items-center gap-1.5">
+                          <span class="text-slate-500 font-medium">Lot:</span>
+                          <span class="text-blue-900 font-black text-xs" x-text="row.category"></span>
+                        </span>
+                        <span class="bg-white/80 text-slate-700 text-[10px] font-mono px-2 py-0.5 rounded-full border border-slate-300"
+                              x-text="getCategoryItemCount(row.category) + ' Items'"></span>
+                      </div>
+
+                      <!-- Category Rollup Intelligence (Visible even when collapsed!) -->
+                      <div class="flex items-center gap-4 text-[10px] font-mono normal-case">
+                        <div class="text-slate-600">
+                          <span>Est. Benchmark:</span>
+                          <strong class="text-slate-900" x-text="'₹' + formatCompact(getCategoryBenchmarkSpend(row.category))"></strong>
+                        </div>
+                        <div class="bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-bold">
+                          <span>Lowest Compliant: </span>
+                          <span x-text="getCategoryLowestVendor(row.category)"></span>
+                        </div>
+                        <span class="text-blue-600 font-semibold hover:underline text-[10px]"
+                              x-text="isCategoryCollapsed(row.category) ? 'Expand Line Items ▼' : 'Collapse ▲'"></span>
+                      </div>
                     </div>
                   </td>
                 </tr>
               </template>
 
               <!-- Commercial Line Item Row -->
-              <tr class="hover:bg-blue-50/50 transition-colors divide-x divide-slate-100"
+              <tr x-show="!isCategoryCollapsed(row.category)"
+                  class="hover:bg-blue-50/50 transition-colors divide-x divide-slate-100"
                   :class="activeScenario?.award_map?.[row.item_code] ? 'bg-emerald-50/20' : ''">
 
                 <!-- Sticky Item Spec -->
@@ -1157,6 +1186,7 @@
         searchQuery: '',
         filterCategory: '',
         strictISO: false,
+        collapsedCategories: {},
         activeScenario: null,
         rfxPromptInput: "Draft a complete enterprise RFx for a 200-seat tech campus refresh in Bengaluru. Include enterprise dual-socket Xeon servers, Dell corporate laptops, Cisco PoE+ switching, online rack UPS power backup, and CAT6 structured cabling with 3-year on-site SLA.",
         targetBudgetInput: "4,50,00,000",
@@ -1224,6 +1254,10 @@
             setTimeout(() => {
               this.openScopeFollowUp('techpro');
             }, 300);
+          } else if (hash === '#collapse') {
+            setTimeout(() => {
+              this.collapseAllCategories();
+            }, 350);
           }
         },
 
@@ -1246,6 +1280,52 @@
         getCategoryItemCount(cat) {
           if (!this.comparison) return 0;
           return this.comparison.rows.filter(r => r.category === cat).length;
+        },
+
+        getCategoryBenchmarkSpend(cat) {
+          if (!this.comparison) return 0;
+          return this.comparison.rows
+            .filter(r => r.category === cat)
+            .reduce((sum, r) => sum + ((r.benchmark_price_inr || 45000) * r.quantity), 0);
+        },
+
+        getCategoryLowestVendor(cat) {
+          if (!this.comparison) return 'Analyzing...';
+          const items = this.comparison.rows.filter(r => r.category === cat);
+          if (!items.length) return 'N/A';
+          const compliant = ['techpro', 'globalit', 'digitaledge'];
+          let bestVid = 'techpro';
+          let minSpend = Infinity;
+          compliant.forEach(vid => {
+            const spend = items.reduce((sum, r) => {
+              const p = r.vendors[vid]?.normalised_price_inr || (r.benchmark_price_inr || 45000);
+              return sum + (p * r.quantity);
+            }, 0);
+            if (spend < minSpend) {
+              minSpend = spend;
+              bestVid = vid;
+            }
+          });
+          const vObj = this.vendors.find(v => v.id === bestVid);
+          return `${vObj?.name?.split(' ')[0] || bestVid} (₹${this.formatCompact(minSpend)})`;
+        },
+
+        toggleCategory(cat) {
+          this.collapsedCategories[cat] = !this.collapsedCategories[cat];
+        },
+
+        isCategoryCollapsed(cat) {
+          return !!this.collapsedCategories[cat];
+        },
+
+        expandAllCategories() {
+          this.collapsedCategories = {};
+        },
+
+        collapseAllCategories() {
+          const map = {};
+          this.categories.forEach(c => { map[c] = true; });
+          this.collapsedCategories = map;
         },
 
         get filteredRows() {
