@@ -19,7 +19,10 @@ load_dotenv()
 
 BASE = Path(__file__).parent
 EXTRACTED_DIR = BASE / "data" / "extracted"
-EXTRACTED_DIR.mkdir(parents=True, exist_ok=True)
+try:
+    EXTRACTED_DIR.mkdir(parents=True, exist_ok=True)
+except OSError:
+    pass
 
 app = FastAPI(title="Aerchain RFx System", version="1.0.0")
 
