@@ -335,6 +335,17 @@ def build_comparison() -> dict:
         else:
             iso_uncovered_items.append({"code": r["item_code"], "desc": r["description"]})
 
+    # On-site SLA qualified award: ISO 9001 + 4-Hour On-Site SLA Gate
+    # Reallocates client compute laptops from GlobalIT (Remote Only Singapore) to TechPro (Bengaluru Depot)
+    onsite_award_map = iso_bpl_map.copy()
+    onsite_award_map["LPT-001"] = "techpro"
+    onsite_award_map["LPT-002"] = "techpro"
+    onsite_total = 0
+    for r in rows:
+        win_v = onsite_award_map.get(r["item_code"])
+        if win_v and r["vendors"][win_v].get("normalised_price_inr"):
+            onsite_total += r["vendors"][win_v]["normalised_price_inr"] * r["quantity"]
+
     return {
         "rfx_id": RFX["id"],
         "rfx_title": RFX["title"],
@@ -367,6 +378,16 @@ def build_comparison() -> dict:
                 "total_lines": len(rows),
                 "missing_lines": iso_uncovered_items,
                 "notes": f"Full 30/30 scope covered across TechPro (12 items), GlobalIT (10 items), and DigitalEdge (8 items). 100% ISO certified.",
+            },
+            "onsite_sla_award": {
+                "name": "On-Site SLA Enforced Award (TechPro Bengaluru Depot)",
+                "total_inr": round(onsite_total, 2),
+                "award_map": onsite_award_map,
+                "coverage_pct": 100.0,
+                "covered_count": 30,
+                "total_lines": len(rows),
+                "missing_lines": [],
+                "notes": "Laptops reallocated to TechPro (4h on-site Bengaluru depot). GlobalIT retained for non-end-user lots.",
             }
         }
     }

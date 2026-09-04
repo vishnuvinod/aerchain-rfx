@@ -447,7 +447,7 @@
               <template x-for="row in getCategoryFilteredRows(cat)" :key="row.item_id">
                 <tr x-show="!isCategoryCollapsed(cat)"
                     class="hover:bg-blue-50/50 transition-colors divide-x divide-slate-100"
-                    :class="activeScenario?.award_map?.[row.item_code] ? 'bg-emerald-50/20' : ''">
+                    :class="getEffectiveAwardVendor(row) ? 'bg-emerald-50/20' : ''">
 
                   <!-- Sticky Item Spec -->
                   <td class="sticky-col-item bg-white px-3 py-2 border-r border-slate-200">
@@ -512,7 +512,7 @@
                         <!-- 4. Badges (Awarded, Review, ERP Available) -->
                         <div class="flex flex-wrap gap-1 mt-1">
                           <!-- Awarded Badge -->
-                          <template x-if="activeScenario?.award_map?.[row.item_code] === v.id">
+                          <template x-if="getEffectiveAwardVendor(row) === v.id">
                             <span class="bg-emerald-600 text-white font-black text-[9px] px-1.5 py-0.2 rounded shadow-sm tracking-wide">
                               AWARDED
                             </span>
@@ -651,6 +651,11 @@
                   class="w-full text-left text-[11px] bg-white hover:bg-rose-50 hover:border-rose-300 border border-slate-200 text-slate-700 px-2.5 py-1.5 rounded transition-all flex items-start gap-1.5 shadow-2xs">
             <span class="text-rose-600 font-bold">Q4:</span>
             <span>QuickByte quoted ₹2.70 Cr. Why shouldn't we award to them? (L1 Trap)</span>
+          </button>
+          <button @click="askCopilot('Notice GlobalIT offers laptops at ₹77,000 vs TechPro ₹88,000, but only remote support from Singapore. What happens if we enforce our 4-hour On-Site SLA Gate?')"
+                  class="w-full text-left text-[11px] bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-slate-700 px-2.5 py-1.5 rounded transition-all flex items-start gap-1.5 shadow-2xs">
+            <span class="text-emerald-600 font-bold">Q5:</span>
+            <span>Enforce 4-hr On-Site SLA: Award Laptops to TechPro (Bengaluru Depot)</span>
           </button>
         </div>
       </div>
@@ -2078,9 +2083,29 @@
           return "POLICY EXCLUSION";
         },
 
+        getEffectiveAwardVendor(row) {
+          if (!row) return null;
+          let baseMap = this.activeScenario?.award_map || this.comparison?.scenarios?.strict_quality_award?.award_map || {};
+          let preferred = baseMap[row.item_code];
+          if (preferred && !this.isVendorDisqualified(preferred)) {
+            return preferred;
+          }
+          // Preferred vendor is disqualified (e.g. globalit on-site SLA failure or excluded by policy)
+          // Find lowest compliant non-disqualified vendor who quoted this row
+          let candidates = Object.keys(row.vendors || {}).filter(vid => {
+            let c = row.vendors[vid];
+            return c && c.normalised_price_inr && !this.isVendorDisqualified(vid);
+          });
+          if (candidates.length > 0) {
+            candidates.sort((a, b) => row.vendors[a].normalised_price_inr - row.vendors[b].normalised_price_inr);
+            return candidates[0];
+          }
+          return null;
+        },
+
         getCellStyle(row, vid) {
           if (this.isVendorDisqualified(vid)) return 'cell-dimmed bg-slate-50';
-          if (this.activeScenario?.award_map?.[row.item_code] === vid) return 'cell-awarded';
+          if (this.getEffectiveAwardVendor(row) === vid) return 'cell-awarded';
           const cell = row.vendors[vid];
           if (!cell || cell.status === 'NOT_QUOTED') return 'bg-slate-50 text-slate-400';
           if (cell.flags?.includes('VERIFICATION_REQUIRED') && !cell.is_verified) return 'bg-amber-50/70 border border-amber-200';
@@ -2248,6 +2273,9 @@
             total_tco: action.total_tco || 27800000,
             disqualify_vendors: action.disqualify_vendors || []
           };
+          if (action.name && (action.name.toLowerCase().includes("on-site") || action.name.toLowerCase().includes("onsite"))) {
+            this.strictOnsite = true;
+          }
         },
 
         resetScenario() {
@@ -2477,7 +2505,7 @@
 
           this.comparison.rows.forEach((row, idx) => {
             const itemCode = row.item_code;
-            const winningVid = awardMap[itemCode];
+            const winningVid = this.getEffectiveAwardVendor(row);
             if (winningVid) {
               const vObj = this.vendors.find(v => v.id === winningVid);
               const cell = row.vendors[winningVid];

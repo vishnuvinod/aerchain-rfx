@@ -7,11 +7,13 @@ import os
 import json
 import asyncio
 from pathlib import Path
-from google import genai
-from dotenv import load_dotenv
-
-load_dotenv(Path(__file__).parent / ".env")
-_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY", ""))
+try:
+    from google import genai
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).parent / ".env")
+    _client = genai.Client(api_key=os.getenv("GEMINI_API_KEY", ""))
+except Exception:
+    _client = None
 
 MODEL = "gemini-3.6-flash"
 
@@ -41,6 +43,11 @@ BEHAVIOUR RULES:
    - Hidden FOB Logistics & Port Handling: +Rs. 2,10,000.
    - True Landed TCO: Rs. 3,02,15,000.
    Conclude that the recommended ISO Split Award (Rs. 2,84,37,600) is actually Rs. 17.77 Lakhs cheaper and carries zero compliance risk.
+7. If the buyer asks about On-Site Support, SLA Gate, Singapore remote support, Laptops, or why GlobalIT shouldn't get laptops (e.g. 77,000 vs 88,000):
+   - Highlight that GlobalIT's quoted price for LPT-001 (Rs. 77,154) is EXW Singapore with REMOTE-ONLY support.
+   - For 50 developer laptops (LPT-001) and 100 enterprise units (LPT-002), the 4-Hour On-Site SLA Gate is non-negotiable.
+   - Disqualify GlobalIT from the Client Compute / Laptop lot and award LPT-001 (Rs. 88,000) and LPT-002 (Rs. 62,000) to TechPro Solutions (backed by their local Bengaluru 4-hour depot).
+   - Conclude with a SCENARIO_ACTION where award_map maps LPT-001 and LPT-002 to "techpro".
 
 Tone: Authoritative, audit-defensible, concise, and structured.
 """
@@ -198,7 +205,53 @@ Reject QuickByte on compliance and true TCO. Award the **Quality-Gated Split Awa
                 "is_fallback": True,
                 "engine": "offline_fallback"
             }
+        elif any(k in q_lower for k in ["onsite", "on-site", "support", "laptop", "singapore", "remote", "depot", "sla", "77,000", "88,000"]):
+            onsite_scen = comparison.get("scenarios", {}).get("onsite_sla_award") or comparison.get("scenarios", {}).get("strict_quality_award", {})
+            onsite_map = onsite_scen.get("award_map", {}).copy()
+            onsite_map["LPT-001"] = "techpro"
+            onsite_map["LPT-002"] = "techpro"
+            onsite_tco = onsite_scen.get("total_inr", 29907934)
+            return {
+                "answer": """### On-Site SLA Gate Enforced: Laptops Reallocated to TechPro Bengaluru Depot
+
+Forensic analysis of the **Client Compute & Laptops Lot (50 High-End Dev Laptops + 100 Enterprise Units)**:
+
+| Evaluation Dimension | GlobalIT Supplies Inc. | TechPro Solutions Pvt. Ltd. | Sourcing Impact & Verdict |
+| :--- | :--- | :--- | :--- |
+| **Headline Rate (LPT-001)** | **₹77,154** ($1,050 list - 12% footnote) | **₹88,000** (Net INR DDP Bengaluru) | GlobalIT appears ~₹10,800/unit cheaper on paper. |
+| **Support Architecture** | **Remote Only from Singapore** | **4-Hour On-Site NBD Depot** (Bengaluru) | **CRITICAL FAILURE:** GlobalIT has zero field engineers in India. |
+| **Incoterms & Transit Risk** | EXW Singapore (+17.5% freight/customs) | DDP Bengaluru Campus | GlobalIT introduces customs delay and foreign exchange volatility. |
+| **Developer Downtime Risk** | 7–14 days RMA turnaround to Singapore | 4-hour hot-swap replacement | 50 developers idle = ₹12.5L productivity loss in 1 month. |
+
+#### **Executive Allocation Decision:**
+1. **Enforce On-Site SLA Gate:** GlobalIT is **disqualified from the Client Compute Lot** due to lack of domestic on-site repair SLA.
+2. **Reallocate Laptops to TechPro Solutions:**
+   - **LPT-001 (50 units):** Awarded to **TechPro** at **₹88,000** (₹44,00,000 total).
+   - **LPT-002 (100 units):** Awarded to **TechPro** at **₹62,000** (₹62,00,000 total).
+3. **Preserve High-Value Infrastructure Savings:** GlobalIT is retained only for enterprise infrastructure (Blade Chassis, Core Switches) where campus engineering handles hot-spares.
+4. **Defensible Spend:** Total optimized TCO is **₹2.99 Crore**—delivering **₹1.51 Cr savings against budget** while eliminating campus operational downtime.""",
+                "chart": {
+                    "type": "bar",
+                    "labels": ["GlobalIT Paper Headline", "Freight & Customs (+17.5%)", "Downtime Risk Exposure", "TechPro True Landed TCO"],
+                    "datasets": [{
+                        "label": "Cost / Risk Impact (Lakhs INR)",
+                        "data": [38.58, 6.75, 12.50, 44.00]
+                    }],
+                    "title": "50 Developer Laptops: Paper Savings vs 4-Hour On-Site SLA Protection"
+                },
+                "scenario_action": {
+                    "name": "On-Site SLA Enforced Award (TechPro Bengaluru Depot)",
+                    "disqualify_vendors": ["quickbyte", "shree"],
+                    "award_map": onsite_map,
+                    "total_tco": onsite_tco
+                },
+                "model": "aerchain-analyst-v1",
+                "question": question,
+                "is_fallback": True,
+                "engine": "offline_fallback"
+            }
         elif "split" in q_lower or "quality" in q_lower or "iso" in q_lower:
+            iso_scen = comparison.get("scenarios", {}).get("strict_quality_award", {})
             return {
                 "answer": """### Quality-Gated Split Allocation (ISO 9001 Compliant)
 
@@ -213,7 +266,8 @@ Disqualifying **QuickByte** (No ISO 9001 certification) and **Shree IT** (14 mis
                 "scenario_action": {
                     "name": "Quality-Gated Split Award (ISO 9001 + 3yr SLA)",
                     "disqualify_vendors": ["quickbyte", "shree"],
-                    "total_tco": 28437600
+                    "award_map": iso_scen.get("award_map", {}),
+                    "total_tco": iso_scen.get("total_inr", 28437600)
                 },
                 "model": "aerchain-analyst-v1",
                 "question": question,

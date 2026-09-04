@@ -146,7 +146,7 @@ PRICES = {
     2:  {"techpro": 188000,  "globalit": 192050,  "quickbyte": 175000,  "digitaledge": 178000,  "shree": 182000},
     3:  {"techpro": None,    "globalit": 876750,  "quickbyte": None,    "digitaledge": None,    "shree": None},
     4:  {"techpro": 96000,   "globalit": 91850,   "quickbyte": 91000,   "digitaledge": 92000,   "shree": 89000},
-    5:  {"techpro": 95000,   "globalit": 87675,   "quickbyte": 88000,   "digitaledge": 90000,   "shree": 87500},
+    5:  {"techpro": 88000,   "globalit": 87675,   "quickbyte": 88000,   "digitaledge": 90000,   "shree": 87500},
     6:  {"techpro": 62000,   "globalit": 56780,   "quickbyte": 54000,   "digitaledge": 57000,   "shree": 53500},
     7:  {"techpro": None,    "globalit": None,    "quickbyte": 172000,  "digitaledge": 175000,  "shree": None},
     8:  {"techpro": 42000,   "globalit": 43420,   "quickbyte": 35000,   "digitaledge": 38000,   "shree": 34500},
