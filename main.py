@@ -195,6 +195,10 @@ async def get_questionnaire():
         }
     return result
 
+@app.get("/api")
+async def api_root():
+    return {"status": "ok", "app": "Aerchain RFx Intelligence Cockpit", "version": "1.0.0"}
+
 @app.get("/api/health")
 async def health():
     api_key = os.getenv("GEMINI_API_KEY", "")
