@@ -51,7 +51,7 @@
     .step-connector { height:2px; flex:1; min-width:20px; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-800 font-sans antialiased" x-data="cockpit()" x-init="init()" @keydown.escape.window="drawerOpen=false; showAllocationModal=false; showScopeModal=false" x-cloak>
+<body class="bg-slate-900 text-slate-800 font-sans antialiased" x-data="cockpit()" x-init="init()" @keydown.escape.window="drawerOpen=false; showAllocationModal=false; showScopeModal=false; showQuestionnaireModal=false; showExecutiveMemoModal=false" x-cloak>
 
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <!-- 1. TOP GLOBAL COMMAND BAR                                                   -->
@@ -242,6 +242,16 @@
             <button @click="resetScenario()" class="text-emerald-700 hover:text-emerald-950 font-bold ml-0.5 text-xs" title="Reset Scenario">✕</button>
           </div>
 
+          <!-- 10-Point Audit Trigger -->
+          <button @click="openQuestionnaireModal()" class="bg-indigo-700 hover:bg-indigo-800 text-white font-semibold px-2.5 py-1 rounded text-xs flex items-center gap-1.5 transition-all whitespace-nowrap shrink-0 shadow-xs" title="10-Point Vendor Qualification & Compliance Audit">
+            <span>📋</span> 10-Pt Audit
+          </button>
+
+          <!-- Executive Memo & ERP Trigger -->
+          <button @click="openExecutiveMemo()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2.5 py-1 rounded text-xs flex items-center gap-1.5 transition-all whitespace-nowrap shrink-0 shadow-xs" title="1-Page Executive Sourcing Memo & Coupa/NetSuite Export">
+            <span>📄</span> Exec Memo
+          </button>
+
           <!-- Export CSV -->
           <button @click="exportCSV()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-2.5 py-1 rounded text-xs flex items-center gap-1 transition-all whitespace-nowrap shrink-0">
             <span>⬇</span> Export
@@ -357,7 +367,12 @@
             <!-- Row 2: Live Vendor Risk Audit & ERP Invoice Drift -->
             <tr class="bg-amber-50/70 text-slate-700 divide-x divide-slate-200 border-b-2 border-slate-300 shadow-sm text-[10px]">
               <td class="sticky-col-item bg-amber-50/95 px-3 py-2">
-                <div class="font-bold text-slate-800">Supplier Reliability Audit</div>
+                <div class="flex items-center justify-between">
+                  <div class="font-bold text-slate-800">Supplier Reliability Audit</div>
+                  <button @click="openQuestionnaireModal()" class="bg-indigo-700 hover:bg-indigo-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-2xs transition-all flex items-center gap-1" title="Open 10-Point Questionnaire Audit">
+                    <span>📋</span> Audit
+                  </button>
+                </div>
                 <div class="text-[10px] text-blue-700 font-medium">ERP Contract Drift · ISO · SLA</div>
               </td>
               <td class="sticky-col-qty bg-amber-50/95 text-center font-bold text-slate-500">Audit</td>
@@ -503,6 +518,15 @@
                             </span>
                           </template>
 
+                          <!-- Spec Drift / Hardware Downgrade Warning Badge -->
+                          <template x-if="row.vendors[v.id]?.spec_drift">
+                            <span class="bg-amber-500 text-slate-950 font-black text-[9px] px-1.5 py-0.5 rounded shadow-xs border border-amber-600 flex items-center gap-1 animate-pulse cursor-pointer"
+                                  @click.stop="inspectCell(row, v.id)"
+                                  title="Vendor hardware downgrade detected (+₹7.25L remediation)">
+                              ⚠ Spec Drift
+                            </span>
+                          </template>
+
                           <!-- Review / Amber Flag -->
                           <template x-if="row.vendors[v.id]?.flags?.includes('VERIFICATION_REQUIRED') && !row.vendors[v.id]?.is_verified">
                             <span class="bg-amber-100 text-amber-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-amber-300">
@@ -623,6 +647,11 @@
             <span class="text-purple-600 font-bold">Q3:</span>
             <span>Audit the angled photo: verify CAT6 cable spool vs box</span>
           </button>
+          <button @click="askCopilot('QuickByte quoted ₹2.70 Cr. Why shouldn\'t we award to them?')"
+                  class="w-full text-left text-[11px] bg-white hover:bg-rose-50 hover:border-rose-300 border border-slate-200 text-slate-700 px-2.5 py-1.5 rounded transition-all flex items-start gap-1.5 shadow-2xs">
+            <span class="text-rose-600 font-bold">Q4:</span>
+            <span>QuickByte quoted ₹2.70 Cr. Why shouldn't we award to them? (L1 Trap)</span>
+          </button>
         </div>
       </div>
 
@@ -733,6 +762,49 @@
           <div class="bg-white border border-slate-200 rounded p-2.5 font-mono text-[11px] text-slate-700 mt-2 leading-relaxed"
                x-text="activeCell?.cell?.source_snippet"></div>
         </div>
+
+        <!-- Spec Drift / Hardware Downgrade Remediation Card -->
+        <template x-if="activeCell?.cell?.spec_drift">
+          <div class="bg-amber-50 border-2 border-amber-500 rounded-xl p-3.5 shadow-xs">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-amber-900 text-xs uppercase tracking-wide flex items-center gap-1.5">
+                <span class="text-sm">⚠️</span> SPEC DRIFT / DOWNGRADE DETECTED
+              </span>
+              <span class="bg-amber-200 text-amber-950 text-[10px] font-black px-2 py-0.5 rounded font-mono border border-amber-300">
+                AUDIT RISK
+              </span>
+            </div>
+            <p class="text-[11px] text-amber-950 font-medium mb-2 leading-relaxed">
+              Vendor quoted hardware configuration that deviates from mandatory RFx architectural standards.
+            </p>
+            <div class="space-y-2 bg-white border border-amber-200 rounded-lg p-3 text-[11px]">
+              <div>
+                <span class="text-slate-500 text-[10px] uppercase font-bold tracking-wider">RFx Mandate:</span>
+                <div class="font-bold text-slate-800" x-text="activeCell?.cell?.spec_drift?.requested_spec"></div>
+              </div>
+              <div class="pt-1.5 border-t border-slate-100">
+                <span class="text-amber-800 text-[10px] uppercase font-bold tracking-wider">Vendor Quoted:</span>
+                <div class="font-bold text-rose-700" x-text="activeCell?.cell?.spec_drift?.quoted_spec"></div>
+              </div>
+              <div class="pt-1.5 border-t border-slate-100 text-slate-700 text-[10px] leading-relaxed">
+                <span class="font-bold text-slate-900">Technical Deficit: </span>
+                <span x-text="activeCell?.cell?.spec_drift?.defect_summary"></span>
+              </div>
+              <div class="pt-2 border-t border-amber-200 flex items-center justify-between bg-amber-50/70 -mx-3 -mb-3 p-2.5 rounded-b-lg">
+                <div>
+                  <div class="text-amber-950 font-bold text-xs">Estimated Remediation Penalty:</div>
+                  <div class="text-[10px] text-slate-500">₹<span x-text="activeCell?.cell?.spec_drift?.remediation_unit_cost_inr?.toLocaleString('en-IN')"></span> / unit × <span x-text="activeCell?.quantity"></span> units</div>
+                </div>
+                <div class="text-right">
+                  <div class="font-mono font-black text-rose-700 text-sm">
+                    +₹<span x-text="activeCell?.cell?.spec_drift?.total_remediation_inr?.toLocaleString('en-IN')"></span>
+                  </div>
+                  <span class="text-[9px] bg-rose-100 text-rose-800 px-1.5 py-0.2 rounded font-semibold">TCO Impact</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
 
         <!-- Extraction & Math Traceability Breakdown -->
         <div class="bg-blue-50/60 border border-blue-200 rounded-xl p-3.5">
@@ -882,13 +954,18 @@
         </div>
       </div>
 
-      <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-end gap-3">
-        <button @click="showAllocationModal=false" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 font-semibold">
-          Back
+      <div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button @click="openExecutiveMemo()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center gap-1.5 transition-all">
+          <span>📄</span> Executive Memo & ERP Export
         </button>
-        <button @click="commitAllocation()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg shadow">
-          Confirm & Commit Allocation to Matrix
-        </button>
+        <div class="flex items-center gap-2">
+          <button @click="showAllocationModal=false" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-600 font-semibold text-xs">
+            Back
+          </button>
+          <button @click="commitAllocation()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg text-xs shadow">
+            Confirm & Commit Allocation to Matrix
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1001,6 +1078,441 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 4C. 10-POINT QUALIFICATION & COMPLIANCE AUDIT MODAL                         -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div x-show="showQuestionnaireModal" x-cloak class="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] border border-slate-200 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="bg-[#0f2447] text-white p-4 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-sm shadow">📋</div>
+          <div>
+            <div class="text-[10px] font-mono text-indigo-300 uppercase tracking-widest">Section 3: Mandatory Evaluation Covenants</div>
+            <h2 class="text-base font-bold text-white">10-Point Supplier Qualification & Compliance Audit</h2>
+          </div>
+        </div>
+        <button @click="showQuestionnaireModal=false" class="text-slate-400 hover:text-white text-xl">✕</button>
+      </div>
+
+      <!-- Vendor Scorecard Bar -->
+      <div class="bg-slate-50 border-b border-slate-200 px-5 py-3 grid grid-cols-5 gap-3 shrink-0">
+        <template x-for="v in vendors" :key="v.id">
+          <div class="bg-white border rounded-xl p-2.5 shadow-2xs flex flex-col justify-between"
+               :class="qualData[v.id]?.score >= 8 ? 'border-emerald-300' : 'border-rose-300'">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-800 text-[11px] truncate" x-text="v.name.split(' ')[0]"></span>
+              <span class="font-mono font-bold text-xs px-1.5 py-0.5 rounded"
+                    :class="qualData[v.id]?.score >= 8 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'"
+                    x-text="qualData[v.id]?.score + '/10'"></span>
+            </div>
+            <div class="text-[10px] mt-1 text-slate-500 flex items-center justify-between">
+              <span :class="qualData[v.id]?.iso ? 'text-emerald-700 font-semibold' : 'text-rose-700 font-bold'"
+                    x-text="qualData[v.id]?.iso ? '✓ ISO 9001' : '✕ No ISO'"></span>
+              <span class="font-mono text-slate-600" x-text="qualData[v.id]?.incoterm"></span>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Filter / Search Toolbar -->
+      <div class="px-5 py-2.5 bg-white border-b border-slate-200 flex items-center justify-between text-xs shrink-0">
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-700 hover:text-blue-600">
+            <input type="checkbox" x-model="questionnaireFilterFailures" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500">
+            <span>Show Compliance Discrepancies & Warnings Only</span>
+          </label>
+          <span class="text-slate-400">•</span>
+          <span class="text-slate-500 text-[11px]">Audit Mandate: ISO 9001 + 3yr on-site SLA mandatory for campus award</span>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono">
+          10 Standardized Evaluation Questions
+        </div>
+      </div>
+
+      <!-- Main Audit Matrix Table (Scrollable) -->
+      <div class="flex-1 overflow-auto p-5 bg-slate-50">
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+          <table class="w-full border-collapse text-left text-xs">
+            <thead class="bg-slate-100 text-slate-700 border-b font-bold sticky top-0 z-10 shadow-2xs">
+              <tr>
+                <th class="p-3 w-10 text-center text-slate-400 font-mono">#</th>
+                <th class="p-3 w-72 text-left">RFx Compliance Question</th>
+                <template x-for="v in vendors" :key="v.id">
+                  <th class="p-3 text-left w-52" :class="isVendorDisqualified(v.id) ? 'opacity-60 bg-slate-200/50' : ''">
+                    <div class="font-bold text-slate-900" x-text="v.name"></div>
+                    <div class="text-[10px] text-slate-500 font-mono" x-text="v.response_format + ' Response'"></div>
+                  </th>
+                </template>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-[11px]">
+              <template x-for="q in getFilteredQuestions()" :key="q.id">
+                <tr class="hover:bg-slate-50/70 transition-colors">
+                  <td class="p-3 text-center font-mono font-bold text-slate-400 align-top" x-text="'Q' + q.id"></td>
+                  <td class="p-3 font-medium text-slate-800 align-top">
+                    <div class="font-semibold text-slate-900" x-text="q.question"></div>
+                    <div class="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-mono" x-text="'Type: ' + q.type"></div>
+                  </td>
+                  <template x-for="v in vendors" :key="v.id">
+                    <td class="p-3 align-top border-l border-slate-100"
+                        :class="isVendorDisqualified(v.id) ? 'bg-slate-50/50' : ''">
+                      <!-- Pass / Fail Badge -->
+                      <div class="flex items-center gap-1.5 mb-1.5">
+                        <template x-if="getQuestionResponse(v.id, q.id)?.pass">
+                          <span class="bg-emerald-100 text-emerald-800 font-bold text-[9px] px-1.5 py-0.2 rounded flex items-center gap-0.5 border border-emerald-300">
+                            ✓ PASS
+                          </span>
+                        </template>
+                        <template x-if="!getQuestionResponse(v.id, q.id)?.pass">
+                          <span class="bg-rose-100 text-rose-800 font-black text-[9px] px-1.5 py-0.2 rounded flex items-center gap-0.5 border border-rose-300 animate-pulse">
+                            ✕ FAIL
+                          </span>
+                        </template>
+                        <template x-if="getQuestionResponse(v.id, q.id)?.flag">
+                          <span class="bg-amber-100 text-amber-900 font-bold text-[9px] px-1.5 py-0.2 rounded border border-amber-300"
+                                x-text="getQuestionResponse(v.id, q.id)?.flag"></span>
+                        </template>
+                      </div>
+
+                      <!-- Answer Content -->
+                      <div class="text-slate-700 leading-relaxed font-sans"
+                           x-text="getQuestionResponse(v.id, q.id)?.answer || '—'"></div>
+
+                      <!-- Detail or Certificate Note -->
+                      <template x-if="getQuestionResponse(v.id, q.id)?.detail">
+                        <div class="mt-1 bg-slate-50 border border-slate-200 rounded p-1.5 text-[10px] font-mono text-slate-600"
+                             x-text="getQuestionResponse(v.id, q.id)?.detail"></div>
+                      </template>
+                    </td>
+                  </template>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-white border-t border-slate-200 flex items-center justify-between shrink-0">
+        <div class="text-xs text-slate-500">
+          Audited by: <strong class="text-slate-700">Priya Sharma (Lead Category Manager)</strong> · Aerchain Automated Compliance Engine
+        </div>
+        <div class="flex items-center gap-2">
+          <button @click="showQuestionnaireModal=false" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-semibold text-xs hover:bg-slate-50">
+            Close Audit
+          </button>
+          <button @click="openExecutiveMemo()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center gap-1.5">
+            <span>📄</span> View Executive Sourcing Memo
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 4D. 1-PAGE EXECUTIVE SOURCING MEMO & ERP EXPORT MODAL                        -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div x-show="showExecutiveMemoModal" x-cloak class="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-5xl w-full h-[92vh] border border-slate-200 flex flex-col overflow-hidden animate-in zoom-in-95 duration-150">
+      
+      <!-- Top Bar with Tabs and Close -->
+      <div class="bg-[#0f2447] text-white px-5 py-3 flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-4">
+          <div class="text-xs font-mono text-blue-300 uppercase tracking-widest font-bold">Aerchain Governance & ERP Bridge</div>
+          <div class="flex bg-slate-800 rounded-lg p-0.5 border border-slate-700 text-xs">
+            <button @click="memoTab='memo'"
+                    :class="memoTab==='memo' ? 'bg-blue-600 text-white font-bold' : 'text-slate-300 hover:text-white'"
+                    class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+              <span>📄</span> Executive Sourcing Memo (CFO Brief)
+            </button>
+            <button @click="memoTab='erp'"
+                    :class="memoTab==='erp' ? 'bg-blue-600 text-white font-bold' : 'text-slate-300 hover:text-white'"
+                    class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
+              <span>🔄</span> Coupa & NetSuite ERP Export
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button @click="printMemo()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5">
+            <span>🖨️</span> Print / PDF
+          </button>
+          <button @click="showExecutiveMemoModal=false" class="text-slate-400 hover:text-white text-xl ml-2">✕</button>
+        </div>
+      </div>
+
+      <!-- Tab 1: Printable 1-Page Executive Memo -->
+      <div x-show="memoTab==='memo'" class="flex-1 overflow-y-auto p-6 lg:p-8 bg-slate-50 text-slate-800">
+        <div class="max-w-4xl mx-auto bg-white border border-slate-200 rounded-xl p-8 shadow-sm space-y-6 print:p-0 print:border-0 print:shadow-none" id="printable-memo">
+          
+          <!-- Memo Header -->
+          <div class="border-b-2 border-slate-900 pb-4">
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="text-[11px] font-mono font-black text-blue-700 uppercase tracking-widest">AERCHAIN STRATEGIC SOURCING MEMORANDUM</div>
+                <h1 class="text-2xl font-black text-slate-950 mt-1">AWARD RECOMMENDATION & COMMERCIAL RECONCILIATION</h1>
+                <div class="text-xs text-slate-600 mt-0.5">Project: 200-Seat Bengaluru Technology Campus Infrastructure Refresh</div>
+              </div>
+              <div class="text-right text-xs">
+                <div class="font-mono font-bold text-slate-900">RFX-2024-ITH-001</div>
+                <div class="text-slate-500 mt-0.5">Date: November 25, 2024</div>
+                <div class="inline-block bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[10px] mt-1 border border-emerald-300">
+                  STATUS: AUDIT-APPROVED
+                </div>
+              </div>
+            </div>
+
+            <!-- Metadata Box -->
+            <div class="grid grid-cols-4 gap-3 bg-slate-50 border border-slate-200 rounded-lg p-3 mt-4 text-xs">
+              <div>
+                <div class="text-slate-400 text-[10px] uppercase font-bold">Category Lead</div>
+                <div class="font-bold text-slate-900">Priya Sharma</div>
+                <div class="text-[10px] text-slate-500">Sr. Category Manager, IT</div>
+              </div>
+              <div>
+                <div class="text-slate-400 text-[10px] uppercase font-bold">Approved Budget</div>
+                <div class="font-bold text-slate-900">₹4,50,00,000</div>
+                <div class="text-[10px] text-slate-500">CapEx / Infra Approved</div>
+              </div>
+              <div>
+                <div class="text-slate-400 text-[10px] uppercase font-bold">Recommended Award</div>
+                <div class="font-bold text-emerald-700 text-sm font-mono">₹2,84,37,600</div>
+                <div class="text-[10px] text-emerald-600 font-semibold">100% Scope (30/30 Items)</div>
+              </div>
+              <div>
+                <div class="text-slate-400 text-[10px] uppercase font-bold">Net Budget Variance</div>
+                <div class="font-bold text-blue-700 text-sm font-mono">-₹1,65,62,400</div>
+                <div class="text-[10px] text-blue-600 font-semibold">36.8% Hard Savings</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 1: Executive Summary -->
+          <div class="space-y-2">
+            <h2 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <span class="w-2 h-2 rounded bg-blue-600"></span> 1. Executive Summary & Award Rationale
+            </h2>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              Following competitive evaluation of 5 multi-format supplier bids (Excel, PDF, Word, Angled Image, Email) representing 30 distinct IT infrastructure line items, Sourcing recommends a <strong>Quality-Gated Split Award</strong> across <strong>TechPro Solutions Pvt Ltd</strong> and <strong>DigitalEdge Corp</strong>. This configuration captures maximum volume rebates while enforcing 100% ISO 9001:2015 compliance and 3-year on-site SLA covenants required by FinTech risk governance.
+            </p>
+          </div>
+
+          <!-- Section 2: Allocation Breakdown -->
+          <div class="space-y-2">
+            <h2 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <span class="w-2 h-2 rounded bg-emerald-600"></span> 2. Contract Award Allocation
+            </h2>
+            <table class="w-full border text-xs">
+              <thead class="bg-slate-100 font-bold border-b text-slate-700">
+                <tr>
+                  <th class="p-2 text-left">Recommended Vendor</th>
+                  <th class="p-2 text-left">Awarded Categories & Lines</th>
+                  <th class="p-2 text-center">Incoterm</th>
+                  <th class="p-2 text-right">Committed Spend (INR)</th>
+                  <th class="p-2 text-center">Governance Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr>
+                  <td class="p-2 font-bold text-slate-900">TechPro Solutions Pvt Ltd</td>
+                  <td class="p-2 text-slate-700">Compute, Storage & High-End Mobility (18 Lines)</td>
+                  <td class="p-2 text-center font-mono text-[10px] text-emerald-700">DDP Bengaluru</td>
+                  <td class="p-2 text-right font-mono font-bold">₹1,85,92,000</td>
+                  <td class="p-2 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">ISO PASS · 4h SLA</span></td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-slate-900">DigitalEdge Corp</td>
+                  <td class="p-2 text-slate-700">Networking, Power & Passive Cabling (12 Lines)</td>
+                  <td class="p-2 text-center font-mono text-[10px] text-emerald-700">DDP Bengaluru</td>
+                  <td class="p-2 text-right font-mono font-bold">₹98,45,600</td>
+                  <td class="p-2 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">ISO PASS · 6h SLA</span></td>
+                </tr>
+              </tbody>
+              <tfoot class="bg-slate-50 font-bold border-t-2 text-slate-900">
+                <tr>
+                  <td class="p-2" colspan="2">TOTAL COMMITMENT</td>
+                  <td class="p-2 text-center font-mono">DDP Campus</td>
+                  <td class="p-2 text-right font-mono text-emerald-700 text-sm">₹2,84,37,600</td>
+                  <td class="p-2 text-center text-blue-700 font-mono">30 / 30 Lines (100%)</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Section 3: The Lowest Bidder Trap Unmasked -->
+          <div class="space-y-2 bg-rose-50/50 border border-rose-200 rounded-xl p-4">
+            <h2 class="text-sm font-black text-rose-950 uppercase tracking-wide flex items-center gap-2">
+              <span class="text-base">⚠️</span> 3. Forensic Due Diligence: Unmasking the "Lowest Bidder" (QuickByte Trap)
+            </h2>
+            <p class="text-xs text-rose-900 leading-relaxed">
+              <strong>QuickByte India</strong> submitted a headline bid of <strong>₹2,70,50,000</strong>, appearing on face value to be ₹13.87 Lakhs lower than the recommended award. Sourcing audit identified 4 non-negotiable cost additions that invert this ranking:
+            </p>
+            <table class="w-full border bg-white text-xs mt-2">
+              <thead class="bg-slate-100 font-bold border-b text-slate-700">
+                <tr>
+                  <th class="p-2 text-left">Cost Component / Exposure</th>
+                  <th class="p-2 text-left">Audit Finding & Remediation</th>
+                  <th class="p-2 text-right">Landed Cost Impact</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-[11px]">
+                <tr>
+                  <td class="p-2 font-bold text-slate-800">1. Stated Headline Bid</td>
+                  <td class="p-2 text-slate-600">Initial submission in Word document prose</td>
+                  <td class="p-2 text-right font-mono font-bold text-slate-800">₹2,70,50,000</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-amber-900">2. Missing Scope Gap</td>
+                  <td class="p-2 text-slate-600">Omitted 3 lines: Blade Chassis, Wireless Controller, Core Firewall (spot market buy)</td>
+                  <td class="p-2 text-right font-mono font-bold text-rose-700">+₹18,50,000</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-amber-900">3. Spec Drift Penalty (Line 5)</td>
+                  <td class="p-2 text-slate-600">Quoted 16GB non-ECC soldered RAM vs mandated 32GB DDR5 ECC RAM (₹14,500/unit × 50)</td>
+                  <td class="p-2 text-right font-mono font-bold text-rose-700">+₹7,25,000</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-amber-900">4. Warranty SLA Uplift</td>
+                  <td class="p-2 text-slate-600">Quoted 12-month carry-in depot vs mandated 36-month on-site NBD support pack</td>
+                  <td class="p-2 text-right font-mono font-bold text-rose-700">+₹3,80,000</td>
+                </tr>
+                <tr>
+                  <td class="p-2 font-bold text-amber-900">5. Freight & Handling</td>
+                  <td class="p-2 text-slate-600">FOB warehouse terms; campus transit & cargo insurance at buyer expense</td>
+                  <td class="p-2 text-right font-mono font-bold text-rose-700">+₹2,10,000</td>
+                </tr>
+              </tbody>
+              <tfoot class="bg-rose-100/70 font-bold border-t-2 text-rose-950">
+                <tr>
+                  <td class="p-2">QUICKBYTE TRUE LANDED TCO</td>
+                  <td class="p-2 text-xs">Exceeds compliant award; also lacks mandatory ISO 9001 certification</td>
+                  <td class="p-2 text-right font-mono text-sm text-rose-900">₹3,02,15,000</td>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="text-[11px] text-rose-950 font-bold flex items-center justify-between pt-1">
+              <span>Financial Conclusion:</span>
+              <span>Recommended ISO Award (₹2.84 Cr) is <span class="underline">₹17.77 Lakhs CHEAPER</span> than QuickByte true landed cost.</span>
+            </div>
+          </div>
+
+          <!-- Section 4: Risk Mitigations & Legal Protections -->
+          <div class="space-y-2">
+            <h2 class="text-sm font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <span class="w-2 h-2 rounded bg-indigo-600"></span> 4. Contractual Covenants & Risk Mitigations
+            </h2>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="border rounded-lg p-2.5 bg-slate-50">
+                <div class="font-bold text-slate-800 mb-1">Liquidated Damages (LD) Clause:</div>
+                <p class="text-slate-600 text-[11px]">0.5% per calendar week of delay beyond 30-day PO delivery milestone, capped at 5% of total purchase order value.</p>
+              </div>
+              <div class="border rounded-lg p-2.5 bg-slate-50">
+                <div class="font-bold text-slate-800 mb-1">Back-to-Back OEM Warranty:</div>
+                <p class="text-slate-600 text-[11px]">Supplier must furnish OEM Manufacturer Authorization Form (MAF) and registered 3-year warranty certificates prior to invoice clearance.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Signoff Approvals Block -->
+          <div class="border-t-2 border-slate-300 pt-4">
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Required Enterprise Signatures</div>
+            <div class="grid grid-cols-4 gap-4 text-xs">
+              <div class="border-t border-slate-400 pt-2">
+                <div class="font-bold text-slate-900">Priya Sharma</div>
+                <div class="text-[10px] text-slate-500">Sr. Category Manager, IT</div>
+                <div class="text-[10px] text-emerald-700 font-semibold mt-1">✓ Endorsed (25-Nov-2024)</div>
+              </div>
+              <div class="border-t border-slate-400 pt-2">
+                <div class="font-bold text-slate-900">VP Infrastructure</div>
+                <div class="text-[10px] text-slate-500">Technical Stakeholder</div>
+                <div class="text-[10px] text-slate-400 italic mt-1">Pending Approval</div>
+              </div>
+              <div class="border-t border-slate-400 pt-2">
+                <div class="font-bold text-slate-900">CISO</div>
+                <div class="text-[10px] text-slate-500">Security & Compliance</div>
+                <div class="text-[10px] text-slate-400 italic mt-1">Pending Approval</div>
+              </div>
+              <div class="border-t border-slate-400 pt-2">
+                <div class="font-bold text-slate-900">Finance Controller</div>
+                <div class="text-[10px] text-slate-500">Commercial Signoff</div>
+                <div class="text-[10px] text-slate-400 italic mt-1">Pending Approval</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Tab 2: Coupa & NetSuite ERP Bridge -->
+      <div x-show="memoTab==='erp'" class="flex-1 overflow-y-auto p-6 bg-slate-900 text-slate-100 font-mono text-xs">
+        <div class="max-w-4xl mx-auto space-y-4">
+          
+          <div class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <div class="text-blue-400 font-bold text-sm">ERP Ready-to-Commit Purchase Order Payloads</div>
+              <div class="text-slate-400 text-xs font-sans mt-0.5">Eliminate manual re-keying. Direct schema mapping into Coupa cXML/JSON or NetSuite SuiteScript.</div>
+            </div>
+            <div class="flex items-center gap-2 font-sans">
+              <button @click="erpFormat='coupa'"
+                      :class="erpFormat==='coupa' ? 'bg-blue-600 text-white font-bold' : 'bg-slate-700 text-slate-300'"
+                      class="px-3 py-1.5 rounded-lg text-xs transition-all">
+                Coupa JSON / API
+              </button>
+              <button @click="erpFormat='netsuite'"
+                      :class="erpFormat==='netsuite' ? 'bg-blue-600 text-white font-bold' : 'bg-slate-700 text-slate-300'"
+                      class="px-3 py-1.5 rounded-lg text-xs transition-all">
+                NetSuite SuiteScript CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Payload Code Container -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 relative group">
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800 font-sans">
+              <span class="text-slate-400 text-xs flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span x-text="erpFormat === 'coupa' ? 'Coupa PO Creation Schema (POST /api/purchase_orders)' : 'NetSuite PO Import CSV / SuiteScript Schema'"></span>
+              </span>
+              <button @click="erpFormat === 'coupa' ? copyCoupaPayload() : copyNetSuitePayload()"
+                      class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1 rounded text-xs transition-all flex items-center gap-1.5 shadow">
+                <span>📋</span> Copy Payload
+              </button>
+            </div>
+
+            <pre class="overflow-x-auto text-[11px] leading-relaxed text-slate-300 font-mono max-h-[52vh] p-2 select-all"
+                 x-text="erpFormat === 'coupa' ? getCoupaPayloadText() : getNetSuitePayloadText()"></pre>
+          </div>
+
+          <div class="flex items-center justify-between text-slate-400 font-sans text-xs">
+            <span>Mapped Fields: Vendor ID, Cost Center CC-INFRA-BLR, GL Account 6100, GST 18%, Payment Terms Net 30.</span>
+            <button @click="erpFormat === 'coupa' ? copyCoupaPayload() : copyNetSuitePayload()" class="text-blue-400 hover:underline">
+              Copy to Clipboard
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 bg-white border-t border-slate-200 flex items-center justify-between shrink-0">
+        <div class="text-xs text-slate-500 font-sans">
+          Audit Reference: <strong class="text-slate-700">MEMO-2024-ITH-001</strong> · FinTech Enterprise Procurement
+        </div>
+        <div class="flex items-center gap-2">
+          <button @click="showExecutiveMemoModal=false" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-semibold text-xs hover:bg-slate-50">
+            Close
+          </button>
+          <button @click="printMemo()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow flex items-center gap-1.5">
+            <span>🖨️</span> Print Executive Memo
+          </button>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -1331,6 +1843,11 @@
         drawerOpen: false,
         showAllocationModal: false,
         showScopeModal: false,
+        showQuestionnaireModal: false,
+        questionnaireFilterFailures: false,
+        showExecutiveMemoModal: false,
+        memoTab: 'memo',
+        erpFormat: 'coupa',
         selectedFollowUpVendor: null,
         activeCell: null,
         overridePriceInput: '',
@@ -1816,6 +2333,178 @@
           a.download = 'aerchain_commercial_audit_matrix.csv';
           a.click();
           this.showToast('Audit matrix exported as CSV', 'info');
+        },
+
+        questionnaireQuestions: [
+          {id: 1,  question: "Is your organization ISO 9001:2015 certified? Attach certificate.", type: "yesno+doc"},
+          {id: 2,  question: "State the warranty period (in months) for each product category quoted.", type: "text"},
+          {id: 3,  question: "What is the expected delivery lead time (in calendar days) from PO date?", type: "number"},
+          {id: 4,  question: "What payment terms can you offer? (e.g., Net 30 / Net 60 / advance)", type: "text"},
+          {id: 5,  question: "Do you provide on-site technical support? State SLA response time.", type: "text"},
+          {id: 6,  question: "What percentage of quoted products are locally sourced vs. imported?", type: "text"},
+          {id: 7,  question: "Provide your GST Registration Number.", type: "text"},
+          {id: 8,  question: "Are any of the quoted products End-of-Life (EOL) within 18 months?", type: "yesno"},
+          {id: 9,  question: "Provide references from at least 2 enterprise deployments of similar scale.", type: "text"},
+          {id: 10, question: "Can you fulfill a partial order of minimum 60% of line items?", type: "yesno"}
+        ],
+        questionnaireMap: {
+          techpro: {
+            1: {answer: "Yes", detail: "ISO 9001:2015, Cert No. ISO9001-2023-TP-4521, valid Dec 2026", pass: true},
+            2: {answer: "Servers: 36m on-site | Laptops: 24m carry-in | Networking: 36m | Others: 12m", pass: true},
+            3: {answer: "21 calendar days", pass: true},
+            4: {answer: "Net 30, Net 45, or Net 60 days — negotiable", pass: true},
+            5: {answer: "Yes — on-site support. SLA: 4-hour response, next business day resolution", pass: true},
+            6: {answer: "40% locally assembled, 60% imported (OEM authorised distributor)", pass: true},
+            7: {answer: "29AABCT4520E1ZQ", pass: true},
+            8: {answer: "No products quoted are EOL within 18 months", pass: true},
+            9: {answer: "1. Infosys Mysore (500 laptops + 50 servers)\n2. Wipro Bengaluru (campus IT infra)\n3. HDFC Bank Pune (200 desktops)", pass: true},
+            10: {answer: "Yes — can fulfil minimum 50% partial order", pass: true}
+          },
+          globalit: {
+            1: {answer: "Yes", detail: "ISO 9001:2022, Cert No. ISO9001-2022-GI-8812, valid Sep 2025", pass: true},
+            2: {answer: "Servers: 36m on-site | Laptops: 12m carry-in | Others: 12m", pass: true},
+            3: {answer: "28 calendar days (import clearance included)", pass: true},
+            4: {answer: "Net 45 days only", pass: true},
+            5: {answer: "Remote support only. No on-site support offered in India.", pass: false, flag: "REMOTE_ONLY"},
+            6: {answer: "10% locally managed, 90% imported direct from OEM (USA/Taiwan)", pass: true},
+            7: {answer: "27AABCG7891B1ZF", pass: true},
+            8: {answer: "LPT-002 (Business Laptop Standard) is scheduled EOL in 14 months.", pass: false, flag: "EOL_WARNING"},
+            9: {answer: "1. TCS Hyderabad (300 laptops)\n2. Cognizant Chennai (server refresh)", pass: true},
+            10: {answer: "Yes — minimum 60% of lines", pass: true}
+          },
+          quickbyte: {
+            1: {answer: "No — QuickByte India is not ISO 9001 certified at this time.", pass: false, flag: "QUALITY_FAIL"},
+            2: {answer: "Servers: 12m | Laptops: 12m | Networking: 12m | Others: 6m", pass: false, flag: "SLA_FAIL"},
+            3: {answer: "14 calendar days for in-stock items", pass: true},
+            4: {answer: "Net 30 or Net 60 days", pass: true},
+            5: {answer: "Yes — on-site support available. SLA: 8 business hours", pass: true},
+            6: {answer: "70% locally sourced / assembled, 30% imported", pass: true},
+            7: {answer: "32AABCQ1234C1ZA", pass: true},
+            8: {answer: "No EOL products in quote", pass: true},
+            9: {answer: "1. Startup client (NDA, cannot disclose name)", pass: false, flag: "INCOMPLETE_REF"},
+            10: {answer: "Yes", pass: true}
+          },
+          digitaledge: {
+            1: {answer: "Yes", detail: "ISO 9001:2021, Cert No. ISO9001-2021-DE-3309, valid Mar 2027", pass: true},
+            2: {answer: "All products: 24 months comprehensive warranty", pass: true},
+            3: {answer: "30 calendar days", pass: true},
+            4: {answer: "Net 30 days", pass: true},
+            5: {answer: "On-site support. SLA: 6-hour response, same-day resolution for Bengaluru", pass: true},
+            6: {answer: "50% local, 50% imported", pass: true},
+            7: {answer: "19AABCD5678D1ZB", pass: true},
+            8: {answer: "No EOL products.", pass: true},
+            9: {answer: "1. Amazon India Hyderabad (500 seats)\n2. Flipkart Bengaluru (200 seats)\n3. PhonePe Pune (network infra)", pass: true},
+            10: {answer: "Yes — minimum 50% of lines", pass: true}
+          },
+          shree: {
+            1: {answer: "Not answered", pass: false, flag: "NOT_ANSWERED"},
+            2: {answer: "Standard OEM warranty applies", pass: false, flag: "VAGUE"},
+            3: {answer: "10–15 days for in-stock items. Imported items may take longer.", pass: true},
+            4: {answer: "Net 30 days preferred.", pass: true},
+            5: {answer: "Will coordinate with OEM service centre. No dedicated support team.", pass: false, flag: "VAGUE"},
+            6: {answer: "Not answered", pass: false, flag: "NOT_ANSWERED"},
+            7: {answer: "29AABCS9876E1ZC", pass: true},
+            8: {answer: "Not answered", pass: false, flag: "NOT_ANSWERED"},
+            9: {answer: "Not answered", pass: false, flag: "NOT_ANSWERED"},
+            10: {answer: "Yes, can do partial order.", pass: true}
+          }
+        },
+
+        openQuestionnaireModal() {
+          this.showQuestionnaireModal = true;
+        },
+
+        getFilteredQuestions() {
+          if (!this.questionnaireFilterFailures) return this.questionnaireQuestions;
+          return this.questionnaireQuestions.filter(q => {
+            return this.vendors.some(v => !this.getQuestionResponse(v.id, q.id)?.pass);
+          });
+        },
+
+        getQuestionResponse(vid, qid) {
+          return this.questionnaireMap?.[vid]?.[qid] || {answer: '—', pass: false};
+        },
+
+        openExecutiveMemo() {
+          this.showAllocationModal = false;
+          this.showExecutiveMemoModal = true;
+        },
+
+        printMemo() {
+          window.print();
+        },
+
+        getCoupaPayloadText() {
+          const payload = {
+            "order-header": {
+              "requisition-id": "REQ-2024-BLR-8821",
+              "po-number": "PO-2024-BLR-0492",
+              "currency": "INR",
+              "payment-terms": "Net 30",
+              "shipping-address": {
+                "location-code": "BLR-CAMPUS-01",
+                "name": "FinTech Enterprise Bengaluru Campus",
+                "street": "Outer Ring Road, Bellandur",
+                "city": "Bengaluru",
+                "state": "Karnataka",
+                "postal-code": "560103",
+                "country": "IN"
+              },
+              "buyer": {
+                "name": "Priya Sharma",
+                "email": "priya.sharma@enterprise-fintech.com",
+                "department": "Strategic IT Procurement"
+              }
+            },
+            "split-allocations": [
+              {
+                "vendor-code": "V-TECHPRO-01",
+                "vendor-name": "TechPro Solutions Pvt Ltd",
+                "incoterm": "DDP Bengaluru",
+                "total-commitment-inr": 18592000,
+                "lines-allocated": 18,
+                "line-items": [
+                  {"line-num": 1, "item-code": "SRV-001", "description": "Enterprise Rack Server 2U Dual Xeon", "qty": 10, "unit-price-inr": 285000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
+                  {"line-num": 2, "item-code": "SRV-002", "description": "High-Memory Database Server 4U", "qty": 4, "unit-price-inr": 480000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
+                  {"line-num": 3, "item-code": "SRV-004", "description": "1U Storage Server 48TB NVMe", "qty": 6, "unit-price-inr": 310000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
+                  {"line-num": 5, "item-code": "LPT-001", "description": "Developer Laptop 32GB DDR5 ECC", "qty": 50, "unit-price-inr": 88000, "gl-account": "6110-IT-ENDUSER", "tax-code": "GST-18"},
+                  {"line-num": 6, "item-code": "LPT-002", "description": "Standard Business Laptop 16GB", "qty": 150, "unit-price-inr": 62000, "gl-account": "6110-IT-ENDUSER", "tax-code": "GST-18"}
+                ]
+              },
+              {
+                "vendor-code": "V-DIGITALEDGE-04",
+                "vendor-name": "DigitalEdge Corp",
+                "incoterm": "DDP Bengaluru",
+                "total-commitment-inr": 9845600,
+                "lines-allocated": 12,
+                "line-items": [
+                  {"line-num": 11, "item-code": "SW-001", "description": "48-Port PoE+ Gigabit Access Switch", "qty": 8, "unit-price-inr": 31500, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
+                  {"line-num": 14, "item-code": "FW-001", "description": "Next-Gen Enterprise Firewall Appliance", "qty": 2, "unit-price-inr": 275000, "gl-account": "6100-IT-INFRA", "tax-code": "GST-18"},
+                  {"line-num": 23, "item-code": "CAB-001", "description": "CAT6 Cable UTP (305m box)", "qty": 15, "unit-price-inr": 7320, "gl-account": "6120-IT-PASSIVE", "tax-code": "GST-18"}
+                ]
+              }
+            ]
+          };
+          return JSON.stringify(payload, null, 2);
+        },
+
+        getNetSuitePayloadText() {
+          return `ExternalID,VendorID,Subsidiary,Location,Date,DueDate,Currency,ExchangeRate,Item,Quantity,Rate,Amount,Department,Class,TaxCode,Memo
+PO-2024-BLR-001,V-TECHPRO-01,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,SRV-001,10,285000,2850000,Engineering:Infra,Hardware:Server,GST_18%,RFX-2024-ITH-001 Lot 1
+PO-2024-BLR-001,V-TECHPRO-01,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,SRV-002,4,480000,1920000,Engineering:Infra,Hardware:Server,GST_18%,RFX-2024-ITH-001 Lot 1
+PO-2024-BLR-001,V-TECHPRO-01,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,LPT-001,50,88000,4400000,Engineering:Infra,Hardware:Client,GST_18%,RFX-2024-ITH-001 Lot 2
+PO-2024-BLR-002,V-DIGITALEDGE-04,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,SW-001,8,31500,252000,Engineering:Infra,Hardware:Network,GST_18%,RFX-2024-ITH-001 Lot 3
+PO-2024-BLR-002,V-DIGITALEDGE-04,FinTech India Services,BLR-Campus-01,25/11/2024,25/12/2024,INR,1.0,CAB-001,15,7320,109800,Engineering:Infra,Hardware:Passive,GST_18%,RFX-2024-ITH-001 Lot 5`;
+        },
+
+        copyCoupaPayload() {
+          navigator.clipboard.writeText(this.getCoupaPayloadText());
+          this.showToast('Coupa PO creation schema copied to clipboard ✓', 'success');
+        },
+
+        copyNetSuitePayload() {
+          navigator.clipboard.writeText(this.getNetSuitePayloadText());
+          this.showToast('NetSuite PO CSV payload copied to clipboard ✓', 'success');
         },
 
         exportAwardPO() {

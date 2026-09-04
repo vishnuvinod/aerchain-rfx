@@ -152,6 +152,20 @@ def build_comparison() -> dict:
                 }
 
             elif vid == "quickbyte":
+                qb_flags = ["PROSE_FORMAT"]
+                spec_drift_data = None
+                if iid == 5:
+                    qb_flags.append("SPEC_DRIFT")
+                    spec_drift_data = {
+                        "detected": True,
+                        "component": "System Memory Architecture",
+                        "requested_spec": "32GB DDR5 ECC RAM (Expandable to 64GB)",
+                        "quoted_spec": "16GB DDR5 Non-ECC (Soldered / Non-upgradeable)",
+                        "defect_summary": "-50% RAM capacity deficit. Soldered memory cannot be upgraded in field. Unsuitable for engineering workloads.",
+                        "remediation_unit_cost_inr": 14500,
+                        "total_remediation_inr": 725000,
+                        "recommendation": "Disqualify bid or apply +₹14,500/unit cost penalty (+₹7.25L) to establish true landed TCO."
+                    }
                 cell = {
                     "status": "QUOTED",
                     "raw_display": f"₹{price:,} (Prose in Word)",
@@ -159,9 +173,10 @@ def build_comparison() -> dict:
                     "confidence": 0.91,
                     "is_verified": True,
                     "source_type": "Word",
-                    "source_snippet": f"Commercials Paragraph: 'We can supply {item['qty']} {item['unit']} of {item['description']} at a unit price of Rs. {price:,}/-.'",
-                    "formula": f"Extracted directly from paragraph prose in Word document.",
-                    "flags": ["PROSE_FORMAT"],
+                    "source_snippet": f"Commercials Paragraph: 'We can supply {item['qty']} {item['unit']} of {item['description']} at a unit price of Rs. {price:,}/- (Standard 16GB non-ECC config).' " if iid == 5 else f"Commercials Paragraph: 'We can supply {item['qty']} {item['unit']} of {item['description']} at a unit price of Rs. {price:,}/-.'",
+                    "formula": f"Extracted directly from paragraph prose in Word document. Flagged: 16GB soldered vs 32GB requested." if iid == 5 else "Extracted directly from paragraph prose in Word document.",
+                    "flags": qb_flags,
+                    "spec_drift": spec_drift_data
                 }
 
             else:

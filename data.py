@@ -24,7 +24,7 @@ RFX = {
         {"id": 26, "code": "SSD-001", "description": "Enterprise SSD 1TB",              "qty": 50,  "unit": "unit", "specs": "1TB 2.5\" SATA Enterprise SSD, DWPD 3, 5yr warranty, server-grade",                    "category": "Servers & Storage"},
 
         # Category 2: Client Compute & Laptops (6 items)
-        {"id": 5,  "code": "LPT-001", "description": "Business Laptop (High-End)",       "qty": 50,  "unit": "unit", "specs": "Intel Core i7 13th Gen, 16GB DDR5, 512GB NVMe SSD, 14\" FHD IPS, Backlit KB, Win11 Pro","category": "Client Compute & Laptops"},
+        {"id": 5,  "code": "LPT-001", "description": "Business Laptop (High-End)",       "qty": 50,  "unit": "unit", "specs": "Intel Core i7 13th Gen, 32GB DDR5 ECC RAM (Expandable to 64GB), 512GB NVMe SSD, 14\" FHD IPS, Backlit KB, Win11 Pro","category": "Client Compute & Laptops"},
         {"id": 6,  "code": "LPT-002", "description": "Business Laptop (Standard)",       "qty": 100, "unit": "unit", "specs": "Intel Core i5 13th Gen, 8GB DDR4, 256GB NVMe SSD, 14\" FHD, Win11 Home",               "category": "Client Compute & Laptops"},
         {"id": 7,  "code": "WKS-001", "description": "CAD Workstation",                  "qty": 5,   "unit": "unit", "specs": "Intel Core i9-13900K, 64GB ECC RAM, 2TB NVMe, NVIDIA RTX A4000 16GB, Win11 Pro",       "category": "Client Compute & Laptops"},
         {"id": 8,  "code": "DSK-001", "description": "Desktop PC (Office)",              "qty": 50,  "unit": "unit", "specs": "Intel Core i5 13th Gen, 8GB RAM, 512GB SSD, Win11 Home, USB keyboard+mouse",           "category": "Client Compute & Laptops"},
