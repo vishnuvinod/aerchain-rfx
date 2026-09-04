@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aerchain · RFx Intelligence Cockpit</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232563eb'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='white' font-family='system-ui' font-weight='900' font-size='13'%3EAER%3C/text%3E%3C/svg%3E">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -31,9 +32,26 @@
     ::-webkit-scrollbar-track { background:#f1f5f9; }
     ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; }
     ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+    /* Toast Notifications */
+    .toast-container { position:fixed; top:72px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px; pointer-events:none; }
+    .toast { pointer-events:auto; display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:10px; font-size:12px; font-weight:600; box-shadow:0 8px 24px rgba(0,0,0,.12); backdrop-filter:blur(8px); animation: toastIn 0.3s ease-out forwards; max-width:380px; }
+    .toast.toast-out { animation: toastOut 0.3s ease-in forwards; }
+    .toast-success { background:#ecfdf5; border:1px solid #6ee7b7; color:#065f46; }
+    .toast-info { background:#eff6ff; border:1px solid #93c5fd; color:#1e40af; }
+    .toast-warn { background:#fffbeb; border:1px solid #fcd34d; color:#92400e; }
+    @keyframes toastIn { from { opacity:0; transform:translateX(80px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(80px); } }
+    /* Loading Skeleton Shimmer */
+    .skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    /* Stepper */
+    .step-active { background:#2563eb; color:white; box-shadow:0 0 0 3px rgba(37,99,235,0.2); }
+    .step-done { background:#059669; color:white; }
+    .step-pending { background:#e2e8f0; color:#64748b; }
+    .step-connector { height:2px; flex:1; min-width:20px; }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-800 font-sans antialiased" x-data="cockpit()" x-init="init()" x-cloak>
+<body class="bg-slate-900 text-slate-800 font-sans antialiased" x-data="cockpit()" x-init="init()" @keydown.escape.window="drawerOpen=false; showAllocationModal=false; showScopeModal=false" x-cloak>
 
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <!-- 1. TOP GLOBAL COMMAND BAR                                                   -->
@@ -62,17 +80,17 @@
 
     <!-- Navigation pills -->
     <div class="flex items-center bg-slate-800/80 p-1 rounded-lg border border-slate-700 text-xs">
-      <button @click="viewMode='cockpit'"
+      <button @click="viewMode='cockpit'; currentStep=2"
               :class="viewMode==='cockpit' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
               class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
         <span>📊</span> Decision Cockpit
       </button>
-      <button @click="viewMode='rfx_builder'"
+      <button @click="viewMode='rfx_builder'; currentStep=0"
               :class="viewMode==='rfx_builder' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
               class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
         <span>📋</span> RFx Scope
       </button>
-      <button @click="viewMode='vendor_inbox'"
+      <button @click="viewMode='vendor_inbox'; currentStep=1"
               :class="viewMode==='vendor_inbox' ? 'bg-blue-600 text-white font-semibold shadow' : 'text-slate-300 hover:text-white'"
               class="px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5">
         <span>📬</span> Raw Submissions (5)
@@ -88,13 +106,87 @@
     </button>
   </header>
 
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 1B. WORKFLOW STEPPER BAR — End-to-End Procurement Journey                 -->
+  <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+  <div class="fixed top-14 left-0 right-0 z-40 bg-white border-b border-slate-200 shadow-xs">
+    <div class="max-w-5xl mx-auto flex items-center justify-center py-2 px-4 gap-1">
+      <template x-for="(step, idx) in workflowSteps" :key="idx">
+        <div class="flex items-center gap-1" :class="idx < workflowSteps.length - 1 ? 'flex-1' : ''">
+          <button @click="navigateStep(idx)"
+                  class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold transition-all whitespace-nowrap"
+                  :class="{
+                    'step-done': idx < currentStep,
+                    'step-active': idx === currentStep,
+                    'step-pending': idx > currentStep
+                  }">
+            <span class="w-4.5 h-4.5 rounded-full flex items-center justify-center text-[10px] font-black"
+                  :class="{
+                    'bg-white/30': idx <= currentStep,
+                    'bg-slate-300/50': idx > currentStep
+                  }"
+                  x-text="idx < currentStep ? '✓' : (idx + 1)"></span>
+            <span x-text="step.label"></span>
+          </button>
+          <div x-show="idx < workflowSteps.length - 1"
+               class="step-connector"
+               :class="idx < currentStep ? 'bg-emerald-400' : 'bg-slate-200'"></div>
+        </div>
+      </template>
+    </div>
+  </div>
+
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <!-- 2. MAIN COCKPIT VIEW (Split Layout: 65% Matrix + 35% Co-Pilot)              -->
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-  <main class="pt-14 h-screen flex overflow-hidden bg-slate-100" x-show="viewMode==='cockpit'">
+  <main class="pt-[5.5rem] h-screen flex overflow-hidden bg-slate-100" x-show="viewMode==='cockpit'">
 
     <!-- ── LEFT: NORMALIZED COMPARISON GRID (Scrollable) ─────────────────────── -->
     <div class="flex-1 flex flex-col min-w-0 h-full border-r border-slate-300 transition-all duration-300">
+
+      <!-- Executive KPI Summary Cards -->
+      <div x-show="comparison" class="bg-white border-b border-slate-200 px-5 py-3 grid grid-cols-5 gap-3 flex-shrink-0">
+        <div class="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-blue-600">Vendors Evaluated</div>
+          <div class="text-lg font-black text-slate-900 mt-0.5">5</div>
+          <div class="text-[10px] text-slate-500 font-medium">3 Compliant · 2 Flagged</div>
+        </div>
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Optimized TCO</div>
+          <div class="text-lg font-black text-emerald-700 mt-0.5" x-text="'₹' + ((activeScenario ? activeScenario.total_tco : comparison?.scenarios?.strict_quality_award?.total_inr) / 10000000).toFixed(2) + ' Cr'"></div>
+          <div class="text-[10px] text-slate-500 font-medium">Split across 3 vendors</div>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-3 py-2.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-indigo-600">Budget Savings</div>
+          <div class="text-lg font-black text-indigo-700 mt-0.5">₹1.65 Cr</div>
+          <div class="text-[10px] text-slate-500 font-medium">37% under ₹4.50 Cr target</div>
+        </div>
+        <div class="bg-purple-50 border border-purple-200 rounded-xl px-3 py-2.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-purple-600">Scope Coverage</div>
+          <div class="text-lg font-black text-purple-700 mt-0.5">100%</div>
+          <div class="text-[10px] text-slate-500 font-medium">30 / 30 lines quoted</div>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+          <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600">Review Required</div>
+          <div class="text-lg font-black text-amber-700 mt-0.5">3</div>
+          <div class="text-[10px] text-slate-500 font-medium">Spool/unit verification</div>
+        </div>
+      </div>
+
+      <!-- Loading Skeleton (shown while comparison data is loading) -->
+      <div x-show="!comparison" class="p-5 space-y-4">
+        <div class="grid grid-cols-5 gap-3">
+          <div class="skeleton h-[72px]"></div><div class="skeleton h-[72px]"></div><div class="skeleton h-[72px]"></div><div class="skeleton h-[72px]"></div><div class="skeleton h-[72px]"></div>
+        </div>
+        <div class="skeleton h-10 w-full"></div>
+        <div class="space-y-2">
+          <div class="skeleton h-14 w-full"></div><div class="skeleton h-14 w-full"></div><div class="skeleton h-14 w-full"></div>
+          <div class="skeleton h-14 w-full"></div><div class="skeleton h-14 w-full"></div><div class="skeleton h-14 w-full"></div>
+        </div>
+      </div>
 
       <!-- Action & Filter Ribbon -->
       <div class="bg-white border-b border-slate-200 px-5 py-2 flex items-center gap-4 text-xs flex-shrink-0 shadow-xs">
@@ -550,6 +642,12 @@
 
       <!-- Chat Stream -->
       <div class="flex-1 overflow-y-auto p-4 space-y-3" id="copilot-stream">
+        <!-- Empty State -->
+        <div x-show="copilotHistory.length === 0" class="flex flex-col items-center justify-center h-full text-center py-8 opacity-60">
+          <div class="text-3xl mb-2">💡</div>
+          <div class="text-sm font-bold text-slate-600">Ask the AI Procurement Analyst</div>
+          <div class="text-[11px] text-slate-400 mt-1 max-w-[250px] leading-relaxed">Compare vendors, model what-if scenarios, or interrogate landed costs. Grounded in verified data only.</div>
+        </div>
         <template x-for="msg in copilotHistory" :key="msg.id">
           <div>
             <!-- Buyer Prompt -->
@@ -924,7 +1022,7 @@
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
   <!-- 5. SECONDARY VIEWS (RFx Builder & Vendor Inbox)                             -->
   <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-  <div x-show="viewMode==='rfx_builder'" class="pt-16 max-w-6xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-2xl border border-slate-200">
+  <div x-show="viewMode==='rfx_builder'" class="pt-[6.5rem] max-w-6xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-2xl border border-slate-200">
     <!-- Header with Breadcrumbs & Action -->
     <div class="flex items-center justify-between border-b pb-4 mb-5">
       <div>
@@ -1139,28 +1237,96 @@
     </div>
   </div>
 
-  <div x-show="viewMode==='vendor_inbox'" class="pt-16 max-w-4xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-xl">
+  <div x-show="viewMode==='vendor_inbox'" class="pt-[6.5rem] max-w-4xl mx-auto p-6 text-slate-800 bg-white min-h-screen shadow-lg my-4 rounded-xl">
     <div class="flex items-center justify-between border-b pb-4 mb-4">
       <div>
         <h1 class="text-xl font-bold text-slate-900">📬 Supplier Unstructured Submissions</h1>
-        <p class="text-xs text-slate-500">Zero forced templates · 5 formats ingested autonomously</p>
+        <p class="text-xs text-slate-500">Zero forced templates · 5 formats ingested autonomously · AI extraction with provenance chain</p>
       </div>
       <button @click="viewMode='cockpit'" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded font-bold">
         ← Back to Cockpit
       </button>
     </div>
+
+    <!-- Ingestion Stats Bar -->
+    <div class="grid grid-cols-4 gap-3 mb-5">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+        <div class="text-xl font-black text-blue-700">5</div>
+        <div class="text-[10px] font-bold uppercase text-blue-600">Formats Parsed</div>
+      </div>
+      <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
+        <div class="text-xl font-black text-emerald-700">150</div>
+        <div class="text-[10px] font-bold uppercase text-emerald-600">Cells Extracted</div>
+      </div>
+      <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+        <div class="text-xl font-black text-purple-700">96.7%</div>
+        <div class="text-[10px] font-bold uppercase text-purple-600">Avg Confidence</div>
+      </div>
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
+        <div class="text-xl font-black text-amber-700">3</div>
+        <div class="text-[10px] font-bold uppercase text-amber-600">Edge Cases Auto-Resolved</div>
+      </div>
+    </div>
+
     <div class="grid gap-3 text-xs">
       <template x-for="v in vendors" :key="v.id">
-        <div class="border rounded-xl p-4 flex items-center justify-between bg-slate-50">
-          <div>
-            <div class="font-bold text-sm text-slate-900" x-text="v.name"></div>
-            <div class="text-slate-500 text-xs mt-0.5" x-text="v.description"></div>
-            <div class="flex gap-2 mt-2">
-              <span class="bg-blue-100 text-blue-800 font-mono px-2 py-0.5 rounded text-[10px]" x-text="v.response_format + ': ' + v.response_file"></span>
-              <span class="bg-amber-100 text-amber-800 font-medium px-2 py-0.5 rounded text-[10px]" x-text="'Edge Case: ' + v.edge_case"></span>
+        <div class="border rounded-xl p-4 bg-slate-50 hover:shadow-md transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-lg flex items-center justify-center text-lg font-black"
+                   :class="{
+                     'bg-emerald-100 text-emerald-700': v.response_format === 'Excel',
+                     'bg-red-100 text-red-700': v.response_format === 'PDF',
+                     'bg-blue-100 text-blue-700': v.response_format === 'Word',
+                     'bg-purple-100 text-purple-700': v.response_format === 'Image',
+                     'bg-amber-100 text-amber-700': v.response_format === 'Email'
+                   }"
+                   x-text="v.response_format === 'Excel' ? '📊' : v.response_format === 'PDF' ? '📄' : v.response_format === 'Word' ? '📝' : v.response_format === 'Image' ? '📷' : '✉️'"></div>
+              <div>
+                <div class="font-bold text-sm text-slate-900" x-text="v.name"></div>
+                <div class="text-slate-500 text-xs mt-0.5" x-text="v.description"></div>
+              </div>
+            </div>
+            <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-xs flex items-center gap-1">
+              <span>✓</span> Ingested
+            </span>
+          </div>
+
+          <!-- Source File & Format -->
+          <div class="flex items-center gap-2 mb-3">
+            <span class="bg-blue-100 text-blue-800 font-mono px-2 py-0.5 rounded text-[10px]" x-text="v.response_format + ': ' + v.response_file"></span>
+            <span class="bg-amber-100 text-amber-800 font-medium px-2 py-0.5 rounded text-[10px]" x-text="'⚡ Edge: ' + v.edge_case"></span>
+          </div>
+
+          <!-- Ingestion Pipeline Stages -->
+          <div class="flex items-center gap-1 mb-2.5">
+            <template x-for="(stage, sIdx) in ['Received', 'Parsed', 'Extracted', 'Normalized']" :key="stage">
+              <div class="flex items-center gap-1" :class="sIdx < 3 ? 'flex-1' : ''">
+                <div class="flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[9px] font-bold whitespace-nowrap">
+                  <span>✓</span>
+                  <span x-text="stage"></span>
+                </div>
+                <div x-show="sIdx < 3" class="flex-1 h-0.5 bg-emerald-300 rounded"></div>
+              </div>
+            </template>
+          </div>
+
+          <!-- Extraction Metrics Row -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5">
+              <div class="text-[9px] text-slate-400 uppercase font-bold">Lines Quoted</div>
+              <div class="font-black text-slate-900" x-text="(comparison?.totals?.[v.id]?.lines_quoted || 0) + ' / 30'"></div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5">
+              <div class="text-[9px] text-slate-400 uppercase font-bold">Confidence</div>
+              <div class="font-black" :class="v.response_format === 'Image' ? 'text-amber-700' : 'text-emerald-700'"
+                   x-text="v.response_format === 'Image' ? '87%' : v.response_format === 'Email' ? '92%' : '98%'"></div>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5">
+              <div class="text-[9px] text-slate-400 uppercase font-bold">Auto-Resolved</div>
+              <div class="font-black text-purple-700" x-text="v.id === 'globalit' ? 'USD→INR + Ftnt' : v.id === 'digitaledge' ? 'Spool→Box' : v.id === 'shree' ? 'ERP Ref' : '—'"></div>
             </div>
           </div>
-          <span class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-xs">Ingested ✓</span>
         </div>
       </template>
     </div>
@@ -1186,6 +1352,7 @@
         searchQuery: '',
         filterCategory: '',
         strictISO: false,
+        strictOnsite: false,
         collapsedCategories: {},
         activeScenario: null,
         rfxPromptInput: "Draft a complete enterprise RFx for a 200-seat tech campus refresh in Bengaluru. Include enterprise dual-socket Xeon servers, Dell corporate laptops, Cisco PoE+ switching, online rack UPS power backup, and CAT6 structured cabling with 3-year on-site SLA.",
@@ -1194,6 +1361,14 @@
         copilotInput: '',
         copilotLoading: false,
         copilotHistory: [],
+        currentStep: 2,
+        workflowSteps: [
+          {label: 'Draft RFx Scope', view: 'rfx_builder'},
+          {label: 'Ingest Submissions', view: 'vendor_inbox'},
+          {label: 'Normalize & Compare', view: 'cockpit'},
+          {label: 'AI Analysis', view: 'cockpit'},
+          {label: 'Award Decision', view: 'cockpit'}
+        ],
 
         vendors: [
           {id:'techpro',    name:'TechPro Solutions Pvt Ltd', response_format:'Excel', response_file:'techpro_response.xlsx', edge_case:'Omitted 3 lines', description:'Clean Excel missing 3 items.'},
@@ -1404,7 +1579,7 @@
 
         copyScopeEmail() {
           navigator.clipboard.writeText(this.getScopeClarificationBody());
-          alert("Automated RFP Addendum copied to clipboard!");
+          this.showToast('Automated RFP Addendum copied to clipboard!', 'success');
         },
 
         simulateVendorAddendumResponse() {
@@ -1429,7 +1604,7 @@
           this.comparison.totals[vid].is_partial = false;
           this.comparison.totals[vid].missing_scope_gap_inr = 0;
           this.showScopeModal = false;
-          alert(`⚡ Round-2 Submission Received!\n\n${vName} submitted competitive rates for all missing lines.\nCoverage updated to 30/30 (100% Full Scope).\nNew Landed Total: ₹${(newTotal/10000000).toFixed(2)} Cr.`);
+          this.showToast(`${vName} submitted 30/30 lines · New TCO: ₹${(newTotal/10000000).toFixed(2)} Cr`, 'success');
         },
 
         inspectCell(row, vid) {
@@ -1456,6 +1631,7 @@
           const idx = cellWrapper.cell.flags?.indexOf('VERIFICATION_REQUIRED');
           if (idx !== -1) cellWrapper.cell.flags.splice(idx, 1);
           this.drawerOpen = false;
+          this.showToast('Cell verified as defensible ✓', 'success');
         },
 
         submitOverride(cellWrapper) {
@@ -1465,6 +1641,7 @@
           cellWrapper.cell.is_verified = true;
           cellWrapper.cell.formula = `Manual Buyer Override: set explicitly to ₹${val.toLocaleString()}`;
           this.drawerOpen = false;
+          this.showToast(`Rate overridden to ₹${val.toLocaleString()}`, 'info');
         },
 
         applyERPLookup(cellWrapper) {
@@ -1476,6 +1653,7 @@
           cellWrapper.cell.raw_display = `₹${rate.toLocaleString()} (ERP PO-2023-088)`;
           cellWrapper.cell.formula = `Fetched historical ERP rate from PO-2023-088 @ ₹${rate.toLocaleString()}/unit (0% YoY inflation adjustment applied).`;
           this.drawerOpen = false;
+          this.showToast('Historical ERP PO rate applied to matrix', 'success');
         },
 
         async generateRFxFromPrompt() {
@@ -1487,7 +1665,7 @@
               body: JSON.stringify({description: this.rfxPromptInput})
             });
             await new Promise(r => setTimeout(r, 600)); // Smooth UX transition
-            alert("✨ AI RFx Scope Generated!\n\nAll 30 line items structured across 5 enterprise categories with calculated switch ports, UPS runtimes, benchmark pricing, and 5-point qualification criteria.");
+            this.showToast('AI RFx Scope Generated — 30 items across 5 categories with benchmark pricing', 'success');
           } catch(e) {
             console.error(e);
           } finally {
@@ -1498,12 +1676,13 @@
         copyClarification(text) {
           if (!text) return;
           navigator.clipboard.writeText(text);
-          alert("Clarification email copied to clipboard!");
+          this.showToast('Clarification email copied to clipboard', 'info');
         },
 
         commitAllocation() {
           this.showAllocationModal = false;
           this.applyScenario('strict_quality_award');
+          this.showToast('Quality-gated split allocation committed to matrix', 'success');
         },
 
         applyScenario(key) {
@@ -1532,6 +1711,7 @@
           this.activeScenario = null;
           this.strictISO = false;
           this.strictOnsite = false;
+          this.showToast('Simulation reset to baseline matrix', 'info');
         },
 
         async askCopilot(prompt) {
@@ -1618,10 +1798,31 @@
           a.href = url;
           a.download = 'aerchain_commercial_audit_matrix.csv';
           a.click();
+          this.showToast('Audit matrix exported as CSV', 'info');
         },
 
         exportAwardPO() {
           this.showAllocationModal = true;
+        },
+
+        navigateStep(idx) {
+          this.currentStep = idx;
+          const step = this.workflowSteps[idx];
+          if (step?.view) this.viewMode = step.view;
+          if (idx === 3) { this.copilotOpen = true; }
+          if (idx === 4) { this.showAllocationModal = true; }
+        },
+
+        showToast(message, type = 'success') {
+          const container = document.getElementById('toast-container');
+          if (!container) return;
+          const icons = {success: '✓', info: 'ℹ', warn: '⚠'};
+          const toast = document.createElement('div');
+          toast.className = `toast toast-${type}`;
+          toast.innerHTML = `<span style="font-size:14px">${icons[type] || '✓'}</span><span>${message}</span>`;
+          container.appendChild(toast);
+          setTimeout(() => { toast.classList.add('toast-out'); }, 2800);
+          setTimeout(() => { toast.remove(); }, 3100);
         }
       }
     }

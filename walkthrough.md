@@ -21,9 +21,12 @@ This is your step-by-step, minute-by-minute speaking script for your **5-minute 
 2. **Point out the Sticky Qualification Banner:**
    - *"Before looking at a single price, we enforce a Supplier Risk Audit across ISO 9001 certification, warranty, on-site SLAs, and historical ERP invoice drift.*
    - **Click the toggle:** *"Notice what happens when I toggle `Strict ISO 9001 Only`—QuickByte (who lacks ISO certification) is instantly disqualified, and their column dims with a high-contrast red badge."*
-3. **Show the Dual-Layer Cell Architecture:**
+3. **Show the Dual-Layer Cell Architecture & Smart Rollup Lots:**
    - Point to GlobalIT's Laptop row (Row 5):
      - *"Notice how we display prices: bold normalized INR rate (`₹77,154 net`) on top, with the supplier's raw stated quote (`$1,050 list in USD · -12% footnote discount`) right below. The buyer never has to guess where a number came from."*
+   - **Show the Smart Rollup Accordions:**
+     - Click **`[ ⊟ Collapse All ]`** in the top ribbon: *"Notice how the matrix collapses into an Executive Category Scorecard—showing the benchmark spend and lowest compliant vendor for each of the 5 Lots without hiding commercial intelligence."*
+     - Click **`[ ⊞ Expand All ]`** to expand back to the full 30-line audit view.
 
 ---
 
