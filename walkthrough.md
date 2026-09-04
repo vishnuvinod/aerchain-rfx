@@ -1,91 +1,180 @@
-# Aerchain RFx Intelligence Cockpit — Loom Video Presentation Script
+# 🎬 Aerchain RFx Intelligence Cockpit — Executive Video Walkthrough Script
 
-This is your step-by-step, minute-by-minute speaking script for your **5-minute Loom walkthrough video**. It walks the Aerchain hiring team through your build using the exact vocabulary and judgment of a Senior Product Manager.
+> **Tone:** Authentic, conversational, sharp, and grounded. Speak like an experienced Senior/Principal PM walking peers through a prototype you built with care and conviction.
 
 ---
 
-## 🎬 5-Minute Loom Recording Flow
+## ⏱️ Pre-Record Checklist (15 Seconds)
+- Open Chrome to: `http://localhost:8000`
+- Press `Cmd + Shift + B` (hides bookmarks bar)
+- Press `Cmd + 0` (resets zoom to 100%)
+- Have your phone propped up directly under your monitor with `phone_notes_script.md` open.
+- Take a deep breath, smile, and start recording.
 
-### 0:00 – 0:45: The Problem & Product Thesis
-> *"Hi Aerchain team, I'm Vishnu Vinod. Today I'm demonstrating my build for 'Kill the Quote Spreadsheet'.*
+---
+
+## 🎬 Act 1: The Hook & The Real Pain (0:00 – 0:50)
+
+👉 **What to do on screen:**
+- Start on **Step 1: Draft RFx Scope**.
+- Move your mouse naturally over the prompt input and the 4 sizing cards below.
+
+🗣️ **What to say:**
+> *"Hey Raghunath, Neel, and the Aerchain team—I’m Vishnu.
 >
-> *In enterprise procurement, comparing quotes isn't just about data entry speed—it is about **Defensibility Under Fire**. When a buyer manages a ₹4.5 Crore spend across 30 line items, suppliers send messy, incompatible files: unformatted Excel sheets, PDFs with buried footnote discounts, conversational Word docs, and even angled smartphone photos of paper rate cards.*
+> Let’s be honest: every enterprise procurement team knows this pain. You need to buy 30 line items of IT hardware for a new campus. You send out an RFx. And over the next nine days, complete chaos lands in your inbox.
 >
-> *We designed an **Enterprise Decision Cockpit** that solves this through 4 core principles: Zero-Template Ingestion, Dual-Layer Traceability, Sticky Qualification Gatekeeping, and Bi-Directional Co-Pilot Simulation."*
-
----
-
-### 0:45 – 1:30: The Commercial Grid & Dual-Layer Traceability
-1. **Show the Main Screen ([http://localhost:8000](http://localhost:8000)):**
-   - *"Notice our layout: on the left (65%), we have the Normalized Comparison Matrix. On the right (35%), an interactive Procurement Co-Pilot."*
-2. **Point out the Sticky Qualification Banner:**
-   - *"Before looking at a single price, we enforce a Supplier Risk Audit across ISO 9001 certification, warranty, on-site SLAs, and historical ERP invoice drift.*
-   - **Click the toggle:** *"Notice what happens when I toggle `Strict ISO 9001 Only`—QuickByte (who lacks ISO certification) is instantly disqualified, and their column dims with a high-contrast red badge."*
-3. **Show the Dual-Layer Cell Architecture & Smart Rollup Lots:**
-   - Point to GlobalIT's Laptop row (Row 5):
-     - *"Notice how we display prices: bold normalized INR rate (`₹77,154 net`) on top, with the supplier's raw stated quote (`$1,050 list in USD · -12% footnote discount`) right below. The buyer never has to guess where a number came from."*
-   - **Show the Smart Rollup Accordions:**
-     - Click **`[ ⊟ Collapse All ]`** in the top ribbon: *"Notice how the matrix collapses into an Executive Category Scorecard—showing the benchmark spend and lowest compliant vendor for each of the 5 Lots without hiding commercial intelligence."*
-     - Click **`[ ⊞ Expand All ]`** to expand back to the full 30-line audit view.
-
----
-
-### 1:30 – 2:30: The Ugly Edges & The Slide-Over Inspection Panel
-1. **The Angled Phone Photo (DigitalEdge Row 23 — CAT6 Cable):**
-   - Click on the amber `⚑ Review Spool` badge on DigitalEdge's CAT6 cable row.
-   - The slide-over inspection drawer opens on the right.
-   - *"This directly addresses the brief's toughest question: 'What does your system show the buyer when it isn't sure?'"*
-   - **Show the top:** *"Here is the actual crop of the angled phone photo taken in the supplier's warehouse."*
-   - **Show the middle:** *"The AI caught that DigitalEdge quoted ₹2,680 per 100m spool, whereas our RFx requested 305m pull-boxes. Our deterministic engine applied a 3.05× conversion to normalize it to ₹8,174."*
-   - **Show the bottom triad:** *"Instead of guessing blindly, we give the buyer 3 production-grade controls: `Accept Conversion`, `Override Price`, or click `Draft Clarification` to send a pre-written inquiry."*
-   - Click `Accept Conversion`. Show how the cell turns verified green.
-
-2. **The "Same as Last Year" ERP Resolution (Shree IT Row 9 — Thin Clients):**
-   - Click on Shree IT's purple `Same as 2023` cell.
-   - *"Shree IT wrote an informal email saying 'rest same as last year'. In our drawer, rather than showing a dead-end error, the system matches their reference against our ERP historical database (PO-2023-088 at ₹19,500/unit)."*
-   - Click `Apply Historical Rate`. Show the cell update and recalculate live.
-
----
-
-### 2:30 – 3:30: Incomplete Quotes & The Scope Delta Chaser (Option 3 Hero Flow)
-1. **Show the Apples-to-Apples Basket Modeling Toggle:**
-   - Click **`Projected 30-Line`** in the top ribbon:
-     - *"Notice what happened: unquoted cells now display dashed market benchmark estimates (`Est. ₹4,50,000`). This solves the classic procurement trap where Shree IT's ₹1.72 Cr looks cheaper simply because they skipped 14 lines. With imputed rates, Shree IT is actually ₹3.14 Cr—more expensive than TechPro!"*
-2. **Open the Scope Clarification Modal:**
-   - On TechPro's column header, click **`[ ⚠ 3 Lines Missing · Request Addendum ✉ ]`**:
-   - *"Look at what the system tells the Category Lead: an AI Strategic Sourcing Recommendation with a **High ROI Follow-up** verdict. TechPro is ISO-compliant with only +1.2% invoice drift. They are just 3 lines away from a viable single-source bid."*
-   - *"Compare that to Shree IT, where the system advises **Disqualification** because they omitted 47% of the project scope."*
-3. **Simulate Round-2 Vendor Response:**
-   - Click **`[ ⚡ Simulate Supplier Round-2 Submission ]`**:
-   - *"Watch what happens in real time: TechPro submits negotiated rates for those 3 lines. The matrix updates TechPro to **30/30 (100% Scope)** and recalculates their landed TCO live on screen."*
-
----
-
-### 3:30 – 4:30: Bi-Directional Co-Pilot Simulation (The VP's Prompt)
-1. **Click the first Quick Prompt in the Co-Pilot:**
-   > *"What if we split it, cheapest per line, but only among vendors who cleared the quality questionnaire?"*
-2. **Watch the AI respond and trigger live table highlighting:**
-   - *"Notice that the Co-Pilot doesn't just return a text response; it acts as an execution engine."*
-   - **Point to the table:** 
-     - Non-compliant vendors (QuickByte and Shree IT) are automatically dimmed.
-     - Winning line items light up across TechPro, GlobalIT, and DigitalEdge with emerald green `AWARDED` badges.
-   - **Point to the bottom bar:**
-     - *"The bottom executive bar instantly recalculates: our optimized spend is **₹2.84 Crore**, delivering **₹10.0 Lakhs in defensible savings** compared to TechPro single-sourcing."*
-
----
-
-### 4:30 – 5:00: The PM Closing ("Where the Better Problem Actually Is")
-> *"To close: automated quote ingestion saves 3 days of grunt work, but in my 1-page design memo, I outline where the real multi-million dollar bleed in enterprise procurement lies: **Post-Award Contract Drift**.*
+> One vendor sends an Excel sheet that completely ignores your template. Another sends a PDF with a 12% discount buried in a footnote on page 3. Someone sends a Word document with prices in paragraphs. Someone else takes an angled photo of a paper rate card on their phone. And another vendor just replies: 'same as last year, freight extra.'
 >
-> *Suppliers routinely win deals on low bids, then claw back margin through freight add-ons, delay surcharges, and spec substitutions on actual purchase orders. The natural evolution of this module is to close the loop: linking extracted quote terms directly into three-way ERP invoice matching to continuously score a **Vendor Trust Graph**.*
+> A category buyer spends three full days retyping all of this into a spreadsheet just to answer one basic question: 'Who should we award this to?'
 >
-> *Thank you, and I look forward to walking through the live build with you during the interview."*
+> We built this system to delete that week.
+>
+> We start right here in our RFx Studio. Instead of forcing rigid Excel templates that suppliers hate, the buyer just describes their campus scope in plain English. Our engine automatically translates that intent into a full 30-item Bill of Materials—servers, networking, UPS power, and cabling—ready for market."*
 
 ---
 
-## 🎯 Pre-Flight Recording Checklist
-- [ ] Make sure `http://localhost:8000` is open in your browser.
-- [ ] Test the toggle: click `Projected 30-Line` to see the dashed benchmark estimates appear.
-- [ ] Click `[ ⚠ 3 Lines Missing · Request Addendum ✉ ]` on TechPro to verify the Scope Follow-Up Modal.
-- [ ] Click Row 23 (DigitalEdge Cable) to verify the rate card photo in the slide-over drawer.
-- [ ] Hit record on Loom, follow this script, and you are guaranteed a winning submission!
+## 🎬 Act 2: Real-World Ingestion (0:50 – 1:40)
+
+👉 **What to do on screen:**
+- Click **Step 2: Ingest Submissions** in the top navigation bar.
+- Slowly scroll past the 5 vendor cards.
+
+🗣️ **What to say:**
+> *"Now, let's see what happens when the responses arrive.
+>
+> In enterprise procurement, you can’t force suppliers into a rigid portal. They reply with whatever they have.
+>
+> Look at our Ingestion Inbox: 5 suppliers, 5 completely different formats, zero forced templates:
+> - **TechPro** sent a clean Excel sheet, but omitted 3 critical lines.
+> - **GlobalIT** quoted in US Dollars, with that sneaky 12% footnote discount.
+> - **QuickByte** sent a Word document where the pricing is buried inside prose paragraphs.
+> - **DigitalEdge** literally took an angled smartphone photo of a printed paper rate card.
+> - And **Shree IT** sent a quick email saying 'rest same as last year'.
+>
+> Our multimodal engine parses all five formats without breaking a sweat.
+>
+> Now, let's enter the Decision Cockpit."*
+
+---
+
+## 🎬 Act 3: The Cockpit & Commercial Traps (1:40 – 3:00)
+
+👉 **What to do on screen:**
+- Click **Step 3: Normalize & Compare**.
+- **Action 1:** Check the box `Require Strict ISO 9001:2015`. *(Pause 2 sec as QuickByte & Shree dim out with red badges).* Uncheck it.
+- **Action 2:** Hover over **Row 5 (LPT-001)** under **GlobalIT**.
+  - Point to the bold `₹77,154 net` on top, and `$1,050 USD · -12% Ftnt` below it.
+- **Action 3:** Check the box `Require 3-Yr On-Site SLA`.
+  - *(Watch GlobalIT dim with red "NO ONSITE SLA", and the green AWARDED badge instantly jump to TechPro at ₹88,000!).*
+- **Action 4:** In the top ribbon, click the **`30-Line`** button.
+  - Hover over **Shree IT’s column header**: show the partial ₹1.73 Cr jump to the true 30-line estimate of **₹2.93 Crore**.
+
+🗣️ **What to say:**
+> *"This is the comparison grid. Everything is normalized to Indian Rupees and common units.
+>
+> Notice three things that make this enterprise-grade:
+>
+> **First: Compliance Gatekeeping.** 
+> Before a buyer looks at price, they have to know if a vendor is legally qualified. Watch what happens when I toggle `Strict ISO 9001`—QuickByte and Shree IT immediately dim out. We don't let buyers make rookie mistakes on uncertified suppliers.
+>
+> **Second: Dual-Layer Traceability & The SLA Gate.**
+> Look at Row 5 for GlobalIT. On top, you see the normalized rate: **₹77,154**. Right underneath, you see the raw provenance: **$1,050 in USD with the 12% footnote discount applied**. The buyer never has to guess where a number came from.
+>
+> Now look closer at GlobalIT: pure price optimization would give them our 50 developer laptops to save a few thousand rupees. But our 10-point audit catches that **GlobalIT only offers remote support from Singapore!** 
+> For 50 developers in Bengaluru, remote-only support is an operational disaster. Watch what happens when I toggle `Require 3-Year On-Site SLA`: GlobalIT is disqualified from the lot, and the award instantly routes to **TechPro**, backed by their 4-hour local Bengaluru depot!
+>
+> **Third: Disarming Incomplete Quotes.**
+> Look at Shree IT over here. Their headline total says ₹1.73 Crore. It looks cheap—until you realize they only quoted 16 of our 30 lines! 
+> When I toggle our 30-line view, the engine imputes baseline category benchmarks for their missing lines. Their real projected TCO jumps to **₹2.93 Crore**—and their paper discount completely evaporates."*
+
+---
+
+## 🎬 Act 4: The Ugly Edges & Spec Drift (3:00 – 4:00)
+
+👉 **What to do on screen:**
+- **Action 1:** Scroll down to **Row 23 (DigitalEdge CAT6 Cable)**. Click the amber **`⚑ Review Spool`** badge.
+  - Drawer opens on right. Point to the cropped rate card photo. Point to the `3.05×` math formula.
+  - Click the green button: `[ ✓ Accept Conversion as Defensible ]`.
+- **Action 2:** Scroll to **Row 5 (QuickByte Laptop)**. Click the pulsing amber **`⚠ Spec Drift`** badge.
+  - Show the memory comparison (32GB ECC requested vs 16GB soldered quoted). Show the `+₹7.25 Lakhs` penalty. Close drawer.
+
+🗣️ **What to say:**
+> *"Now let's talk about the ugly edges that break traditional tools.
+>
+> On Row 23, DigitalEdge submitted an angled photo where they quoted CAT6 cable **per 100-meter spool**. But our RFx asked for **305-meter master boxes**. 
+>
+> Our engine recognized the unit mismatch, applied an exact 3.05x multiplier, and calculated **₹8,174 per box**. But because confidence was 62%—below our 75% threshold—it flagged it for human audit. 
+> The buyer opens this inspection drawer, sees the actual photo snippet, checks the formula, and clicks *Accept Conversion*. That is true Human-in-the-Loop governance.
+>
+> Even sneakier is **Spec Drift on Row 5**: QuickByte quoted a cheap laptop, but buried in their Word document was a specification downgrade: they quoted **16GB soldered RAM** instead of our mandated **32GB ECC upgradeable RAM**. 
+> Instead of missing it, our engine flags it and calculates a **+₹7.25 Lakh remediation penalty** right into their landed cost."*
+
+---
+
+## 🎬 Act 5: The AI Co-Pilot & The L1 Trap (4:00 – 5:00)
+
+👉 **What to do on screen:**
+- Move cursor to the right-hand **AI Co-Pilot** panel.
+- Click prompt pill **`Q4`**: *"QuickByte quoted ₹2.70 Cr. Why shouldn't we award to them? (L1 Trap)"*
+  - *(Wait 2-3 sec as AI streams the breakdown and cost chart).*
+- Click prompt pill **`Q1`** or **`Q5`**: *"Split award among ISO-cleared vendors only"*.
+  - *(AI returns the ₹2.84 Cr / ₹2.99 Cr scenario).*
+  - Click **`[ Highlight in Table ]`**: show the matrix light up with green `AWARDED` badges!
+
+🗣️ **What to say:**
+> *"Now, the buyer stops clicking and starts asking questions.
+>
+> I'll click Q4: *'QuickByte quoted ₹2.70 Crore. Why shouldn't we just award to them?'*
+>
+> This is the classic **L1 procurement trap**. QuickByte looks ₹14 Lakhs cheaper on paper. But our AI analyst breaks down the hidden reality:
+> - They skipped 3 critical lines: **+₹18.5 Lakhs** to spot-buy elsewhere.
+> - Soldered RAM downgrade: **+₹7.25 Lakhs** remediation.
+> - Only a 12-month carry-in warranty: **+₹3.8 Lakhs** uplift.
+> - FOB warehouse freight: **+₹2.1 Lakhs**.
+>
+> QuickByte's **True Landed TCO is actually ₹3.02 Crore**—they are the most expensive vendor in the tender!
+>
+> Now I'll ask Q1 to model our optimal split award among qualified vendors. 
+> With one click on *Highlight in Table*, the matrix executes the strategy: 
+> We award 12 items to TechPro, 10 to GlobalIT, and 8 to DigitalEdge. Total spend is **₹2.84 Crore**—saving **₹1.65 Crore against our budget** with zero compliance risk."*
+
+---
+
+## 🎬 Act 6: ERP PO Export & The Bigger Problem (5:00 – 5:45)
+
+👉 **What to do on screen:**
+- Click the blue button in top-right: **`[ Award Selected Allocation ]`**.
+  - Modal opens. Show the 3 split vendor summaries.
+  - Toggle from `Executive Sourcing Memo` $\to$ `Coupa JSON Payload` $\to$ `NetSuite CSV Export`.
+  - Click **`[ Copy Coupa Payload ]`**.
+- Look up at the camera for the closing statement.
+
+🗣️ **What to say:**
+> *"Finally, we close the loop. 
+>
+> A recommendation is useless if a buyer has to spend another afternoon retyping lines into Coupa or SAP. 
+>
+> Clicking *Award Selected Allocation* generates our complete audit package: an **Executive Sourcing Memo** defending the decision, alongside **ready-to-ingest Coupa JSON and NetSuite CSV payloads**—item codes, quantities, and landed INR rates perfectly matched.
+>
+> ---
+>
+> ### 💡 The Closing Thought (The $25M ARR Thesis)
+> I want to leave you with one final product thought. 
+>
+> Deleting the 3 days of spreadsheet transcription is huge. But as Aerchain scales to $25M ARR, **the real multi-million dollar problem in enterprise spend isn't quote extraction—it’s Post-Award Invoice & Contract Drift.**
+>
+> Suppliers bid aggressively to win the RFx, and then claw back margin through freight add-ons and spec downgrades during fulfillment. 
+>
+> The real breakthrough is connecting this extraction engine directly to 3-way invoice matching in SAP—so that the promises made during negotiation are enforced down to the last rupee on the invoice.
+>
+> That is how we turn procurement from a reactive back-office cost center into an intelligent profit driver.
+>
+> Thank you so much for your time—I'm looking forward to diving into the details with you!"*
+
+---
+
+### 🎉 Recording Tips for a Confident Delivery
+1. **Don't rush:** You have plenty of time. If you mispronounce a word, just pause for 1 second, repeat the sentence cleanly, and keep going (nobody expects a Hollywood cut).
+2. **Smile when you start and end:** It projects natural senior PM confidence.
+3. **Keep the mouse purposeful:** Hover only over what you're talking about so the viewer's eyes follow effortlessly.
