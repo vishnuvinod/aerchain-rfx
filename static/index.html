@@ -407,146 +407,146 @@
             </tr>
           </tbody>
 
-          <!-- 30 COMPARISON ROWS -->
-          <tbody class="divide-y divide-slate-200">
-            <template x-for="(row, rIdx) in filteredRows" :key="row.item_id">
+          <!-- 30 COMPARISON ROWS GROUPED BY CATEGORY LOTS -->
+          <template x-for="cat in visibleCategories" :key="cat">
+            <tbody class="divide-y divide-slate-100 border-b-2 border-slate-300">
               <!-- Category Header Divider Row (Smart Rollup Accordion) -->
-              <template x-if="rIdx === 0 || row.category !== filteredRows[rIdx-1]?.category">
-                <tr @click="toggleCategory(row.category)"
-                    class="bg-slate-200/95 hover:bg-slate-300/90 cursor-pointer font-bold text-slate-800 tracking-wider uppercase text-[11px] border-t-2 border-slate-300 transition-colors select-none">
-                  <td colspan="7" class="px-4 py-2.5">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center gap-2.5">
-                        <span class="text-blue-700 font-bold text-xs" x-text="isCategoryCollapsed(row.category) ? '▶' : '▼'"></span>
-                        <span class="flex items-center gap-1.5">
-                          <span class="text-slate-500 font-medium">Lot:</span>
-                          <span class="text-blue-900 font-black text-xs" x-text="row.category"></span>
-                        </span>
-                        <span class="bg-white/80 text-slate-700 text-[10px] font-mono px-2 py-0.5 rounded-full border border-slate-300"
-                              x-text="getCategoryItemCount(row.category) + ' Items'"></span>
-                      </div>
-
-                      <!-- Category Rollup Intelligence (Visible even when collapsed!) -->
-                      <div class="flex items-center gap-4 text-[10px] font-mono normal-case">
-                        <div class="text-slate-600">
-                          <span>Est. Benchmark:</span>
-                          <strong class="text-slate-900" x-text="'₹' + formatCompact(getCategoryBenchmarkSpend(row.category))"></strong>
-                        </div>
-                        <div class="bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-bold">
-                          <span>Lowest Compliant: </span>
-                          <span x-text="getCategoryLowestVendor(row.category)"></span>
-                        </div>
-                        <span class="text-blue-600 font-semibold hover:underline text-[10px]"
-                              x-text="isCategoryCollapsed(row.category) ? 'Expand Line Items ▼' : 'Collapse ▲'"></span>
-                      </div>
+              <tr @click="toggleCategory(cat)"
+                  class="bg-slate-200/95 hover:bg-slate-300/90 cursor-pointer font-bold text-slate-800 tracking-wider uppercase text-[11px] border-t-2 border-slate-300 transition-colors select-none">
+                <td colspan="7" class="px-4 py-2.5">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2.5">
+                      <span class="text-blue-700 font-bold text-xs" x-text="isCategoryCollapsed(cat) ? '▶' : '▼'"></span>
+                      <span class="flex items-center gap-1.5">
+                        <span class="text-slate-500 font-medium">Lot:</span>
+                        <span class="text-blue-900 font-black text-xs" x-text="cat"></span>
+                      </span>
+                      <span class="bg-white/80 text-slate-700 text-[10px] font-mono px-2 py-0.5 rounded-full border border-slate-300"
+                            x-text="getCategoryItemCount(cat) + ' Items'"></span>
                     </div>
-                  </td>
-                </tr>
-              </template>
 
-              <!-- Commercial Line Item Row -->
-              <tr x-show="!isCategoryCollapsed(row.category)"
-                  class="hover:bg-blue-50/50 transition-colors divide-x divide-slate-100"
-                  :class="activeScenario?.award_map?.[row.item_code] ? 'bg-emerald-50/20' : ''">
-
-                <!-- Sticky Item Spec -->
-                <td class="sticky-col-item bg-white px-3 py-2 border-r border-slate-200">
-                  <div class="flex items-start gap-1.5">
-                    <span class="text-[10px] font-mono text-slate-400 mt-0.5" x-text="row.item_id"></span>
-                    <div class="min-w-0">
-                      <div class="font-bold text-slate-900 text-xs truncate" :title="row.description" x-text="row.description"></div>
-                      <div class="text-[10px] font-mono text-blue-600 font-semibold" x-text="row.item_code"></div>
-                      <div class="text-[10px] text-slate-500 truncate" :title="row.specs" x-text="row.specs"></div>
+                    <!-- Category Rollup Intelligence (Visible even when collapsed!) -->
+                    <div class="flex items-center gap-4 text-[10px] font-mono normal-case">
+                      <div class="text-slate-600">
+                        <span>Est. Benchmark:</span>
+                        <strong class="text-slate-900" x-text="'₹' + formatCompact(getCategoryBenchmarkSpend(cat))"></strong>
+                      </div>
+                      <div class="bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-bold">
+                        <span>Lowest Compliant: </span>
+                        <span x-text="getCategoryLowestVendor(cat)"></span>
+                      </div>
+                      <span class="text-blue-600 font-semibold hover:underline text-[10px]"
+                            x-text="isCategoryCollapsed(cat) ? 'Expand Line Items ▼' : 'Collapse ▲'"></span>
                     </div>
                   </div>
                 </td>
+              </tr>
 
-                <!-- Sticky Qty -->
-                <td class="sticky-col-qty bg-white text-center px-2 py-2 font-mono font-bold text-slate-700 border-r border-slate-200">
-                  <span x-text="row.quantity"></span>
-                  <div class="text-[9px] text-slate-400 font-normal uppercase" x-text="row.rfx_unit"></div>
-                </td>
+              <!-- Commercial Line Item Rows for this Category -->
+              <template x-for="row in getCategoryFilteredRows(cat)" :key="row.item_id">
+                <tr x-show="!isCategoryCollapsed(cat)"
+                    class="hover:bg-blue-50/50 transition-colors divide-x divide-slate-100"
+                    :class="activeScenario?.award_map?.[row.item_code] ? 'bg-emerald-50/20' : ''">
 
-                <!-- 5 Vendor Dual-Layer Cells (Top: Bold Net INR | Bottom: Muted Raw Quote) -->
-                <template x-for="v in vendors" :key="v.id">
-                  <td class="p-2 cursor-pointer transition-all relative"
-                      :class="getCellStyle(row, v.id)"
-                      @click="inspectCell(row, v.id)">
-
-                    <div class="flex flex-col">
-                      <!-- 1. Normalized INR Price (Top / Bold - Primary Eye Anchor) -->
-                      <template x-if="row.vendors[v.id]?.normalised_price_inr">
-                        <div class="flex items-baseline justify-between">
-                          <span class="font-bold text-slate-900 text-xs tracking-tight"
-                                x-text="formatCurrency(row.vendors[v.id]?.normalised_price_inr)"></span>
-                          <span class="text-[9px] text-slate-400 font-mono" x-text="'₹' + formatCompact(row.vendors[v.id]?.normalised_price_inr * row.quantity)"></span>
-                        </div>
-                      </template>
-
-                      <!-- 2. Stated Raw Quote (Bottom / Muted Layer - Traceability Anchor) -->
-                      <div x-show="!denseView" class="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-0.5">
-                        <span class="truncate max-w-[130px]" :title="row.vendors[v.id]?.raw_display" x-text="row.vendors[v.id]?.raw_display"></span>
-                        <template x-if="row.vendors[v.id]?.is_verified">
-                          <span class="text-emerald-600 font-bold" title="Verified by Buyer">✓</span>
-                        </template>
+                  <!-- Sticky Item Spec -->
+                  <td class="sticky-col-item bg-white px-3 py-2 border-r border-slate-200">
+                    <div class="flex items-start gap-1.5">
+                      <span class="text-[10px] font-mono text-slate-400 mt-0.5" x-text="row.item_id"></span>
+                      <div class="min-w-0">
+                        <div class="font-bold text-slate-900 text-xs truncate" :title="row.description" x-text="row.description"></div>
+                        <div class="text-[10px] font-mono text-blue-600 font-semibold" x-text="row.item_code"></div>
+                        <div class="text-[10px] text-slate-500 truncate" :title="row.specs" x-text="row.specs"></div>
                       </div>
-
-                      <!-- 3. Unquoted or Ref Required Status (Decision 2) -->
-                      <template x-if="row.vendors[v.id]?.status === 'NOT_QUOTED'">
-                        <div>
-                          <div x-show="basketMode==='quoted'" class="text-slate-400 font-medium italic text-[11px] text-center py-1">
-                            Not Quoted
-                          </div>
-                          <div x-show="basketMode==='projected'" class="border border-dashed border-blue-400/50 bg-blue-50/50 rounded px-1.5 py-0.5 text-center">
-                            <div class="text-[10px] font-mono text-blue-900 font-bold" x-text="formatCurrency(row.vendors[v.id]?.imputed_benchmark_inr || row.benchmark_price_inr)"></div>
-                            <div class="text-[8px] text-blue-600 font-semibold uppercase tracking-tighter">Est. Benchmark</div>
-                          </div>
-                        </div>
-                      </template>
-                      <template x-if="row.vendors[v.id]?.status === 'REFERENCE_REQUIRED'">
-                        <div class="text-purple-700 font-semibold text-[10px] text-center bg-purple-100/60 rounded py-0.5">
-                          Same as 2023
-                        </div>
-                      </template>
-
-                      <!-- 4. Badges (Awarded, Review, ERP Available) -->
-                      <div class="flex flex-wrap gap-1 mt-1">
-                        <!-- Awarded Badge -->
-                        <template x-if="activeScenario?.award_map?.[row.item_code] === v.id">
-                          <span class="bg-emerald-600 text-white font-black text-[9px] px-1.5 py-0.2 rounded shadow-sm tracking-wide">
-                            AWARDED
-                          </span>
-                        </template>
-
-                        <!-- Review / Amber Flag -->
-                        <template x-if="row.vendors[v.id]?.flags?.includes('VERIFICATION_REQUIRED') && !row.vendors[v.id]?.is_verified">
-                          <span class="bg-amber-100 text-amber-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-amber-300">
-                            ⚑ Review Spool
-                          </span>
-                        </template>
-
-                        <!-- ERP Lookup Available -->
-                        <template x-if="row.vendors[v.id]?.erp_lookup && !row.vendors[v.id]?.normalised_price_inr">
-                          <span class="bg-purple-100 text-purple-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-purple-200">
-                            ⚡ ERP Match
-                          </span>
-                        </template>
-
-                        <!-- Footnote discount tag -->
-                        <template x-if="row.vendors[v.id]?.flags?.includes('FOOTNOTE_DISCOUNT_APPLIED') && !denseView">
-                          <span class="text-blue-600 text-[9px] font-medium" title="12% Footnote discount applied">
-                            -12% Ftnt
-                          </span>
-                        </template>
-                      </div>
-
                     </div>
                   </td>
-                </template>
 
-              </tr>
-            </template>
-          </tbody>
+                  <!-- Sticky Qty -->
+                  <td class="sticky-col-qty bg-white text-center px-2 py-2 font-mono font-bold text-slate-700 border-r border-slate-200">
+                    <span x-text="row.quantity"></span>
+                    <div class="text-[9px] text-slate-400 font-normal uppercase" x-text="row.rfx_unit"></div>
+                  </td>
+
+                  <!-- 5 Vendor Dual-Layer Cells (Top: Bold Net INR | Bottom: Muted Raw Quote) -->
+                  <template x-for="v in vendors" :key="v.id">
+                    <td class="p-2 cursor-pointer transition-all relative"
+                        :class="getCellStyle(row, v.id)"
+                        @click="inspectCell(row, v.id)">
+
+                      <div class="flex flex-col">
+                        <!-- 1. Normalized INR Price (Top / Bold - Primary Eye Anchor) -->
+                        <template x-if="row.vendors[v.id]?.normalised_price_inr">
+                          <div class="flex items-baseline justify-between">
+                            <span class="font-bold text-slate-900 text-xs tracking-tight"
+                                  x-text="formatCurrency(row.vendors[v.id]?.normalised_price_inr)"></span>
+                            <span class="text-[9px] text-slate-400 font-mono" x-text="'₹' + formatCompact(row.vendors[v.id]?.normalised_price_inr * row.quantity)"></span>
+                          </div>
+                        </template>
+
+                        <!-- 2. Stated Raw Quote (Bottom / Muted Layer - Traceability Anchor) -->
+                        <div x-show="!denseView" class="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-0.5">
+                          <span class="truncate max-w-[130px]" :title="row.vendors[v.id]?.raw_display" x-text="row.vendors[v.id]?.raw_display"></span>
+                          <template x-if="row.vendors[v.id]?.is_verified">
+                            <span class="text-emerald-600 font-bold" title="Verified by Buyer">✓</span>
+                          </template>
+                        </div>
+
+                        <!-- 3. Unquoted or Ref Required Status (Decision 2) -->
+                        <template x-if="row.vendors[v.id]?.status === 'NOT_QUOTED'">
+                          <div>
+                            <div x-show="basketMode==='quoted'" class="text-slate-400 font-medium italic text-[11px] text-center py-1">
+                              Not Quoted
+                            </div>
+                            <div x-show="basketMode==='projected'" class="border border-dashed border-blue-400/50 bg-blue-50/50 rounded px-1.5 py-0.5 text-center">
+                              <div class="text-[10px] font-mono text-blue-900 font-bold" x-text="formatCurrency(row.vendors[v.id]?.imputed_benchmark_inr || row.benchmark_price_inr)"></div>
+                              <div class="text-[8px] text-blue-600 font-semibold uppercase tracking-tighter">Est. Benchmark</div>
+                            </div>
+                          </div>
+                        </template>
+                        <template x-if="row.vendors[v.id]?.status === 'REFERENCE_REQUIRED'">
+                          <div class="text-purple-700 font-semibold text-[10px] text-center bg-purple-100/60 rounded py-0.5">
+                            Same as 2023
+                          </div>
+                        </template>
+
+                        <!-- 4. Badges (Awarded, Review, ERP Available) -->
+                        <div class="flex flex-wrap gap-1 mt-1">
+                          <!-- Awarded Badge -->
+                          <template x-if="activeScenario?.award_map?.[row.item_code] === v.id">
+                            <span class="bg-emerald-600 text-white font-black text-[9px] px-1.5 py-0.2 rounded shadow-sm tracking-wide">
+                              AWARDED
+                            </span>
+                          </template>
+
+                          <!-- Review / Amber Flag -->
+                          <template x-if="row.vendors[v.id]?.flags?.includes('VERIFICATION_REQUIRED') && !row.vendors[v.id]?.is_verified">
+                            <span class="bg-amber-100 text-amber-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-amber-300">
+                              ⚑ Review Spool
+                            </span>
+                          </template>
+
+                          <!-- ERP Lookup Available -->
+                          <template x-if="row.vendors[v.id]?.erp_lookup && !row.vendors[v.id]?.normalised_price_inr">
+                            <span class="bg-purple-100 text-purple-800 font-bold text-[9px] px-1 rounded flex items-center gap-0.5 border border-purple-200">
+                              ⚡ ERP Match
+                            </span>
+                          </template>
+
+                          <!-- Footnote discount tag -->
+                          <template x-if="row.vendors[v.id]?.flags?.includes('FOOTNOTE_DISCOUNT_APPLIED') && !denseView">
+                            <span class="text-blue-600 text-[9px] font-medium" title="12% Footnote discount applied">
+                              -12% Ftnt
+                            </span>
+                          </template>
+                        </div>
+
+                      </div>
+                    </td>
+                  </template>
+
+                </tr>
+              </template>
+            </tbody>
+          </template>
 
           <!-- TOTALS FOOTER -->
           <tfoot>
@@ -1486,7 +1486,10 @@
         },
 
         toggleCategory(cat) {
-          this.collapsedCategories[cat] = !this.collapsedCategories[cat];
+          this.collapsedCategories = {
+            ...this.collapsedCategories,
+            [cat]: !this.collapsedCategories[cat]
+          };
         },
 
         isCategoryCollapsed(cat) {
@@ -1495,12 +1498,35 @@
 
         expandAllCategories() {
           this.collapsedCategories = {};
+          this.showToast('All category lots expanded', 'info');
         },
 
         collapseAllCategories() {
           const map = {};
           this.categories.forEach(c => { map[c] = true; });
           this.collapsedCategories = map;
+          this.showToast('All category lots collapsed to executive view', 'info');
+        },
+
+        get visibleCategories() {
+          if (!this.comparison) return [];
+          if (this.filterCategory) return [this.filterCategory];
+          return this.categories.filter(cat => this.getCategoryFilteredRows(cat).length > 0);
+        },
+
+        getCategoryFilteredRows(cat) {
+          if (!this.comparison) return [];
+          let rows = this.comparison.rows.filter(r => r.category === cat);
+          if (this.searchQuery && this.searchQuery.trim()) {
+            const q = this.searchQuery.toLowerCase().trim();
+            rows = rows.filter(r =>
+              r.item_code.toLowerCase().includes(q) ||
+              r.description.toLowerCase().includes(q) ||
+              r.specs.toLowerCase().includes(q) ||
+              r.category.toLowerCase().includes(q)
+            );
+          }
+          return rows;
         },
 
         get filteredRows() {
