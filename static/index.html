@@ -1661,7 +1661,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-[11px]">
-            <template x-for="item in (comparison?.rows || [])" :key="item.item_id">
+            <template x-for="item in sortedRfxRows" :key="item.item_id">
               <tr class="hover:bg-blue-50/40 transition-colors">
                 <td class="p-2.5 text-center text-slate-400 font-mono" x-text="item.item_id"></td>
                 <td class="p-2.5 font-mono font-bold text-blue-700" x-text="item.item_code"></td>
@@ -1955,6 +1955,11 @@
           } catch(e) {
             console.error("Failed loading comparison:", e);
           }
+        },
+
+        get sortedRfxRows() {
+          if (!this.comparison?.rows) return [];
+          return [...this.comparison.rows].sort((a, b) => a.item_id - b.item_id);
         },
 
         get categories() {
