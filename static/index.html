@@ -1894,8 +1894,8 @@
         async init() {
           await this.loadComparison();
 
-          // Start in clean executive lot collapsed state by default
-          this.collapseAllCategories(true);
+          // Start with categories expanded so full matrix, dual-layer pricing, and badges are immediately visible
+          this.collapsedCategories = {};
 
           // Pre-seed Co-pilot with VP scenario (Feedback Point 3)
           this.copilotHistory.push({
