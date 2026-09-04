@@ -269,7 +269,7 @@ def build_comparison() -> dict:
             "priority": "VERY_LOW",
             "badge": "Advise Disqualification",
             "color": "rose",
-            "summary": "Shree IT omitted 14 lines (47% of project scope) and submitted unverified references. Even with benchmark estimates, their 30-line TCO is ₹3.14 Cr. Disqualify rather than wasting sourcing cycles."
+            "summary": "Shree IT omitted 14 lines (47% of project scope) and submitted unverified references. Even with benchmark estimates, their 30-line TCO is ₹2.93 Cr. Disqualify rather than wasting sourcing cycles."
         }
     }
 
